@@ -262,4 +262,4 @@ print(f"你选择的保存编码是：{n_encoding_f}")
 
 download_novel(n_url, n_encoding_f)
 
-input("按任意键退出...")
+input("按Enter键退出...")
