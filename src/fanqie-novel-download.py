@@ -43,7 +43,6 @@ def print_usage():
 """)
 
 
-
 # 请用户选择
 def main():
     global mode  # 声明mode为全局变量
@@ -54,7 +53,7 @@ def main():
         print("1. 同意并进入正常模式")
         print("2. 同意并进入Debug模式")
         print("3. 查看更多")
-        print("4. 不理解，退出程序")
+        print("4. 不同意，退出程序")
         choice = input("请输入您的选择（1/2/3/4）:（回车默认“1”）\n ")
 
         if not choice:
@@ -213,9 +212,9 @@ def download_novel(url, encoding):
 
     # 根据编码转换小说内容字符串为二进制数据
     if encoding == "utf-8":
-        data = content.encode("utf-8")
+        data = content.encode("utf-8", errors='ignore')
     elif encoding == "gb2312":
-        data = content.encode("gb2312")
+        data = content.encode("gb2312", errors='ignore')
     else:
         print("不支持的编码")
         return
