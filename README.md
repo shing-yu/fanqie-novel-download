@@ -65,5 +65,8 @@ pip install requirements.txt
 
 如果您遇到问题或有改进建议，请将其提交到此项目的[GitHub issues](https://github.com/xing-yv/fanqie-novel-download/issues)页面。
 
+## 赞赏
 
+如果您想要支持我的开发，欢迎赞赏，感谢您的支持！
 
+![mm_reward_qrcode_1696844640908](https://xyy-1314663891.cos.ap-nanjing.myqcloud.com/202310091746639.png)
