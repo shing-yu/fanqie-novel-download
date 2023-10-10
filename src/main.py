@@ -23,6 +23,8 @@ https://www.gnu.org/licenses/gpl-3.0.html
 import fanqie_normal as fn
 import fanqie_debug as fd
 import fanqie_batch as fb
+import os
+from sys import exit
 
 # 定义全局变量
 mode = None
@@ -61,6 +63,8 @@ def start():
     global mode  # 声明mode为全局变量
     print_usage()
 
+    # 定义变量flag控制是否退出程序
+    flag = True
     while True:
         print("请选择以下操作：")
         print("1. 同意并进入正常模式")
@@ -110,8 +114,23 @@ ibxff所作用户脚本:https://greasyfork.org/zh-CN/scripts/476688
 (请在右侧Label处选择issue类型以得到更快回复)
 """)
         elif choice == '5':
-            print("退出程序。\n")
-            exit()
+            # 确认退出
+            while True:
+                qd = input("您确定要退出程序吗(yes/no)(默认:no): ")
+                if not qd:
+                    qd = "no"
+                if qd.lower() == "yes":
+                    input("按Enter退出程序...")
+                    break
+                elif qd.lower() == "no":
+                    flag = False
+                    break
+                else:
+                    print("输入无效，请重新输入。")
+            if flag is True:
+                exit(0)
+            else:
+                continue
         else:
             print("无效的选择，请重新输入。")
     get_parameter(retry=False)
@@ -126,8 +145,9 @@ def get_parameter(retry):
     page_url = None
 
     if mode == 2:
-        with open('urls.txt', 'x') as _:
-            pass
+        if not os.path.exists('urls.txt'):
+            with open('urls.txt', 'x') as _:
+                pass
         if retry is True:
             print("您在urls.txt中输入的内容有误，请重新输入")
             print("请重新在程序同文件夹(或执行目录)下的urls.txt中，以每行一个的形式写入目录页链接")
@@ -244,6 +264,6 @@ start()
 
 if return_info is None:
     input("按Enter键退出...")
-    exit()
+    exit(0)
 else:
     get_parameter(retry=True)
