@@ -28,7 +28,7 @@ import re
 
 
 # 定义正常模式用来下载番茄小说的函数
-def fanqie_n(url, encoding, user_agent):
+def fanqie_n(url, encoding, user_agent, path_choice):
 
     headers = {
         "User-Agent": user_agent
@@ -78,6 +78,7 @@ def fanqie_n(url, encoding, user_agent):
         # 构造 api 网址
         api_url = f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id={chapter_id}&item_id={chapter_id}"
 
+        chapter_content = None
         retry_count = 1
         while retry_count < 4:  # 设置最大重试次数
             # 获取 api 响应
@@ -107,16 +108,9 @@ def fanqie_n(url, encoding, user_agent):
 
         # 去除其他 html 标签
         chapter_text = re.sub(r"</?\w+>", "", chapter_text)
-        '''
-        # 将 <p> 标签转换为换行符
-        chapter_text = chapter_text.replace("<p>", "\n")
-
-        # 去除 html 标签和空白字符
-        chapter_text = re.sub(r"<\w+>|</\w+>|\s+", "", chapter_text)
-        '''
 
         # 在小说内容字符串中添加章节标题和内容
-        content += f"\n\n{chapter_title}\n{chapter_text}"
+        content += f"\n\n\n{chapter_title}\n{chapter_text}"
 
         # 打印进度信息
         print(f"已获取 {chapter_title}")
@@ -130,12 +124,49 @@ def fanqie_n(url, encoding, user_agent):
         print("不支持的编码")
         return
 
-    # 定义文件名
-    filename = title + ".txt"
+    # 根据main.py中用户选择的路径方式，选择自定义路径或者默认
+    if path_choice == 1:
+        import tkinter as tk
+        from tkinter import filedialog
+        # 创建一个Tkinter窗口，但不显示它
+        root = tk.Tk()
+        root.withdraw()
 
-    # 保存文件
-    with open(filename, "wb") as f:
-        f.write(data)
+        print("您选择了自定义保存路径，请您在弹出窗口中选择路径。")
 
-    # 打印完成信息
-    print(f"已保存 {filename}")
+        # 设置默认文件名和扩展名
+        default_extension = ".txt"
+        default_filename = f"{title}"
+
+        while True:
+
+            # 弹出文件对话框以选择保存位置和文件名
+            file_path = filedialog.asksaveasfilename(
+                defaultextension=default_extension,
+                filetypes=[("Text Files", "*" + default_extension)],
+                initialfile=default_filename
+            )
+
+            # 检查用户是否取消了对话框
+            if not file_path:
+                # 用户取消了对话框，提示重新选择
+                print("您没有选择路径，请重新选择！")
+                continue
+
+            # 用户选择了文件路径，保存文件并退出循环
+            with open(file_path, "wb") as f:
+                f.write(data)
+
+            # 打印完成信息
+            print(f"已保存")
+            break  # 退出循环
+
+    elif path_choice == 0:
+        # 定义文件名
+        filename = title + ".txt"
+
+        # 保存文件
+        with open(filename, "wb") as f:
+            f.write(data)
+        # 打印完成信息
+        print(f"已保存{title}.txt")

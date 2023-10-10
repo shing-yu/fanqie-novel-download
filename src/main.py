@@ -23,6 +23,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 import fanqie_normal as fn
 import fanqie_debug as fd
 
+# 定义全局变量
 mode = None
 
 
@@ -127,7 +128,7 @@ while True:
 
 # 让用户选择保存文件的编码
 while True:
-    txt_encoding_num = input("请输入保存文件所使用的编码：1 -> utf-8 | 2 -> gb2312\n")
+    txt_encoding_num = input("请输入保存文件所使用的编码(默认:1)：1 -> utf-8 | 2 -> gb2312\n")
 
     if not txt_encoding_num:
         txt_encoding_num = '1'
@@ -145,23 +146,55 @@ while True:
 print(f"你选择的保存编码是：{txt_encoding}")
 
 # 初始化“ua”
-ua = None
+ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
 
 # 定义 User-Agent
 if mode == 1:  # 判断用户是否处于调试模式
-    ua_choice = input("是否自行输入User-Agent？(y/n): ")  # 是则询问是否自定义ua
-    if ua_choice.lower() == "y":
-        ua = input("请输入自定义的User-Agent: \n")
+    while True:
+        ua_choice = input("是否自行输入User-Agent？(yes/no)(默认:no): ")
+        if not ua_choice:
+            ua_choice = "no"
+        # 是则询问是否自定义ua
+        if ua_choice.lower() == "yes":
+            ua = input("请输入自定义的User-Agent: \n")
+            break
+        elif ua_choice.lower() == "no":
+            break
+        else:
+            print("输入无效，请重新输入。")
+            continue
+
+type_path_num = None
+
+# 询问用户是否自定义保存路径
+while True:
+
+    type_path = input("是否自行选择保存路径(yes/no)(默认:no):")
+
+    if not type_path:
+        type_path = "no"
+
+    if type_path.lower() == "yes":
+        type_path_num = 1
+        print("您选择了自定义保存路径，请在获取完成后选择保存路径。")
+        break
+
+    elif type_path.lower() == "no":
+        type_path_num = 0
+        print("您未选择自定义保存路径，请在获取完成后到程序相同文件夹下寻找文件。")
+        print("(如果您在命令行中执行程序，请到执行目录下寻找文件)")
+        break
+
     else:
-        ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
-elif mode == 0:  # 否则默认
-    ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
+        print("输入无效，请重新输入。")
+        continue
+
 
 # 判断用户是否处于调试模式
 if mode == 0:
     # 调用番茄正常模式函数
-    fn.fanqie_n(page_url, txt_encoding, ua)
+    fn.fanqie_n(page_url, txt_encoding, ua, type_path_num)
 elif mode == 1:
     # 调用番茄调试模式函数
-    fd.fanqie_d(page_url, txt_encoding, ua)
+    fd.fanqie_d(page_url, txt_encoding, ua, type_path_num)
 input("按Enter键退出...")
