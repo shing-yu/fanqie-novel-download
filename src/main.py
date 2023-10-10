@@ -22,9 +22,15 @@ https://www.gnu.org/licenses/gpl-3.0.html
 
 import fanqie_normal as fn
 import fanqie_debug as fd
+import fanqie_batch as fb
 
 # 定义全局变量
 mode = None
+page_url = None
+txt_encoding = None
+ua = None
+type_path_num = None
+return_info = None
 
 
 # 用户须知
@@ -51,17 +57,18 @@ def print_usage():
 
 
 # 请用户同意协议并选择模式
-def main():
+def start():
     global mode  # 声明mode为全局变量
     print_usage()
 
     while True:
         print("请选择以下操作：")
         print("1. 同意并进入正常模式")
-        print("2. 同意并进入Debug模式")
-        print("3. 查看更多")
-        print("4. 不同意，退出程序")
-        choice = input("请输入您的选择（1/2/3/4）:（回车默认“1”）\n ")
+        print("2. 同意并进入自动批量模式(测试)")
+        print("3. 同意并进入Debug模式")
+        print("4. 查看更多")
+        print("5. 不同意，退出程序")
+        choice = input("请输入您的选择（1/2/3/4/5）:（回车默认“1”）\n ")
 
         # 通过用户选择，决定模式，给mode赋值
         if not choice:
@@ -71,10 +78,14 @@ def main():
             mode = 0
             break
         elif choice == '2':
+            mode = 2
+            print("您已进入自动批量下载模式;")
+            break
+        elif choice == '3':
             mode = 1
             print("已进入Debug模式，将会给出更多选项和调试信息\n。")
             break
-        elif choice == '3':
+        elif choice == '4':
             print("""作者：星隅（xing-yv）
 版权所有（C）2023 星隅（xing-yv）
 
@@ -98,103 +109,141 @@ ibxff所作用户脚本:https://greasyfork.org/zh-CN/scripts/476688
 提出反馈:https://github.com/xing-yv/fanqie-novel-download/issues/new
 (请在右侧Label处选择issue类型以得到更快回复)
 """)
-        elif choice == '4':
+        elif choice == '5':
             print("退出程序。\n")
             exit()
         else:
             print("无效的选择，请重新输入。")
+    get_parameter(retry=False)
 
 
-# 程序开始
-main()
+def get_parameter(retry):
+    global page_url
+    global txt_encoding
+    global ua
+    global type_path_num
 
-# 让用户输入小说目录页的链接
-while True:
-    page_url = input("请输入目录页链接：\n")
+    page_url = None
 
-    # 预留七猫小说判断
-    # if "qimao" in page_url:
-    #   if mode == 0:
-    #      mode = 2
-    #   elif mode == 1:
-    #      mode = 3
-    # elif "fanqie" in page_url:
-
-    # 检查 url 是否是小说目录页面
-    if "/page/" not in page_url:
-        print("请输入正确的小说目录页面链接")
+    if mode == 2:
+        with open('urls.txt', 'x') as _:
+            pass
+        if retry is True:
+            print("您在urls.txt中输入的内容有误，请重新输入")
+            print("请重新在程序同文件夹(或执行目录)下的urls.txt中，以每行一个的形式写入目录页链接")
+        elif retry is False:
+            print("请在程序同文件夹(或执行目录)下的urls.txt中，以每行一个的形式写入目录页链接")
+        input("完成后请按Enter键继续:")
     else:
-        break  # 如果是正确的链接，则退出循环
+        # 让用户输入小说目录页的链接
+        while True:
+            page_url = input("请输入目录页链接：\n")
 
-# 让用户选择保存文件的编码
-while True:
-    txt_encoding_num = input("请输入保存文件所使用的编码(默认:1)：1 -> utf-8 | 2 -> gb2312\n")
+            # 预留七猫小说判断
+            # if "qimao" in page_url:
+            #   if mode == 0:
+            #      mode = 2
+            #   elif mode == 1:
+            #      mode = 3
+            # elif "fanqie" in page_url:
 
-    if not txt_encoding_num:
-        txt_encoding_num = '1'
+            # 检查 url 是否是小说目录页面
+            if "/page/" not in page_url:
+                print("请输入正确的小说目录页面链接")
+            else:
+                break  # 如果是正确的链接，则退出循环
 
-    # 检查用户选择文件编码是否正确
-    if txt_encoding_num == '1':
-        txt_encoding = 'utf-8'
-        break
-    elif txt_encoding_num == '2':
-        txt_encoding = 'gb2312'
-        break
-    else:
-        print("输入无效，请重新输入。")
-
-print(f"你选择的保存编码是：{txt_encoding}")
-
-# 初始化“ua”
-ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
-
-# 定义 User-Agent
-if mode == 1:  # 判断用户是否处于调试模式
+    # 让用户选择保存文件的编码
     while True:
-        ua_choice = input("是否自行输入User-Agent？(yes/no)(默认:no): ")
-        if not ua_choice:
-            ua_choice = "no"
-        # 是则询问是否自定义ua
-        if ua_choice.lower() == "yes":
-            ua = input("请输入自定义的User-Agent: \n")
+        txt_encoding_num = input("请输入保存文件所使用的编码(默认:1)：1 -> utf-8 | 2 -> gb2312\n")
+
+        if not txt_encoding_num:
+            txt_encoding_num = '1'
+
+        # 检查用户选择文件编码是否正确
+        if txt_encoding_num == '1':
+            txt_encoding = 'utf-8'
             break
-        elif ua_choice.lower() == "no":
+        elif txt_encoding_num == '2':
+            txt_encoding = 'gb2312'
             break
         else:
             print("输入无效，请重新输入。")
+
+    print(f"你选择的保存编码是：{txt_encoding}")
+
+    # 初始化“ua”
+    ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
+
+    # 定义 User-Agent
+    if mode == 1:  # 判断用户是否处于调试模式
+        while True:
+            ua_choice = input("是否自行输入User-Agent？(yes/no)(默认:no): ")
+            if not ua_choice:
+                ua_choice = "no"
+            # 是则询问是否自定义ua
+            if ua_choice.lower() == "yes":
+                ua = input("请输入自定义的User-Agent: \n")
+                break
+            elif ua_choice.lower() == "no":
+                break
+            else:
+                print("输入无效，请重新输入。")
+                continue
+
+    type_path_num = None
+
+    # 询问用户是否自定义保存路径
+    while True:
+
+        type_path = input("是否自行选择保存路径(yes/no)(默认:no):")
+
+        if not type_path:
+            type_path = "no"
+
+        if type_path.lower() == "yes":
+            type_path_num = 1
+            if mode == 2:
+                print("您选择了自定义保存文件夹，请在文件检查后选择保存文件夹。")
+            else:
+                print("您选择了自定义保存路径，请在获取完成后选择保存路径。")
+            break
+
+        elif type_path.lower() == "no":
+            type_path_num = 0
+            if mode == 2:
+                print("您未选择自定义保存路径，请在获取完成后到程序文件夹下output文件夹寻找文件。")
+                print("(如果您在命令行中执行程序，请到执行目录下寻找output文件夹)")
+            else:
+                print("您未选择自定义保存路径，请在获取完成后到程序相同文件夹下寻找文件。")
+                print("(如果您在命令行中执行程序，请到执行目录下寻找文件)")
+            break
+
+        else:
+            print("输入无效，请重新输入。")
             continue
-
-type_path_num = None
-
-# 询问用户是否自定义保存路径
-while True:
-
-    type_path = input("是否自行选择保存路径(yes/no)(默认:no):")
-
-    if not type_path:
-        type_path = "no"
-
-    if type_path.lower() == "yes":
-        type_path_num = 1
-        print("您选择了自定义保存路径，请在获取完成后选择保存路径。")
-        break
-
-    elif type_path.lower() == "no":
-        type_path_num = 0
-        print("您未选择自定义保存路径，请在获取完成后到程序相同文件夹下寻找文件。")
-        print("(如果您在命令行中执行程序，请到执行目录下寻找文件)")
-        break
-
-    else:
-        print("输入无效，请重新输入。")
-        continue
+    perform_user_mode_action()
 
 
-# 判断用户是否处于调试模式
-if mode == 0:
-    # 调用番茄正常模式函数
-    fn.fanqie_n(page_url, txt_encoding, ua, type_path_num)
-elif mode == 1:
-    # 调用番茄调试模式函数
-    fd.fanqie_d(page_url, txt_encoding, ua, type_path_num)
-input("按Enter键退出...")
+def perform_user_mode_action():
+    global return_info
+    # 判断用户处于什么模式
+    if mode == 0:
+        # 调用番茄正常模式函数
+        return_info = fn.fanqie_n(page_url, txt_encoding, ua, type_path_num)
+    elif mode == 1:
+        # 调用番茄调试模式函数
+        return_info = fd.fanqie_d(page_url, txt_encoding, ua, type_path_num)
+    elif mode == 2:
+        # 调用番茄批量模式函数
+        return_info = fb.fanqie_b(txt_encoding, ua, type_path_num)
+
+
+# 程序开始
+start()
+
+if return_info is None:
+    input("按Enter键退出...")
+    exit()
+else:
+    get_parameter(retry=True)
