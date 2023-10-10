@@ -20,16 +20,13 @@ https://www.gnu.org/licenses/gpl-3.0.html
 无论您对程序进行了任何操作，请始终保留此信息。
 """
 
-# 导入必要的模块
-import requests
-from bs4 import BeautifulSoup
-from urllib.parse import urljoin
-import re
+import fanqie_normal as fn
+import fanqie_debug as fd
 
-mode = None  # 将mode定义为全局变量
+mode = None
 
 
-# 输出用户须知
+# 用户须知
 def print_usage():
     print("欢迎使用此程序！")
     print("""用户须知：
@@ -40,7 +37,7 @@ def print_usage():
 请您基于此程序开发或混合后，使用GPLv3开源，感谢配合。
 
 您可以自由地复制、修改和分发本许可证文档，但不能销售它。
-您可以使用此程序提供有偿代下载服务，但在提供服务的同时，必须向服务的接收者提供此程序的副本或源代码，
+您可以使用此程序提供有偿代下载服务，但在提供服务的同时，必须向服务的接收者提供此程序的获取方式，
 以便他们可以自由使用、修改和分发该软件，同时也必须遵守GPLv3协议的所有其他规定。
 
 用户QQ群(闲聊):621748837
@@ -52,7 +49,7 @@ def print_usage():
 """)
 
 
-# 请用户选择
+# 请用户同意协议并选择模式
 def main():
     global mode  # 声明mode为全局变量
     print_usage()
@@ -65,6 +62,7 @@ def main():
         print("4. 不同意，退出程序")
         choice = input("请输入您的选择（1/2/3/4）:（回车默认“1”）\n ")
 
+        # 通过用户选择，决定模式，给mode赋值
         if not choice:
             choice = '1'
 
@@ -77,7 +75,6 @@ def main():
             break
         elif choice == '3':
             print("""作者：星隅（xing-yv）
-
 版权所有（C）2023 星隅（xing-yv）
 
 本软件根据GNU通用公共许可证第三版（GPLv3）发布；
@@ -107,168 +104,64 @@ ibxff所作用户脚本:https://greasyfork.org/zh-CN/scripts/476688
             print("无效的选择，请重新输入。")
 
 
-# 定义一个函数，用来下载小说
-def download_novel(url, encoding):
-    global mode  # 声明mode为全局变量
-    # 定义 User-Agent
-    if mode == 1:
-        user_agent_choice = input("是否自行输入User-Agent？(y/n): ")
-        if user_agent_choice.lower() == "y":
-            user_agent = input("请输入自定义的User-Agent: \n")
-            headers = {
-                "User-Agent": user_agent
-            }
-        else:
-            headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
-            }
-    else:
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
-        }
-
-    # 获取网页源码
-    response = requests.get(url, headers=headers)
-    html = response.text
-
-    # 解析网页源码
-    soup = BeautifulSoup(html, "html.parser")
-
-    # 获取小说标题
-    title = soup.find("h1").get_text()
-    # , class_ = "info-name"
-
-    if mode == 1:
-        print(f"已获取小说标题")
-
-    # 获取小说信息
-    info = soup.find("div", class_="page-header-info").get_text()
-
-    if mode == 1:
-        print(f"已获取小说信息")
-
-    # 获取小说简介
-    intro = soup.find("div", class_="page-abstract-content").get_text()
-
-    if mode == 1:
-        print(f"已获取小说简介")
-
-    # 拼接小说内容字符串
-    content = f"使用 @星隅(xing-yv) 所作开源工具下载\n开源仓库地址:https://github.com/xing-yv/fanqie-novel-download\n\n{title}\n{info}\n{intro}\n"
-
-    if mode == 1:
-        print(f"已拼接小说内容字符串")
-
-    # 获取所有章节链接
-    chapters = soup.find_all("div", class_="chapter-item")
-
-    if mode == 1:
-        print(f"已获取所有章节链接")
-
-    # 遍历每个章节链接
-    for chapter in chapters:
-        # 获取章节标题
-        chapter_title = chapter.find("a").get_text()
-
-        # 获取章节网址
-        chapter_url = urljoin(url, chapter.find("a")["href"])
-
-        # 获取章节 id
-        chapter_id = re.search(r"/(\d+)", chapter_url).group(1)
-
-        if mode == 1:
-            print(f"章节id:{chapter_id}")
-
-        # 构造 api 网址
-        api_url = f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id={chapter_id}&item_id={chapter_id}"
-
-        if mode == 1:
-            print(f"api网址:{api_url}")
-
-        # 获取 api 响应
-        api_response = requests.get(api_url, headers=headers)
-
-        if mode == 1:
-            print(f"HTTP状态码:{api_response}")
-
-        # 解析 api 响应为 json 数据
-        api_data = api_response.json()
-
-        # 获取章节内容
-        chapter_content = api_data["data"]["content"]
-
-        # 提取文章标签中的文本
-        chapter_text = re.search(r"<article>([\s\S]*?)</article>", chapter_content).group(1)
-
-        # 将 <p> 标签替换为换行符
-        chapter_text = re.sub(r"<p>", "\n", chapter_text)
-
-        # 去除其他 html 标签
-        chapter_text = re.sub(r"</?\w+>", "", chapter_text)
-        '''
-        # 将 <p> 标签转换为换行符
-        chapter_text = chapter_text.replace("<p>", "\n")
-
-        # 去除 html 标签和空白字符
-        chapter_text = re.sub(r"<\w+>|</\w+>|\s+", "", chapter_text)
-        '''
-
-        # 在小说内容字符串中添加章节标题和内容
-        content += f"\n\n{chapter_title}\n{chapter_text}"
-
-        # 打印进度信息
-        print(f"已获取 {chapter_title}")
-
-    # 根据编码转换小说内容字符串为二进制数据
-    if encoding == "utf-8":
-        data = content.encode("utf-8", errors='ignore')
-    elif encoding == "gb2312":
-        data = content.encode("gb2312", errors='ignore')
-    else:
-        print("不支持的编码")
-        return
-
-    # 定义文件名
-    filename = title + ".txt"
-
-    # 保存文件
-    with open(filename, "wb") as f:
-        f.write(data)
-
-    # 打印完成信息
-    print(f"已保存 {filename}")
-
-
 # 程序开始
 main()
 
+# 让用户输入小说目录页的链接
 while True:
-    n_url = input("请输入目录页链接：\n")
+    page_url = input("请输入目录页链接：\n")
+
+    # 预留七猫小说判断
+    # if "qimao" in page_url:
+    #   if mode == 0:
+    #      mode = 2
+    #   elif mode == 1:
+    #      mode = 3
+    # elif "fanqie" in page_url:
 
     # 检查 url 是否是小说目录页面
-    if "/page/" not in n_url:
+    if "/page/" not in page_url:
         print("请输入正确的小说目录页面链接")
     else:
         break  # 如果是正确的链接，则退出循环
 
+# 让用户选择保存文件的编码
 while True:
-    n_encoding = input("请输入保存文件所使用的编码：1 -> utf-8 | 2 -> gb2312\n")
+    txt_encoding_num = input("请输入保存文件所使用的编码：1 -> utf-8 | 2 -> gb2312\n")
 
-    if not n_encoding:
-        n_encoding = '1'
+    if not txt_encoding_num:
+        txt_encoding_num = '1'
 
     # 检查用户选择文件编码是否正确
-    if n_encoding == '1':
-        n_encoding_f = 'utf-8'
+    if txt_encoding_num == '1':
+        txt_encoding = 'utf-8'
         break
-    elif n_encoding == '2':
-        n_encoding_f = 'gb2312'
+    elif txt_encoding_num == '2':
+        txt_encoding = 'gb2312'
         break
     else:
         print("输入无效，请重新输入。")
 
-print(f"你选择的保存编码是：{n_encoding_f}")
+print(f"你选择的保存编码是：{txt_encoding}")
 
-download_novel(n_url, n_encoding_f)
+# 初始化“ua”
+ua = None
 
+# 定义 User-Agent
+if mode == 1:  # 判断用户是否处于调试模式
+    ua_choice = input("是否自行输入User-Agent？(y/n): ")  # 是则询问是否自定义ua
+    if ua_choice.lower() == "y":
+        ua = input("请输入自定义的User-Agent: \n")
+    else:
+        ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
+elif mode == 0:  # 否则默认
+    ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
+
+# 判断用户是否处于调试模式
+if mode == 0:
+    # 调用番茄正常模式函数
+    fn.fanqie_n(page_url, txt_encoding, ua)
+elif mode == 1:
+    # 调用番茄调试模式函数
+    fd.fanqie_d(page_url, txt_encoding, ua)
 input("按Enter键退出...")
