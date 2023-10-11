@@ -267,10 +267,10 @@ def check_update():
     owner = "xingyv1024"
     repo = "fanqie-novel-download"
     api_url = f"https://gitee.com/api/v5/repos/{owner}/{repo}/releases/latest"
-    now_version = "1.0"
+    now_version = "2.0"
 
     print("正在检查更新...")
-    print(f"当前版本: {now_version}")
+    print(f"当前版本: v{now_version}")
 
     # 发送GET请求以获取最新的发行版信息
     response = requests.get(api_url)
@@ -279,7 +279,7 @@ def check_update():
         release_info = response.json()
         if "tag_name" in release_info:
             latest_version = release_info["tag_name"]
-            print(f"最新的发行版是：{latest_version}")
+            print(f"最新的发行版是：v{latest_version}")
             result = compare_versions(now_version, latest_version)
             if result < 1:
                 print("检测到新版本\n更新可用！请到 https://gitee.com/xingyv1024/fanqie-novel-download/releases 下载最新版")
