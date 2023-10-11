@@ -630,7 +630,7 @@ attach them to the start of each source file to most effectively state
 the exclusion of warranty; and each file should have at least the
 "copyright" line and a pointer to where the full notice is found.
 
-        <one line to give the program's name and a brief idea of what it does.>
+        fanqie-novel-download: A tool for downloading novels from fanqienovel.com.
         Copyright (C) 2023  xing-yv(shingyu)
 
         This program is free software: you can redistribute it and/or modify
