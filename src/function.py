@@ -64,11 +64,11 @@ def print_usage():
 # 请用户同意协议并选择模式
 def start():
     global mode  # 声明mode为全局变量
-    print_usage()
 
     # 定义变量flag控制是否退出程序
     flag = True
     while True:
+        print_usage()
         print("请选择以下操作：")
         print("1. 同意并进入正常模式")
         print("2. 同意并进入自动批量模式(测试)")
@@ -83,16 +83,21 @@ def start():
 
         if choice == '1':
             mode = 0
+            clear_screen()
+            print("您已进入正常下载模式：")
             break
         elif choice == '2':
             mode = 2
+            clear_screen()
             print("您已进入自动批量下载模式;")
             break
         elif choice == '3':
             mode = 1
+            clear_screen()
             print("已进入Debug模式，将会给出更多选项和调试信息\n。")
             break
         elif choice == '4':
+            clear_screen()
             print("""作者：星隅（xing-yv）
 版权所有（C）2023 星隅（xing-yv）
 
@@ -117,7 +122,10 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
 提出反馈:https://github.com/xing-yv/fanqie-novel-download/issues/new
 (请在右侧Label处选择issue类型以得到更快回复)
 """)
+            input("按Enter键返回...")
+            clear_screen()
         elif choice == '5':
+            clear_screen()
             # 确认退出
             while True:
                 qd = input("您确定要退出程序吗(yes/no)(默认:no): ")
