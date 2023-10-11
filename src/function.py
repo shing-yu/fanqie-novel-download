@@ -263,6 +263,7 @@ def perform_user_mode_action():
         return_info = fb.fanqie_b(txt_encoding, ua, type_path_num)
 
 
+# 检查更新
 def check_update():
     owner = "xingyv1024"
     repo = "fanqie-novel-download"
@@ -281,7 +282,7 @@ def check_update():
             latest_version = release_info["tag_name"]
             print(f"最新的发行版是：v{latest_version}")
             result = compare_versions(now_version, latest_version)
-            if result < 1:
+            if result == -1:
                 print("检测到新版本\n更新可用！请到 https://gitee.com/xingyv1024/fanqie-novel-download/releases 下载最新版")
                 input("按Enter键继续...\n")
             else:
