@@ -60,6 +60,7 @@ pip install requirements.txt
 
 - 作者：星隅（xing-yv）
 - GitHub仓库：[https://github.com/xing-yv/fanqie-novel-download](https://github.com/xing-yv/fanqie-novel-download)
+- Gitee仓库:  [https://gitee.com/xingyv1024/fanqie-novel-download](https://gitee.com/xingyv1024/fanqie-novel-download)
 
 ## 反馈
 
