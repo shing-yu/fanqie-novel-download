@@ -284,11 +284,10 @@ def perform_user_mode_action():
 
 
 # 检查更新
-def check_update():
+def check_update(now_version):
     owner = "xingyv1024"
     repo = "fanqie-novel-download"
     api_url = f"https://gitee.com/api/v5/repos/{owner}/{repo}/releases/latest"
-    now_version = "2.0"
 
     print("正在检查更新...")
     print(f"当前版本: v{now_version}")

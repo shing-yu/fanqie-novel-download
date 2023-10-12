@@ -23,8 +23,10 @@ https://www.gnu.org/licenses/gpl-3.0.html
 import function as f
 from sys import exit
 
+version = "2.1"
+
 # 检查更新
-f.check_update()
+f.check_update(version)
 f.clear_screen()
 
 # 程序开始
