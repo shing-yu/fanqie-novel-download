@@ -77,7 +77,7 @@ def start():
         print("4. 同意并进入Debug模式")
         print("5. 查看更多")
         print("6. 不同意，退出程序")
-        choice = input("请输入您的选择（1/2/3/4/5）:（回车默认“1”）\n")
+        choice = input("请输入您的选择（1/2/3/4/5/6）:（回车默认“1”）\n")
 
         # 通过用户选择，决定模式，给mode赋值
         if not choice:
@@ -280,6 +280,7 @@ def perform_user_mode_action():
         # 调用番茄批量模式函数
         return_info = fb.fanqie_b(txt_encoding, ua, type_path_num)
     elif mode == 3:
+        # 调用番茄分章模式函数
         return_info = fc.fanqie_c(page_url, txt_encoding, ua, type_path_num)
 
 
