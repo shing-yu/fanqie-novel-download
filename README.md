@@ -26,7 +26,7 @@
 在封装&修改此脚本之前，请确保已安装以下内容：
 
 - Python 3.x
-- 所需的Python库：requests、BeautifulSoup（bs4）
+- 所需的Python库：requests、beautifulsoup4、packaging
 
 您可以从从src目录获取程序源代码
 
