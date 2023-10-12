@@ -25,6 +25,7 @@ import fanqie_normal as fn
 import fanqie_debug as fd
 import fanqie_batch as fb
 import fanqie_chapter as fc
+import fanqie_update_setup as fu
 import os
 import requests
 from sys import exit
@@ -77,7 +78,7 @@ def start():
         print("4. 同意并进入Debug模式")
         print("5. 查看更多")
         print("6. 不同意，退出程序")
-        choice = input("请输入您的选择（1/2/3/4/5/6）:（回车默认“1”）\n")
+        choice = input("请输入您的选择（1/2/3/4/5）:（回车默认“1”）\n")
 
         # 通过用户选择，决定模式，给mode赋值
         if not choice:
