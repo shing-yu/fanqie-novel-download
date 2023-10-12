@@ -24,6 +24,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 import fanqie_normal as fn
 import fanqie_debug as fd
 import fanqie_batch as fb
+import fanqie_chapter as fc
 import os
 import requests
 from sys import exit
@@ -72,10 +73,11 @@ def start():
         print("请选择以下操作：")
         print("1. 同意并进入正常模式")
         print("2. 同意并进入自动批量模式(测试)")
-        print("3. 同意并进入Debug模式")
-        print("4. 查看更多")
-        print("5. 不同意，退出程序")
-        choice = input("请输入您的选择（1/2/3/4/5）:（回车默认“1”）\n ")
+        print("3. 同意并进入分章保存模式(测试)")
+        print("4. 同意并进入Debug模式")
+        print("5. 查看更多")
+        print("6. 不同意，退出程序")
+        choice = input("请输入您的选择（1/2/3/4/5）:（回车默认“1”）\n")
 
         # 通过用户选择，决定模式，给mode赋值
         if not choice:
@@ -89,14 +91,19 @@ def start():
         elif choice == '2':
             mode = 2
             clear_screen()
-            print("您已进入自动批量下载模式;")
+            print("您已进入自动批量下载模式(测试);")
             break
         elif choice == '3':
-            mode = 1
+            mode = 3
             clear_screen()
-            print("已进入Debug模式，将会给出更多选项和调试信息\n。")
+            print("您已进入分章保存模式(测试):")
             break
         elif choice == '4':
+            mode = 1
+            clear_screen()
+            print("您已进入Debug模式，将会给出更多选项和调试信息。\n")
+            break
+        elif choice == '5':
             clear_screen()
             print("""作者：星隅（xing-yv）
 版权所有（C）2023 星隅（xing-yv）
@@ -124,7 +131,7 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
 """)
             input("按Enter键返回...")
             clear_screen()
-        elif choice == '5':
+        elif choice == '6':
             clear_screen()
             # 确认退出
             while True:
@@ -156,6 +163,7 @@ def get_parameter(retry):
 
     page_url = None
 
+    # 判断是否是批量下载模式
     if mode == 2:
         if not os.path.exists('urls.txt'):
             with open('urls.txt', 'x') as _:
@@ -167,7 +175,7 @@ def get_parameter(retry):
             print("请在程序同文件夹(或执行目录)下的urls.txt中，以每行一个的形式写入目录页链接")
         input("完成后请按Enter键继续:")
     else:
-        # 让用户输入小说目录页的链接
+        # 不是则让用户输入小说目录页的链接
         while True:
             page_url = input("请输入目录页链接：\n")
 
@@ -237,13 +245,15 @@ def get_parameter(retry):
             type_path_num = 1
             if mode == 2:
                 print("您选择了自定义保存文件夹，请在文件检查后选择保存文件夹。")
+            elif mode == 3:
+                print("您选择了自定义保存文件夹，请在下载开始前选择保存文件夹。")
             else:
                 print("您选择了自定义保存路径，请在获取完成后选择保存路径。")
             break
 
         elif type_path.lower() == "no":
             type_path_num = 0
-            if mode == 2:
+            if mode == 2 or mode == 3:
                 print("您未选择自定义保存路径，请在获取完成后到程序文件夹下output文件夹寻找文件。")
                 print("(如果您在命令行中执行程序，请到执行目录下寻找output文件夹)")
             else:
@@ -269,14 +279,15 @@ def perform_user_mode_action():
     elif mode == 2:
         # 调用番茄批量模式函数
         return_info = fb.fanqie_b(txt_encoding, ua, type_path_num)
+    elif mode == 3:
+        return_info = fc.fanqie_c(page_url, txt_encoding, ua, type_path_num)
 
 
 # 检查更新
-def check_update():
+def check_update(now_version):
     owner = "xingyv1024"
     repo = "fanqie-novel-download"
     api_url = f"https://gitee.com/api/v5/repos/{owner}/{repo}/releases/latest"
-    now_version = "2.0"
 
     print("正在检查更新...")
     print(f"当前版本: v{now_version}")
