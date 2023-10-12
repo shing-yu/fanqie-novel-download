@@ -61,6 +61,7 @@ def fanqie_d(url, encoding, user_agent, path_choice):
     # 拼接小说内容字符串
     content = f"""使用 @星隅(xing-yv) 所作开源工具下载
 开源仓库地址:https://github.com/xing-yv/fanqie-novel-download
+Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 任何人无权限制您访问本工具，如果有向您提供代下载服务者未事先告知您工具的获取方式，请向作者举报:xing_yv@outlook.com
 
 {title}
@@ -69,7 +70,7 @@ def fanqie_d(url, encoding, user_agent, path_choice):
 """
 
     # if mode == 1:
-    print(f"[DEBUG]已拼接小说内容字符串")
+    print(f"[DEBUG]已拼接小说简介字符串")
 
     # 获取所有章节链接
     chapters = soup.find_all("div", class_="chapter-item")
@@ -96,6 +97,7 @@ def fanqie_d(url, encoding, user_agent, path_choice):
 
         print(f"[DEBUG]api网址:{api_url}")
 
+        # 尝试获取章节内容
         chapter_content = None
         retry_count = 1
         while retry_count < 4:  # 设置最大重试次数
@@ -136,13 +138,7 @@ def fanqie_d(url, encoding, user_agent, path_choice):
         print(f"已获取 {chapter_title}")
 
     # 根据编码转换小说内容字符串为二进制数据
-    if encoding == "utf-8":
-        data = content.encode("utf-8", errors='ignore')
-    elif encoding == "gb2312":
-        data = content.encode("gb2312", errors='ignore')
-    else:
-        print("内部错误，不支持的编码")
-        return
+    data = content.encode(encoding, errors='ignore')
 
     # 根据main.py中用户选择的路径方式，选择自定义路径或者默认
     if path_choice == 1:

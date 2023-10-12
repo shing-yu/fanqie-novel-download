@@ -54,6 +54,7 @@ def fanqie_n(url, encoding, user_agent, path_choice):
     # 拼接小说内容字符串
     content = f"""使用 @星隅(xing-yv) 所作开源工具下载
 开源仓库地址:https://github.com/xing-yv/fanqie-novel-download
+Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 任何人无权限制您访问本工具，如果有向您提供代下载服务者未事先告知您工具的获取方式，请向作者举报:xing_yv@outlook.com
 
 {title}
@@ -78,6 +79,7 @@ def fanqie_n(url, encoding, user_agent, path_choice):
         # 构造 api 网址
         api_url = f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id={chapter_id}&item_id={chapter_id}"
 
+        # 尝试获取章节内容
         chapter_content = None
         retry_count = 1
         while retry_count < 4:  # 设置最大重试次数
@@ -116,13 +118,7 @@ def fanqie_n(url, encoding, user_agent, path_choice):
         print(f"已获取 {chapter_title}")
 
     # 根据编码转换小说内容字符串为二进制数据
-    if encoding == "utf-8":
-        data = content.encode("utf-8", errors='ignore')
-    elif encoding == "gb2312":
-        data = content.encode("gb2312", errors='ignore')
-    else:
-        print("不支持的编码")
-        return
+    data = content.encode(encoding, errors='ignore')
 
     # 根据main.py中用户选择的路径方式，选择自定义路径或者默认
     if path_choice == 1:
