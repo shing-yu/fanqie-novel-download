@@ -38,6 +38,8 @@ txt_encoding = None
 ua = None
 type_path_num = None
 return_info = None
+user_folder = os.path.expanduser("~")
+data_path = os.path.join(user_folder, "fanqie_data")
 
 
 # 用户须知
@@ -66,6 +68,7 @@ def print_usage():
 # 请用户同意协议并选择模式
 def start():
     global mode  # 声明mode为全局变量
+    global return_info
 
     # 定义变量flag控制是否退出程序
     flag = True
@@ -77,8 +80,9 @@ def start():
         print("3. 同意并进入分章保存模式(测试)")
         print("4. 同意并进入Debug模式")
         print("5. 查看更多")
-        print("6. 不同意，退出程序")
-        choice = input("请输入您的选择（1/2/3/4/5）:（回车默认“1”）\n")
+        print("6. 更新已下载的小说")
+        print("7. 不同意，退出程序")
+        choice = input("请输入您的选择（1/2/3/4/5/6/7）:（回车默认“1”）\n")
 
         # 通过用户选择，决定模式，给mode赋值
         if not choice:
@@ -134,6 +138,12 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
             clear_screen()
         elif choice == '6':
             clear_screen()
+            print("正在尝试更新...")
+            # 调用番茄更新函数
+            return_info = fu.fanqie_update(ua, data_path)
+            return
+        elif choice == '7':
+            clear_screen()
             # 确认退出
             while True:
                 qd = input("您确定要退出程序吗(yes/no)(默认:no): ")
@@ -150,6 +160,7 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
             if flag is True:
                 exit(0)
             else:
+                clear_screen()
                 continue
         else:
             print("无效的选择，请重新输入。")

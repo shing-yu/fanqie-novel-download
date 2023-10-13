@@ -30,10 +30,9 @@ import os
 
 
 # 定义番茄更新函数
-def fanqie_update(url, encoding, user_agent):
+def fanqie_update(user_agent, data_folder):
     # 指定小说文件夹
     novel_folder = "小说"
-    data_folder = "data"
 
     novel_files = [file for file in os.listdir(novel_folder) if file.endswith(".txt")]
 
@@ -57,17 +56,19 @@ def fanqie_update(url, encoding, user_agent):
 
             # 保存上次更新时间和上次章节id到变量
             last_update_time = lines[0].strip()
+            url = lines[1].strip()
             last_chapter_id = lines[2].strip()
+            encoding = lines[3].strip()
             print(f"上次更新时间{last_update_time}")
             result = download_novel(url, encoding, user_agent, last_chapter_id, txt_file_path)
             if result == "DN":
-                print(f"{novel_name} 已是最新，不需要更新。")
+                print(f"{novel_name} 已是最新，不需要更新。\n")
             else:
                 print(f"{novel_name} 已更新完成。\n")
                 # 获取当前系统时间
                 current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 # 创建要写入元信息文件的内容
-                new_content = f"{current_time}\n\n{result}"
+                new_content = f"{current_time}\n{url}\n{result}\n{encoding}"
                 # 打开文件并完全覆盖内容
                 with open(upd_file_path, "w") as file:
                     file.write(new_content)
@@ -108,7 +109,7 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
         last_chapter_id = chapter_id_tmp
 
     # 判断是否已经最新
-    if start_index > len(chapters):
+    if start_index >= len(chapters):
         return "DN"  # 返回Don't Need.
 
     # 打开文件
