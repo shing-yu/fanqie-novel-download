@@ -131,8 +131,8 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
     # 找到起始章节的索引
     start_index = 0
     for i, chapter in enumerate(chapters):
-        chapter_url = urljoin(url, chapter.find("a")["href"])
-        chapter_id_tmp = re.search(r"/(\d+)", chapter_url).group(1)
+        chapter_url_tmp = urljoin(url, chapter.find("a")["href"])
+        chapter_id_tmp = re.search(r"/(\d+)", chapter_url_tmp).group(1)
         if chapter_id_tmp == start_chapter_id:  # 更新函数，所以前进一个章节
             start_index = i + 1
         last_chapter_id = chapter_id_tmp

@@ -43,6 +43,7 @@ user_folder = os.path.expanduser("~")
 data_path = os.path.join(user_folder, "fanqie_data")
 os.makedirs(data_path, exist_ok=True)
 book_id = None
+start_chapter_id = "0"
 
 
 # 用户须知
@@ -53,13 +54,13 @@ def print_usage():
 
 本程序灵感及api来自于ibxff所作用户脚本，脚本链接请到更多中查看；
 为保护此程序不被用于不良商业行为，此程序使用GPLv3许可证，
-请您基于此程序开发或混合后，使用GPLv3开源，感谢配合。
 
-您可以自由地复制、修改和分发本许可证文档，但不能销售它。
+您可以自由地复制、修改和分发本程序副本，但不能销售它。
 您可以使用此程序提供有偿代下载服务，但在提供服务的同时，必须向服务的接收者提供此程序的获取方式，
 以便他们可以自由使用、修改和分发该软件，同时也必须遵守GPLv3协议的所有其他规定。
 
 用户QQ群(闲聊):621748837
+如果想要指定开始下载的章节，请在输入链接前按Ctrl+C。
 
 免责声明：
 该程序仅用于学习和研究Python网络爬虫和网页处理技术，不得用于任何非法活动或侵犯他人权益的行为。
@@ -86,7 +87,7 @@ def start():
         print("6. 更新已下载的小说")
         print("7. 查看赞助者名单")
         print("8. 不同意，退出程序")
-        choice = input("请输入您的选择（1/2/3/4/5/6/7）:（回车默认“1”）\n")
+        choice = input("请输入您的选择（1/2/3/4/5/6/7）:（默认“1”）\n")
 
         # 通过用户选择，决定模式，给mode赋值
         if not choice:
@@ -196,6 +197,7 @@ def get_parameter(retry):
     global ua
     global type_path_num
     global book_id
+    global start_chapter_id
 
     page_url = None
 
@@ -213,22 +215,34 @@ def get_parameter(retry):
     else:
         # 不是则让用户输入小说目录页的链接
         while True:
-            page_url = input("请输入目录页链接：\n")
+            try:
+                page_url = input("请输入目录页链接：\n")
 
-            # 预留七猫小说判断
-            # if "qimao" in page_url:
-            #   if mode == 0:
-            #      mode = 2
-            #   elif mode == 1:
-            #      mode = 3
-            # elif "fanqie" in page_url:
+                # 预留七猫小说判断
+                # if "qimao" in page_url:
+                #   if mode == 0:
+                #      mode = 2
+                #   elif mode == 1:
+                #      mode = 3
+                # elif "fanqie" in page_url:
 
-            # 检查 url 是否是小说目录页面
-            if "/page/" not in page_url:
-                print("请输入正确的小说目录页面链接")
-            else:
-                book_id = re.search(r"/(\d+)", page_url).group(1)
-                break  # 如果是正确的链接，则退出循环
+                # 检查 url 是否是小说目录页面
+                if "/page/" not in page_url:
+                    print("请输入正确的小说目录页面链接")
+                else:
+                    book_id = re.search(r"/(\d+)", page_url).group(1)
+                    break  # 如果是正确的链接，则退出循环
+            # 当用户按下Ctrl+C是，可以自定义起始章节id
+            except KeyboardInterrupt:
+                while True:
+                    start_chapter_id = input("您已按下Ctrl+C，请输入起始章节的id\n(输入help以查看帮助，再次按下Ctrl+C以强制关闭程序):\n")
+                    if start_chapter_id == 'help':
+                        print("\n打开小说章节阅读界面，上方链接中的数字即为章节id\n请输入您想要开始下载的章节的id\n")
+                        continue
+                    elif start_chapter_id.isdigit():
+                        break
+                    else:
+                        print("无效的输入，请重新输入")
 
     # 让用户选择保存文件的编码
     while True:
@@ -309,16 +323,16 @@ def perform_user_mode_action():
     # 判断用户处于什么模式
     if mode == 0:
         # 调用番茄正常模式函数
-        return_info = fn.fanqie_n(page_url, txt_encoding, ua, type_path_num, data_path, book_id)
+        return_info = fn.fanqie_n(page_url, txt_encoding, ua, type_path_num, data_path, book_id, start_chapter_id)
     elif mode == 1:
         # 调用番茄调试模式函数
-        return_info = fd.fanqie_d(page_url, txt_encoding, ua, type_path_num, data_path, book_id)
+        return_info = fd.fanqie_d(page_url, txt_encoding, ua, type_path_num, data_path, book_id, start_chapter_id)
     elif mode == 2:
         # 调用番茄批量模式函数
         return_info = fb.fanqie_b(txt_encoding, ua, type_path_num, data_path, book_id)
     elif mode == 3:
         # 调用番茄分章模式函数
-        return_info = fc.fanqie_c(page_url, txt_encoding, ua, type_path_num)
+        return_info = fc.fanqie_c(page_url, txt_encoding, ua, type_path_num, start_chapter_id)
 
 
 # 检查更新
