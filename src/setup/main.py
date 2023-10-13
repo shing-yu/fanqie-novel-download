@@ -20,7 +20,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 无论您对程序进行了任何操作，请始终保留此信息。
 """
 
-import function_setup as f
+import function as f
 from sys import exit
 
 version = "2.1"

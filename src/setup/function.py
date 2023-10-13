@@ -25,7 +25,7 @@ import fanqie_normal as fn
 import fanqie_debug as fd
 import fanqie_batch as fb
 import fanqie_chapter as fc
-import fanqie_update_setup as fu
+import fanqie_update as fu
 import os
 import requests
 from sys import exit
@@ -40,6 +40,7 @@ type_path_num = None
 return_info = None
 user_folder = os.path.expanduser("~")
 data_path = os.path.join(user_folder, "fanqie_data")
+os.makedirs(data_path, exist_ok=True)
 
 
 # 用户须知
@@ -138,7 +139,7 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
             clear_screen()
         elif choice == '6':
             clear_screen()
-            print("正在尝试更新...")
+            print("您已进入更新模式")
             # 调用番茄更新函数
             return_info = fu.fanqie_update(ua, data_path)
             return
@@ -284,13 +285,13 @@ def perform_user_mode_action():
     # 判断用户处于什么模式
     if mode == 0:
         # 调用番茄正常模式函数
-        return_info = fn.fanqie_n(page_url, txt_encoding, ua, type_path_num)
+        return_info = fn.fanqie_n(page_url, txt_encoding, ua, type_path_num, data_path)
     elif mode == 1:
         # 调用番茄调试模式函数
-        return_info = fd.fanqie_d(page_url, txt_encoding, ua, type_path_num)
+        return_info = fd.fanqie_d(page_url, txt_encoding, ua, type_path_num, data_path)
     elif mode == 2:
         # 调用番茄批量模式函数
-        return_info = fb.fanqie_b(txt_encoding, ua, type_path_num)
+        return_info = fb.fanqie_b(txt_encoding, ua, type_path_num, data_path)
     elif mode == 3:
         # 调用番茄分章模式函数
         return_info = fc.fanqie_c(page_url, txt_encoding, ua, type_path_num)
