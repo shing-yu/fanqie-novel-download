@@ -137,9 +137,9 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
             # 使用用户选择的文件夹路径和默认文件名来生成完整的文件路径
 
-            file_path = os.path.join(folder_path, f"{chapter_title}.txt")
+            file_path = os.path.join(folder_path, f"{title}", f"{chapter_title}.txt")
             if introduction_use is False:
-                introduction_path = os.path.join(folder_path, "简介.txt")
+                introduction_path = os.path.join(folder_path, f"{title}", "简介.txt")
 
         elif path_choice == 0:
 
@@ -149,10 +149,10 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
             os.makedirs(output_folder, exist_ok=True)
 
-            file_path = os.path.join(output_folder, f"{chapter_title}.txt")
+            file_path = os.path.join(output_folder, f"{title}", f"{chapter_title}.txt")
 
             if introduction_use is False:
-                introduction_path = os.path.join(output_folder, "简介.txt")
+                introduction_path = os.path.join(output_folder, f"{title}", "简介.txt")
 
         if introduction_use is False:
             with open(introduction_path, "wb") as f:
