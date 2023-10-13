@@ -27,7 +27,6 @@ from urllib.parse import urljoin
 import re
 import os
 import time
-import datetime
 
 
 def fanqie_b(encoding, user_agent, path_choice):

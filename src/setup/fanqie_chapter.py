@@ -26,75 +26,15 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import re
 import os
-import time
-import datetime
+
+# 定义文件夹路径
+folder_path = ""
 
 
-def fanqie_b(encoding, user_agent, path_choice):
+# 定义分章节保存模式用来下载番茄小说的函数
+def fanqie_c(url, encoding, user_agent, path_choice):
 
-    if not os.path.exists("urls.txt"):
-        print("url.txt文件不存在")
-        return "file does not exist"
-
-    try:
-        # 打开url.txt文件
-        with open("urls.txt", "r") as file:
-            lines = file.readlines()
-
-        # 检查文件是否为空
-        if not lines or all(not line.strip() for line in lines):
-            print("urls.txt文件为空")
-            return
-        else:
-            # 检查每行是否包含"/page/"，并且不是空行
-            for line in lines:
-                line = line.strip()
-                if line and "/page/" not in line:
-                    print(f"语法错误：第{line}行")
-                    return "file syntax is incorrect"
-
-        print("urls.txt文件内容符合要求")
-
-        # 定义文件夹路径
-        folder_path = None
-        # 如果用户选择自定义路径
-        if path_choice == 1:
-            import tkinter as tk
-            from tkinter import filedialog
-            # 创建一个Tkinter窗口，但不显示它
-            root = tk.Tk()
-            root.withdraw()
-
-            print("您选择了自定义保存路径，请您在弹出窗口中选择保存文件夹。")
-
-            while True:
-
-                # 弹出文件对话框以选择保存位置和文件名
-                folder_path = filedialog.askdirectory()
-
-                # 检查用户是否取消了对话框
-                if not folder_path:
-                    # 用户取消了对话框，提示重新选择
-                    print("您没有选择保存文件夹，请重新选择！")
-                    continue
-                else:
-                    print("已选择保存文件夹")
-                    break
-
-        # 对于文件中的每个url，执行函数
-        for url in lines:
-            url = url.strip()  # 移除行尾的换行符
-            if url:  # 如果url不为空（即，跳过空行）
-                download_novels(url, encoding, user_agent, path_choice, folder_path)
-                time.sleep(1)
-
-    except Exception as e:
-        print(f"发生错误：{str(e)}")
-        return f"发生错误：{str(e)}"
-
-
-# 定义批量模式用来下载番茄小说的函数
-def download_novels(url, encoding, user_agent, path_choice, folder_path):
+    get_folder_path(path_choice)
 
     headers = {
         "User-Agent": user_agent
@@ -110,7 +50,7 @@ def download_novels(url, encoding, user_agent, path_choice, folder_path):
     # 获取小说标题
     title = soup.find("h1").get_text()
     # , class_ = "info-name"
-    print(f"\n开始 《{title}》 的下载")
+
     # 获取小说信息
     info = soup.find("div", class_="page-header-info").get_text()
 
@@ -118,7 +58,7 @@ def download_novels(url, encoding, user_agent, path_choice, folder_path):
     intro = soup.find("div", class_="page-abstract-content").get_text()
 
     # 拼接小说内容字符串
-    content = f"""使用 @星隅(xing-yv) 所作开源工具下载
+    introduction = f"""使用 @星隅(xing-yv) 所作开源工具下载
 开源仓库地址:https://github.com/xing-yv/fanqie-novel-download
 Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 任何人无权限制您访问本工具，如果有向您提供代下载服务者未事先告知您工具的获取方式，请向作者举报:xing_yv@outlook.com
@@ -127,9 +67,15 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 {info}
 {intro}
 """
+    # 转换简介内容格式
+    introduction_data = introduction.encode(encoding, errors='ignore')
 
     # 获取所有章节链接
     chapters = soup.find_all("div", class_="chapter-item")
+
+    # 定义简介路径
+    introduction_use = False
+    introduction_path = None
 
     # 遍历每个章节链接
     for chapter in chapters:
@@ -177,40 +123,73 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         # 去除其他 html 标签
         chapter_text = re.sub(r"</?\w+>", "", chapter_text)
 
-        # 在小说内容字符串中添加章节标题和内容
-        content += f"\n\n\n{chapter_title}\n{chapter_text}"
+        # 在章节内容字符串中添加章节标题和内容
+        content_all = f"{chapter_title}\n{chapter_text}"
+
+        # 转换章节内容格式
+        data = content_all.encode(encoding, errors='ignore')
+
+        # 重置file_path
+        file_path = None
+
+        # 根据用户选择生成最终文件路径
+        if path_choice == 1:
+
+            # 使用用户选择的文件夹路径和默认文件名来生成完整的文件路径
+
+            file_path = os.path.join(folder_path, f"{chapter_title}.txt")
+            if introduction_use is False:
+                introduction_path = os.path.join(folder_path, "简介.txt")
+
+        elif path_choice == 0:
+
+            # 在程序文件夹下新建output文件夹，并定义文件路径
+
+            output_folder = "output"
+
+            os.makedirs(output_folder, exist_ok=True)
+
+            file_path = os.path.join(output_folder, f"{chapter_title}.txt")
+
+            if introduction_use is False:
+                introduction_path = os.path.join(output_folder, "简介.txt")
+
+        if introduction_use is False:
+            with open(introduction_path, "wb") as f:
+                f.write(introduction_data)
+            print("简介已保存")
+            # 将简介保存标记为已完成
+            introduction_use = True
+
+        with open(file_path, "wb") as f:
+            f.write(data)
 
         # 打印进度信息
-        print(f"已获取 {chapter_title}")
+        print(f"已获取: {chapter_title}")
 
-    # 根据编码转换小说内容字符串为二进制数据
-    data = content.encode(encoding, errors='ignore')
 
-    # 根据main.py中用户选择的路径方式，选择自定义路径或者默认
-
-    file_path = None
-
+def get_folder_path(path_choice):
+    global folder_path
+    # 如果用户选择自定义路径
     if path_choice == 1:
+        import tkinter as tk
+        from tkinter import filedialog
+        # 创建一个Tkinter窗口，但不显示它
+        root = tk.Tk()
+        root.withdraw()
 
-        # 使用用户选择的文件夹路径和默认文件名来生成完整的文件路径
+        print("您选择了自定义保存路径，请您在弹出窗口中选择保存文件夹。")
 
-        file_path = os.path.join(folder_path, f"{title}.txt")
+        while True:
 
-    elif path_choice == 0:
+            # 弹出文件对话框以选择保存位置和文件名
+            folder_path = filedialog.askdirectory()
 
-        # 在程序文件夹下新建output文件夹，并把文件放入
-
-        output_folder = "output"
-
-        os.makedirs(output_folder, exist_ok=True)
-
-        file_path = os.path.join(output_folder, f"{title}.txt")
-
-        # 保存文件
-
-    with open(file_path, "wb") as f:
-        f.write(data)
-
-        # 打印完成信息
-
-    print(f"已保存{title}.txt")
+            # 检查用户是否取消了对话框
+            if not folder_path:
+                # 用户取消了对话框，提示重新选择
+                print("您没有选择保存文件夹，请重新选择！")
+                continue
+            else:
+                print("已选择保存文件夹")
+                break

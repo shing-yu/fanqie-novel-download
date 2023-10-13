@@ -25,10 +25,12 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import re
+import datetime
+import os
 
 
 # 定义调试模式用来下载番茄小说的函数
-def fanqie_d(url, encoding, user_agent, path_choice):
+def fanqie_d(url, encoding, user_agent, path_choice, data_folder):
 
     headers = {
         "User-Agent": user_agent
@@ -77,6 +79,8 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
     # if mode == 1:
     print(f"[DEBUG]已获取所有章节链接")
+
+    chapter_id = None
 
     # 遍历每个章节链接
     for chapter in chapters:
@@ -136,6 +140,16 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
         # 打印进度信息
         print(f"已获取 {chapter_title}")
+
+    # 保存小说更新源文件
+    upd_file_path = os.path.join(data_folder, f"{title}.upd")
+    # 获取当前系统时间
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # 创建要写入元信息文件的内容
+    new_content = f"{current_time}\n{url}\n{chapter_id}\n{encoding}"
+    # 打开文件并完全覆盖内容
+    with open(upd_file_path, "w") as file:
+        file.write(new_content)
 
     # 根据编码转换小说内容字符串为二进制数据
     data = content.encode(encoding, errors='ignore')
