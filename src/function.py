@@ -27,6 +27,7 @@ import fanqie_batch as fb
 import fanqie_chapter as fc
 import fanqie_update as fu
 import os
+import re
 import requests
 from sys import exit
 from packaging import version
@@ -41,6 +42,7 @@ return_info = None
 user_folder = os.path.expanduser("~")
 data_path = os.path.join(user_folder, "fanqie_data")
 os.makedirs(data_path, exist_ok=True)
+book_id = None
 
 
 # 用户须知
@@ -193,6 +195,7 @@ def get_parameter(retry):
     global txt_encoding
     global ua
     global type_path_num
+    global book_id
 
     page_url = None
 
@@ -224,6 +227,7 @@ def get_parameter(retry):
             if "/page/" not in page_url:
                 print("请输入正确的小说目录页面链接")
             else:
+                book_id = re.search(r"/(\d+)", page_url).group(1)
                 break  # 如果是正确的链接，则退出循环
 
     # 让用户选择保存文件的编码
@@ -305,13 +309,13 @@ def perform_user_mode_action():
     # 判断用户处于什么模式
     if mode == 0:
         # 调用番茄正常模式函数
-        return_info = fn.fanqie_n(page_url, txt_encoding, ua, type_path_num, data_path)
+        return_info = fn.fanqie_n(page_url, txt_encoding, ua, type_path_num, data_path, book_id)
     elif mode == 1:
         # 调用番茄调试模式函数
-        return_info = fd.fanqie_d(page_url, txt_encoding, ua, type_path_num, data_path)
+        return_info = fd.fanqie_d(page_url, txt_encoding, ua, type_path_num, data_path, book_id)
     elif mode == 2:
         # 调用番茄批量模式函数
-        return_info = fb.fanqie_b(txt_encoding, ua, type_path_num, data_path)
+        return_info = fb.fanqie_b(txt_encoding, ua, type_path_num, data_path, book_id)
     elif mode == 3:
         # 调用番茄分章模式函数
         return_info = fc.fanqie_c(page_url, txt_encoding, ua, type_path_num)
