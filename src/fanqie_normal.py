@@ -30,7 +30,7 @@ import os
 
 
 # 定义正常模式用来下载番茄小说的函数
-def fanqie_n(url, encoding, user_agent, path_choice, data_folder, book_id):
+def fanqie_n(url, encoding, user_agent, path_choice, data_folder, book_id, start_chapter_id):
 
     headers = {
         "User-Agent": user_agent
@@ -69,10 +69,22 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
     # 获取所有章节链接
     chapters = soup.find_all("div", class_="chapter-item")
 
+    # 检查用户是否指定起始章节
+    start_index = 0
+    if start_chapter_id == '0':
+        pass
+    else:
+        # 找到起始章节的索引
+        for i, chapter in enumerate(chapters):
+            chapter_url_tmp = urljoin(url, chapter.find("a")["href"])
+            chapter_id_tmp = re.search(r"/(\d+)", chapter_url_tmp).group(1)
+            if chapter_id_tmp == start_chapter_id:  # 将 开始索引设置为用户的值
+                start_index = i
+
     chapter_id = None
 
     # 遍历每个章节链接
-    for chapter in chapters:
+    for chapter in chapters[start_index:]:
         # 获取章节标题
         chapter_title = chapter.find("a").get_text()
 
