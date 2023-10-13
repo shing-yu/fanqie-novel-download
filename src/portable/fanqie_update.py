@@ -206,6 +206,7 @@ def onefile(user_agent, data_folder):
 
         # 使用os.path.normpath()来规范化路径
         txt_file_path = os.path.normpath(user_path)
+        break
     txt_file = os.path.basename(txt_file_path)
     upd_file_path = os.path.join(data_folder, txt_file.replace(".txt", ".upd"))
     novel_name = txt_file.replace(".txt", "")
