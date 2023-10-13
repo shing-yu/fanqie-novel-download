@@ -27,9 +27,10 @@ from urllib.parse import urljoin
 import re
 import os
 import time
+import datetime
 
 
-def fanqie_b(encoding, user_agent, path_choice):
+def fanqie_b(encoding, user_agent, path_choice, data_folder):
 
     if not os.path.exists("urls.txt"):
         print("url.txt文件不存在")
@@ -84,7 +85,7 @@ def fanqie_b(encoding, user_agent, path_choice):
         for url in lines:
             url = url.strip()  # 移除行尾的换行符
             if url:  # 如果url不为空（即，跳过空行）
-                download_novels(url, encoding, user_agent, path_choice, folder_path)
+                download_novels(url, encoding, user_agent, path_choice, folder_path, data_folder)
                 time.sleep(1)
 
     except Exception as e:
@@ -93,7 +94,7 @@ def fanqie_b(encoding, user_agent, path_choice):
 
 
 # 定义批量模式用来下载番茄小说的函数
-def download_novels(url, encoding, user_agent, path_choice, folder_path):
+def download_novels(url, encoding, user_agent, path_choice, folder_path, data_folder):
 
     headers = {
         "User-Agent": user_agent
@@ -129,6 +130,8 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
     # 获取所有章节链接
     chapters = soup.find_all("div", class_="chapter-item")
+
+    chapter_id = None
 
     # 遍历每个章节链接
     for chapter in chapters:
@@ -181,6 +184,16 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
         # 打印进度信息
         print(f"已获取 {chapter_title}")
+
+    # 保存小说更新源文件
+    upd_file_path = os.path.join(data_folder, f"{title}.upd")
+    # 获取当前系统时间
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # 创建要写入元信息文件的内容
+    new_content = f"{current_time}\n{url}\n{chapter_id}\n{encoding}"
+    # 打开文件并完全覆盖内容
+    with open(upd_file_path, "w") as file:
+        file.write(new_content)
 
     # 根据编码转换小说内容字符串为二进制数据
     data = content.encode(encoding, errors='ignore')

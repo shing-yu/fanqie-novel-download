@@ -25,76 +25,12 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import re
-import os
-import time
 import datetime
+import os
 
 
-def fanqie_b(encoding, user_agent, path_choice):
-
-    if not os.path.exists("urls.txt"):
-        print("url.txt文件不存在")
-        return "file does not exist"
-
-    try:
-        # 打开url.txt文件
-        with open("urls.txt", "r") as file:
-            lines = file.readlines()
-
-        # 检查文件是否为空
-        if not lines or all(not line.strip() for line in lines):
-            print("urls.txt文件为空")
-            return
-        else:
-            # 检查每行是否包含"/page/"，并且不是空行
-            for line in lines:
-                line = line.strip()
-                if line and "/page/" not in line:
-                    print(f"语法错误：第{line}行")
-                    return "file syntax is incorrect"
-
-        print("urls.txt文件内容符合要求")
-
-        # 定义文件夹路径
-        folder_path = None
-        # 如果用户选择自定义路径
-        if path_choice == 1:
-            import tkinter as tk
-            from tkinter import filedialog
-            # 创建一个Tkinter窗口，但不显示它
-            root = tk.Tk()
-            root.withdraw()
-
-            print("您选择了自定义保存路径，请您在弹出窗口中选择保存文件夹。")
-
-            while True:
-
-                # 弹出文件对话框以选择保存位置和文件名
-                folder_path = filedialog.askdirectory()
-
-                # 检查用户是否取消了对话框
-                if not folder_path:
-                    # 用户取消了对话框，提示重新选择
-                    print("您没有选择保存文件夹，请重新选择！")
-                    continue
-                else:
-                    print("已选择保存文件夹")
-                    break
-
-        # 对于文件中的每个url，执行函数
-        for url in lines:
-            url = url.strip()  # 移除行尾的换行符
-            if url:  # 如果url不为空（即，跳过空行）
-                download_novels(url, encoding, user_agent, path_choice, folder_path)
-                time.sleep(1)
-
-    except Exception as e:
-        print(f"发生错误：{str(e)}")
-        return f"发生错误：{str(e)}"
-
-
-# 定义批量模式用来下载番茄小说的函数
-def download_novels(url, encoding, user_agent, path_choice, folder_path):
+# 定义调试模式用来下载番茄小说的函数
+def fanqie_d(url, encoding, user_agent, path_choice, data_folder):
 
     headers = {
         "User-Agent": user_agent
@@ -109,13 +45,20 @@ def download_novels(url, encoding, user_agent, path_choice, folder_path):
 
     # 获取小说标题
     title = soup.find("h1").get_text()
-    # , class_ = "info-name"
-    print(f"\n开始 《{title}》 的下载")
+
+    print(f"[DEBUG]已获取小说标题")
+
     # 获取小说信息
     info = soup.find("div", class_="page-header-info").get_text()
 
+    # if mode == 1:
+    print(f"[DEBUG]已获取小说信息")
+
     # 获取小说简介
     intro = soup.find("div", class_="page-abstract-content").get_text()
+
+    # if mode == 1:
+    print(f"[DEBUG]已获取小说简介")
 
     # 拼接小说内容字符串
     content = f"""使用 @星隅(xing-yv) 所作开源工具下载
@@ -128,13 +71,22 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 {intro}
 """
 
+    # if mode == 1:
+    print(f"[DEBUG]已拼接小说简介字符串")
+
     # 获取所有章节链接
     chapters = soup.find_all("div", class_="chapter-item")
+
+    # if mode == 1:
+    print(f"[DEBUG]已获取所有章节链接")
+
+    chapter_id = None
 
     # 遍历每个章节链接
     for chapter in chapters:
         # 获取章节标题
         chapter_title = chapter.find("a").get_text()
+        print(f"[DEBUG]正在获取章节:{chapter_title}")
 
         # 获取章节网址
         chapter_url = urljoin(url, chapter.find("a")["href"])
@@ -142,8 +94,12 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         # 获取章节 id
         chapter_id = re.search(r"/(\d+)", chapter_url).group(1)
 
+        print(f"[DEBUG]章节id:{chapter_id}")
+
         # 构造 api 网址
         api_url = f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id={chapter_id}&item_id={chapter_id}"
+
+        print(f"[DEBUG]api网址:{api_url}")
 
         # 尝试获取章节内容
         chapter_content = None
@@ -151,6 +107,8 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         while retry_count < 4:  # 设置最大重试次数
             # 获取 api 响应
             api_response = requests.get(api_url, headers=headers)
+
+            print(f"[DEBUG]HTTP状态码:{api_response}")
 
             # 解析 api 响应为 json 数据
             api_data = api_response.json()
@@ -183,34 +141,64 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         # 打印进度信息
         print(f"已获取 {chapter_title}")
 
+    # 保存小说更新源文件
+    upd_file_path = os.path.join(data_folder, f"{title}.upd")
+    # 获取当前系统时间
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # 创建要写入元信息文件的内容
+    new_content = f"{current_time}\n{url}\n{chapter_id}\n{encoding}"
+    # 打开文件并完全覆盖内容
+    with open(upd_file_path, "w") as file:
+        file.write(new_content)
+    print("[DEBUG]已保存.upd更新元数据文件")
+
     # 根据编码转换小说内容字符串为二进制数据
     data = content.encode(encoding, errors='ignore')
 
     # 根据main.py中用户选择的路径方式，选择自定义路径或者默认
-
-    file_path = None
-
     if path_choice == 1:
+        import tkinter as tk
+        from tkinter import filedialog
+        # 创建一个Tkinter窗口，但不显示它
+        root = tk.Tk()
+        root.withdraw()
+        print("[DEBUG]已创建tkinter隐形窗口")
 
-        # 使用用户选择的文件夹路径和默认文件名来生成完整的文件路径
+        print("您选择了自定义保存路径，请您在弹出窗口中选择路径。")
 
-        file_path = os.path.join(folder_path, f"{title}.txt")
+        # 设置默认文件名和扩展名
+        default_extension = ".txt"
+        default_filename = f"{title}"
+
+        while True:
+
+            # 弹出文件对话框以选择保存位置和文件名
+            file_path = filedialog.asksaveasfilename(
+                defaultextension=default_extension,
+                filetypes=[("Text Files", "*" + default_extension)],
+                initialfile=default_filename
+            )
+
+            # 检查用户是否取消了对话框
+            if not file_path:
+                # 用户取消了对话框，提示重新选择
+                print("您没有选择路径，请重新选择！")
+                continue
+
+            # 用户选择了文件路径，保存文件并退出循环
+            with open(file_path, "wb") as f:
+                f.write(data)
+
+            # 打印完成信息
+            print(f"已保存")
+            break  # 退出循环
 
     elif path_choice == 0:
-
-        # 在程序文件夹下新建output文件夹，并把文件放入
-
-        output_folder = "output"
-
-        os.makedirs(output_folder, exist_ok=True)
-
-        file_path = os.path.join(output_folder, f"{title}.txt")
+        # 定义文件名
+        filename = title + ".txt"
 
         # 保存文件
-
-    with open(file_path, "wb") as f:
-        f.write(data)
-
+        with open(filename, "wb") as f:
+            f.write(data)
         # 打印完成信息
-
-    print(f"已保存{title}.txt")
+        print(f"已保存{filename}")
