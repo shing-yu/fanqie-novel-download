@@ -62,7 +62,18 @@ def fanqie_update(user_agent, data_folder):
 
     for txt_file in novel_files:
         txt_file_path = os.path.join(novel_folder, txt_file)
-        upd_file_path = os.path.join(data_folder, txt_file.replace(".txt", ".upd"))
+        # 寻找book_id
+        with open(txt_file_path, "r") as tmp:
+            # 读取第一行
+            first_line = tmp.readline().strip()  # 读取并去除前后空白字符
+
+            # 检测是否全部是数字
+            if first_line.isdigit():
+                book_id = first_line
+            else:
+                print(f"{txt_file} 不是通过此工具下载，无法更新")
+
+        upd_file_path = os.path.join(data_folder, book_id)
         novel_name = txt_file.replace(".txt", "")
 
         if os.path.exists(upd_file_path):
@@ -201,14 +212,31 @@ def onefile(user_agent, data_folder):
         # 提示用户输入路径
         user_path = input("请将要更新的小说拖动到窗口中，然后按 Enter 键:\n")
         if '.txt' not in user_path:
-            print("请重新输入")
+            print("路径不正确，请重新输入")
             continue
 
         # 使用os.path.normpath()来规范化路径
         txt_file_path = os.path.normpath(user_path)
-        break
+        # 检测文件是否存在
+        if os.path.exists(txt_file_path):
+            break
+        else:
+            print("文件不存在，请重新输入")
+            continue
+
     txt_file = os.path.basename(txt_file_path)
-    upd_file_path = os.path.join(data_folder, txt_file.replace(".txt", ".upd"))
+    # 寻找book_id
+    with open(txt_file_path, "r") as tmp:
+        # 读取第一行
+        first_line = tmp.readline().strip()  # 读取并去除前后空白字符
+
+        # 检测是否全部是数字
+        if first_line.isdigit():
+            book_id = first_line
+        else:
+            print(f"{txt_file} 不是通过此工具下载，无法更新")
+
+    upd_file_path = os.path.join(data_folder, book_id)
     novel_name = txt_file.replace(".txt", "")
 
     if os.path.exists(upd_file_path):
