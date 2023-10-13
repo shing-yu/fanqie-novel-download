@@ -82,7 +82,8 @@ def start():
         print("4. 同意并进入Debug模式")
         print("5. 查看更多")
         print("6. 更新已下载的小说")
-        print("7. 不同意，退出程序")
+        print("7. 查看赞助者名单")
+        print("8. 不同意，退出程序")
         choice = input("请输入您的选择（1/2/3/4/5/6/7）:（回车默认“1”）\n")
 
         # 通过用户选择，决定模式，给mode赋值
@@ -144,6 +145,25 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
             return_info = fu.fanqie_update(ua, data_path)
             return
         elif choice == '7':
+            clear_screen()
+            print("""# 项目赞助者名单
+
+感谢以下赞助者对本项目的慷慨支持：
+
+（按照赞助顺序排列）
+
+| 赞助者        | QQ         | 金额（￥） |
+|------------|------------|-------|
+| 【|红尘 |】  | 3442074910 | 0.88  |
+| 死于妄想症的猫    | 2663260955 | 6.66  |
+| 钟          | 215502920  | 6.00  |
+| 之承         | 2686769679 | 6.66  |
+| Noneคิดถึง | 2710604919 | 6.66  |
+
+""")
+            input("按Enter键返回...")
+            clear_screen()
+        elif choice == '8':
             clear_screen()
             # 确认退出
             while True:
