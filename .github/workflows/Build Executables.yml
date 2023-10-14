@@ -21,7 +21,6 @@ jobs:
     - name: Install Dependencies
       run: |
         pip install -r requirements.txt
-      working-directory: src  # Make sure to set the working directory where requirements.txt is located
       shell: bash
 
     - name: Install PyInstaller
