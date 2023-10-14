@@ -27,14 +27,9 @@ from urllib.parse import urljoin
 import re
 import os
 
-# 定义文件夹路径
-folder_path = ""
-
 
 # 定义分章节保存模式用来下载番茄小说的函数
 def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id):
-
-    get_folder_path(path_choice)
 
     headers = {
         "User-Agent": user_agent
@@ -51,6 +46,10 @@ def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id):
     title = soup.find("h1").get_text()
     # , class_ = "info-name"
 
+    # 获取保存路径
+    book_folder = get_folder_path(path_choice, title)
+    # 创建保存文件夹
+    os.makedirs(book_folder, exist_ok=True)
     # 获取小说信息
     info = soup.find("div", class_="page-header-info").get_text()
 
@@ -88,8 +87,6 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
             chapter_id_tmp = re.search(r"/(\d+)", chapter_url_tmp).group(1)
             if chapter_id_tmp == start_chapter_id:  # 将 开始索引设置为用户的值
                 start_index = i
-
-    chapter_id = None
 
     # 遍历每个章节链接
     for chapter in chapters[start_index:]:
@@ -146,27 +143,13 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         # 重置file_path
         file_path = None
 
-        # 根据用户选择生成最终文件路径
-        if path_choice == 1:
+        # 生成最终文件路径
 
-            # 使用用户选择的文件夹路径和默认文件名来生成完整的文件路径
+        # 使用用户选择的文件夹路径和默认文件名来生成完整的文件路径
 
-            file_path = os.path.join(folder_path, f"{title}", f"{chapter_title}.txt")
-            if introduction_use is False:
-                introduction_path = os.path.join(folder_path, f"{title}", "简介.txt")
-
-        elif path_choice == 0:
-
-            # 在程序文件夹下新建output文件夹，并定义文件路径
-
-            output_folder = "output"
-
-            os.makedirs(output_folder, exist_ok=True)
-
-            file_path = os.path.join(output_folder, f"{title}", f"{chapter_title}.txt")
-
-            if introduction_use is False:
-                introduction_path = os.path.join(output_folder, f"{title}", "简介.txt")
+        file_path = os.path.join(book_folder, f"{chapter_title}.txt")
+        if introduction_use is False:
+            introduction_path = os.path.join(book_folder, "简介.txt")
 
         if introduction_use is False:
             with open(introduction_path, "wb") as f:
@@ -182,8 +165,8 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         print(f"已获取: {chapter_title}")
 
 
-def get_folder_path(path_choice):
-    global folder_path
+def get_folder_path(path_choice, title):
+    folder_path = None
     # 如果用户选择自定义路径
     if path_choice == 1:
         import tkinter as tk
@@ -207,3 +190,11 @@ def get_folder_path(path_choice):
             else:
                 print("已选择保存文件夹")
                 break
+    elif path_choice == 0:
+
+        # 在程序文件夹下新建output文件夹，并定义文件路径
+
+        folder_path = "output"
+
+        os.makedirs(folder_path, exist_ok=True)
+    return os.path.join(folder_path, f"{title}")
