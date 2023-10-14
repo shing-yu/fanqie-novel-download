@@ -35,11 +35,11 @@ jobs:
     - name: Build Executable
       run: |
         if [ "${{ matrix.os }}" == "windows-latest" ]; then
-          pyinstaller --onefile src/main.py
+          pyinstaller --onefile -n fanqie_tool_windows src/main.py
         elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-          pyinstaller --onefile src/main.py
+          pyinstaller --onefile -n fanqie_tool_macos src/main.py
         else
-          pyinstaller --onefile src/main.py
+          pyinstaller --onefile -n fanqie_tool_ubuntu src/main.py
         fi
       shell: bash
 
