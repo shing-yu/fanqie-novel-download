@@ -7,7 +7,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
     - name: Checkout code
@@ -28,26 +32,16 @@ jobs:
         pip install pyinstaller
       shell: bash
 
-    - name: Build Windows Executable
+    - name: Build Executable
       run: |
-        pyinstaller --onefile src/main.py
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          pyinstaller --onefile src/main.py
+        elif [ "${{ matrix.os }}" == "macos-latest" ]; then
+          pyinstaller --onefile src/main.py
+        else
+          pyinstaller --onefile src/main.py
+        fi
       shell: bash
-      env:
-        PYINSTALLER_PLATFORM: windows
-
-    - name: Build Mac Executable
-      run: |
-        pyinstaller --onefile src/main.py
-      shell: bash
-      env:
-        PYINSTALLER_PLATFORM: macos
-
-    - name: Build Linux Executable
-      run: |
-        pyinstaller --onefile src/main.py
-      shell: bash
-      env:
-        PYINSTALLER_PLATFORM: linux
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
