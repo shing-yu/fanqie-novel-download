@@ -162,6 +162,7 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
 | 钟          | 215502920  | 6.00  |
 | 之承         | 2686769679 | 6.66  |
 | Noneคิดถึง | 2710604919 | 6.66  |
+| 心海         | 1186663    | 20.00 |
 
 """)
             input("按Enter键返回...")
