@@ -139,7 +139,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
         # 初步解决：当图书格式为 出版物 时，部分标签未能去除
         # TODO 格式乱码
-        chapter_text = re.sub(r'<.*?>', '', chapter_text)
+        chapter_text = re.sub(r'<p class=".*?">', '', chapter_text)
 
         # 在章节内容字符串中添加章节标题和内容
         content_all = f"{chapter_title}\n{chapter_text}"
