@@ -63,17 +63,17 @@ def fanqie_update(user_agent, data_folder):
     for txt_file in novel_files:
         txt_file_path = os.path.join(novel_folder, txt_file)
         # 寻找book_id
-        with open(txt_file_path, "r") as tmp:
-            # 读取第一行
-            first_line = tmp.readline().strip()  # 读取并去除前后空白字符
+        # with open(txt_file_path, "r") as tmp:
+        #     # 读取第一行
+        #     first_line = tmp.readline().strip()  # 读取并去除前后空白字符
+        #
+        #     # 检测是否全部是数字
+        #     if first_line.isdigit():
+        #         book_id = first_line
+        #     else:
+        #         print(f"{txt_file} 不是通过此工具下载，无法更新")
 
-            # 检测是否全部是数字
-            if first_line.isdigit():
-                book_id = first_line
-            else:
-                print(f"{txt_file} 不是通过此工具下载，无法更新")
-
-        upd_file_path = os.path.join(data_folder, book_id)
+        upd_file_path = os.path.join(data_folder, txt_file.replace(".txt", ".upd"))
         novel_name = txt_file.replace(".txt", "")
 
         if os.path.exists(upd_file_path):
@@ -225,18 +225,18 @@ def onefile(user_agent, data_folder):
             continue
 
     txt_file = os.path.basename(txt_file_path)
-    # 寻找book_id
-    with open(txt_file_path, "r") as tmp:
-        # 读取第一行
-        first_line = tmp.readline().strip()  # 读取并去除前后空白字符
+    # # 寻找book_id
+    # with open(txt_file_path, "r") as tmp:
+    #     # 读取第一行
+    #     first_line = tmp.readline().strip()  # 读取并去除前后空白字符
+    #
+    #     # 检测是否全部是数字
+    #     if first_line.isdigit():
+    #         book_id = first_line
+    #     else:
+    #         print(f"{txt_file} 不是通过此工具下载，无法更新")
 
-        # 检测是否全部是数字
-        if first_line.isdigit():
-            book_id = first_line
-        else:
-            print(f"{txt_file} 不是通过此工具下载，无法更新")
-
-    upd_file_path = os.path.join(data_folder, book_id)
+    upd_file_path = os.path.join(data_folder, txt_file.replace(".txt", ".upd"))
     novel_name = txt_file.replace(".txt", "")
 
     if os.path.exists(upd_file_path):

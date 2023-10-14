@@ -324,13 +324,13 @@ def perform_user_mode_action():
     # 判断用户处于什么模式
     if mode == 0:
         # 调用番茄正常模式函数
-        return_info = fn.fanqie_n(page_url, txt_encoding, ua, type_path_num, data_path, book_id, start_chapter_id)
+        return_info = fn.fanqie_n(page_url, txt_encoding, ua, type_path_num, data_path, start_chapter_id)
     elif mode == 1:
         # 调用番茄调试模式函数
-        return_info = fd.fanqie_d(page_url, txt_encoding, ua, type_path_num, data_path, book_id, start_chapter_id)
+        return_info = fd.fanqie_d(page_url, txt_encoding, ua, type_path_num, data_path, start_chapter_id)
     elif mode == 2:
         # 调用番茄批量模式函数
-        return_info = fb.fanqie_b(txt_encoding, ua, type_path_num, data_path, book_id)
+        return_info = fb.fanqie_b(txt_encoding, ua, type_path_num, data_path)
     elif mode == 3:
         # 调用番茄分章模式函数
         return_info = fc.fanqie_c(page_url, txt_encoding, ua, type_path_num, start_chapter_id)

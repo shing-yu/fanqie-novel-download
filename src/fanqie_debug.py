@@ -30,7 +30,7 @@ import os
 
 
 # 定义调试模式用来下载番茄小说的函数
-def fanqie_d(url, encoding, user_agent, path_choice, data_folder, book_id, start_chapter_id):
+def fanqie_d(url, encoding, user_agent, path_choice, data_folder, start_chapter_id):
 
     headers = {
         "User-Agent": user_agent
@@ -61,8 +61,7 @@ def fanqie_d(url, encoding, user_agent, path_choice, data_folder, book_id, start
     print(f"[DEBUG]已获取小说简介")
 
     # 拼接小说内容字符串
-    content = f"""{book_id}
-如果需要小说更新，请勿移动或删除以上小说id
+    content = f"""如果需要小说更新，请勿修改文件名
 使用 @星隅(xing-yv) 所作开源工具下载
 开源仓库地址:https://github.com/xing-yv/fanqie-novel-download
 Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
@@ -156,7 +155,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         print(f"已获取 {chapter_title}")
 
     # 保存小说更新源文件
-    upd_file_path = os.path.join(data_folder, f"{book_id}.upd")
+    upd_file_path = os.path.join(data_folder, f"{title}.upd")
     # 获取当前系统时间
     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # 创建要写入元信息文件的内容

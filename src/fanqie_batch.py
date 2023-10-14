@@ -30,7 +30,7 @@ import time
 import datetime
 
 
-def fanqie_b(encoding, user_agent, path_choice, data_folder, book_id):
+def fanqie_b(encoding, user_agent, path_choice, data_folder):
 
     if not os.path.exists("urls.txt"):
         print("url.txt文件不存在")
@@ -85,7 +85,7 @@ def fanqie_b(encoding, user_agent, path_choice, data_folder, book_id):
         for url in lines:
             url = url.strip()  # 移除行尾的换行符
             if url:  # 如果url不为空（即，跳过空行）
-                download_novels(url, encoding, user_agent, path_choice, folder_path, data_folder, book_id)
+                download_novels(url, encoding, user_agent, path_choice, folder_path, data_folder)
                 time.sleep(1)
 
     except Exception as e:
@@ -94,7 +94,7 @@ def fanqie_b(encoding, user_agent, path_choice, data_folder, book_id):
 
 
 # 定义批量模式用来下载番茄小说的函数
-def download_novels(url, encoding, user_agent, path_choice, folder_path, data_folder, book_id):
+def download_novels(url, encoding, user_agent, path_choice, folder_path, data_folder):
 
     headers = {
         "User-Agent": user_agent
@@ -118,8 +118,7 @@ def download_novels(url, encoding, user_agent, path_choice, folder_path, data_fo
     intro = soup.find("div", class_="page-abstract-content").get_text()
 
     # 拼接小说内容字符串
-    content = f"""{book_id}
-如果需要小说更新，请勿移动或删除以上小说id
+    content = f"""如果需要小说更新，请勿修改文件名
 使用 @星隅(xing-yv) 所作开源工具下载
 开源仓库地址:https://github.com/xing-yv/fanqie-novel-download
 Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
@@ -188,7 +187,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         print(f"已获取 {chapter_title}")
 
     # 保存小说更新源文件
-    upd_file_path = os.path.join(data_folder, f"{book_id}.upd")
+    upd_file_path = os.path.join(data_folder, f"{title}.upd")
     # 获取当前系统时间
     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # 创建要写入元信息文件的内容
