@@ -28,6 +28,7 @@ import re
 import datetime
 import os
 import time
+import public as p
 
 
 # 定义正常模式用来下载番茄小说的函数
@@ -47,6 +48,8 @@ def fanqie_n(url, encoding, user_agent, path_choice, data_folder, start_chapter_
     # 获取小说标题
     title = soup.find("h1").get_text()
     # , class_ = "info-name"
+    # 替换非法字符
+    title = p.rename(title)
 
     # 获取小说信息
     info = soup.find("div", class_="page-header-info").get_text()

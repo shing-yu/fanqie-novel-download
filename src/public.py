@@ -1,7 +1,8 @@
 import re
 
 
-def sanitize_path(name):
+# 替换非法字符
+def rename(name):
     # 定义非法字符的正则表达式模式
     illegal_characters_pattern = r'[\/:*?"<>|]'
 

@@ -28,6 +28,7 @@ import re
 import datetime
 import os
 import time
+import public as p
 
 
 # 定义调试模式用来下载番茄小说的函数
@@ -48,6 +49,11 @@ def fanqie_d(url, encoding, user_agent, path_choice, data_folder, start_chapter_
     title = soup.find("h1").get_text()
 
     print(f"[DEBUG]已获取小说标题")
+
+    # 替换非法字符
+    title = p.rename(title)
+
+    print(f"[DEBUG]已尝试替换非法字符")
 
     # 获取小说信息
     info = soup.find("div", class_="page-header-info").get_text()

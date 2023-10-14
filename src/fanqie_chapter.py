@@ -27,6 +27,7 @@ from urllib.parse import urljoin
 import re
 import os
 import time
+import public as p
 
 
 # 定义分章节保存模式用来下载番茄小说的函数
@@ -46,6 +47,9 @@ def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id):
     # 获取小说标题
     title = soup.find("h1").get_text()
     # , class_ = "info-name"
+
+    # 替换非法字符
+    title = p.rename(title)
 
     # 获取保存路径
     book_folder = get_folder_path(path_choice, title)
@@ -95,6 +99,9 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         time.sleep(0.5)
         # 获取章节标题
         chapter_title = chapter.find("a").get_text()
+
+        # 替换非法字符
+        chapter_title = p.rename(chapter_title)
 
         # 获取章节网址
         chapter_url = urljoin(url, chapter.find("a")["href"])
