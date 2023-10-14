@@ -27,6 +27,7 @@ from urllib.parse import urljoin
 import re
 import datetime
 import os
+import time
 
 
 # 定义调试模式用来下载番茄小说的函数
@@ -97,6 +98,8 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
     # 遍历每个章节链接
     for chapter in chapters[start_index:]:
+
+        time.sleep(0.5)
         # 获取章节标题
         chapter_title = chapter.find("a").get_text()
         print(f"[DEBUG]正在获取章节:{chapter_title}")
