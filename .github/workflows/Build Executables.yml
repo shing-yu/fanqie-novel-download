@@ -1,0 +1,57 @@
+name: Build and Package Python Executables
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11.5
+
+    - name: Install Dependencies
+      run: |
+        pip install -r requirements.txt
+      working-directory: src  # Make sure to set the working directory where requirements.txt is located
+      shell: bash
+
+    - name: Install PyInstaller
+      run: |
+        pip install pyinstaller
+      shell: bash
+
+    - name: Build Windows Executable
+      run: |
+        pyinstaller --onefile src/main.py
+      shell: bash
+      env:
+        PYINSTALLER_PLATFORM: windows
+
+    - name: Build Mac Executable
+      run: |
+        pyinstaller --onefile src/main.py
+      shell: bash
+      env:
+        PYINSTALLER_PLATFORM: macos
+
+    - name: Build Linux Executable
+      run: |
+        pyinstaller --onefile src/main.py
+      shell: bash
+      env:
+        PYINSTALLER_PLATFORM: linux
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: executables
+        path: dist/
