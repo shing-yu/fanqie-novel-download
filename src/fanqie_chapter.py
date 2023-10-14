@@ -137,7 +137,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         # 去除其他 html 标签
         chapter_text = re.sub(r"</?\w+>", "", chapter_text)
 
-        # 初步解决：当图书格式为 出版物 时，部分标签未能去除
+        # 去除带class的p标签
         # TODO 格式乱码
         chapter_text = re.sub(r'<p class=".*?">', '', chapter_text)
 
