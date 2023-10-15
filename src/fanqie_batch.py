@@ -28,6 +28,7 @@ import re
 import os
 import time
 import datetime
+import public as p
 
 
 def fanqie_b(encoding, user_agent, path_choice, data_folder):
@@ -110,6 +111,10 @@ def download_novels(url, encoding, user_agent, path_choice, folder_path, data_fo
     # 获取小说标题
     title = soup.find("h1").get_text()
     # , class_ = "info-name"
+
+    # 替换非法字符
+    title = p.rename(title)
+
     print(f"\n开始 《{title}》 的下载")
     # 获取小说信息
     info = soup.find("div", class_="page-header-info").get_text()
