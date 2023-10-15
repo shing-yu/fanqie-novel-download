@@ -85,7 +85,7 @@ def start():
         print("4. 同意并进入Debug模式")
         print("5. 查看更多")
         print("6. 更新已下载的小说")
-        print("7. 查看赞助者名单")
+        print("7. 查看贡献（赞助）者名单")
         print("8. 不同意，退出程序")
         choice = input("请输入您的选择（1/2/3/4/5/6/7）:（默认“1”）\n")
 
@@ -149,22 +149,18 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
             return
         elif choice == '7':
             clear_screen()
-            print("""# 项目赞助者名单
+            contributors_url = 'https://gitee.com/xingyv1024/fanqie-novel-download/raw/main/CONTRIBUTORS.md'
+            try:
+                contributors = requests.get(contributors_url)
 
-感谢以下赞助者对本项目的慷慨支持：
-
-（按照赞助顺序排列）
-
-| 赞助者        | QQ         | 金额（￥） |
-|------------|------------|-------|
-| 【|红尘 |】  | 3442074910 | 0.88  |
-| 死于妄想症的猫    | 2663260955 | 6.66  |
-| 钟          | 215502920  | 6.00  |
-| 之承         | 2686769679 | 6.66  |
-| Noneคิดถึง | 2710604919 | 6.66  |
-| 心海         | 1186663    | 20.00 |
-
-""")
+                # 检查响应状态码
+                if contributors.status_code == 200:
+                    contributor_md_content = contributors.text
+                    print(contributor_md_content)
+                else:
+                    print(f"获取贡献名单失败，HTTP响应代码: {contributors.status_code}")
+            except requests.exceptions.RequestException as e:
+                print(f"发生错误: {e}")
             input("按Enter键返回...")
             clear_screen()
         elif choice == '8':
