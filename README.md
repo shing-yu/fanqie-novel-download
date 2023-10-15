@@ -2,7 +2,7 @@
 番茄小说下载的Python实现。这是一个用于从番茄小说网站下载小说的Python程序。  
 它提供了一个简单的命令行界面，可以输入小说目录页面的URL并选择保存下载内容的编码格式。  
 软件QQ群（闲聊）：621748837  
-感谢赞助者们对本项目的支持，你可以在[此处](https://github.com/xing-yv/fanqie-novel-download/blob/main/DONORS.md)获取赞助者名单。
+感谢贡献（赞助）者们对本项目的支持，你可以在[此处](https://github.com/xing-yv/fanqie-novel-download/blob/main/DONORS.md)获取贡献和赞助者名单。
 
 ## 特点
 
