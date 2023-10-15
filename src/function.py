@@ -293,8 +293,6 @@ def get_parameter(retry):
             type_path_num = 1
             if mode == 2:
                 print("您选择了自定义保存文件夹，请在文件检查后选择保存文件夹。")
-            elif mode == 3:
-                print("您选择了自定义保存文件夹，请在下载开始前选择保存文件夹。")
             else:
                 print("您选择了自定义保存路径，请在获取完成后选择保存路径。")
             break
