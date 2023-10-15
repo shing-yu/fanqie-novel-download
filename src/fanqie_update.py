@@ -190,6 +190,8 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
             # 去除其他 html 标签
             chapter_text = re.sub(r"</?\w+>", "", chapter_text)
 
+            chapter_text = p.fix_publisher(chapter_text)
+
             # 在小说内容字符串中添加章节标题和内容
             content = f"\n\n\n{chapter_title}\n{chapter_text}"
 

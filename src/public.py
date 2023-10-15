@@ -23,3 +23,16 @@ def rename(name):
 
     return sanitized_path
 
+
+def fix_publisher(text):
+    # 针对性去除所有 出版物 所携带的标签
+    text = re.sub(r'<p class=".*?">', '', text)
+    text = re.sub(r'<!--\?xml.*?>', '', text)
+    text = re.sub(r'<link .*?/>', '', text)
+    text = re.sub(r'<meta .*?/>', '', text)
+    text = re.sub(r'<h1 .*?>', '', text)
+    text = re.sub(r'<br/>', '', text)
+    text = re.sub(r'<!DOCTYPE html .*?>', '', text)
+    text = re.sub(r'<span .*?>', '', text)
+    text = re.sub(r'<html .*?>', '', text)
+    return text
