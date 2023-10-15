@@ -187,9 +187,16 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         # 去除其他 html 标签
         chapter_text = re.sub(r"</?\w+>", "", chapter_text)
 
-        # 去除带class的p标签
-        # TODO 格式乱码
+        # 针对性去除所有 出版物 所携带的标签
         chapter_text = re.sub(r'<p class=".*?">', '', chapter_text)
+        chapter_text = re.sub(r'<!--\?xml.*?>', '', chapter_text)
+        chapter_text = re.sub(r'<link .*?/>', '', chapter_text)
+        chapter_text = re.sub(r'<meta .*?/>', '', chapter_text)
+        chapter_text = re.sub(r'<h1 .*?>', '', chapter_text)
+        chapter_text = re.sub(r'<br/>', '', chapter_text)
+        chapter_text = re.sub(r'<!DOCTYPE html .*?>', '', chapter_text)
+        chapter_text = re.sub(r'<span .*?>', '', chapter_text)
+        chapter_text = re.sub(r'<html .*?>', '', chapter_text)
 
         # 在小说内容字符串中添加章节标题和内容
         content += f"\n\n\n{chapter_title}\n{chapter_text}"
