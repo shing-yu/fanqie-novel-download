@@ -39,7 +39,7 @@ pip install requests beautifulsoup4 packaging
 或
 
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 ## 许可证
