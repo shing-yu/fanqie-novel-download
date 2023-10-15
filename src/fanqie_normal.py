@@ -120,7 +120,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
     chapter_id = None
 
-    with open(file_path, "wb") as f:
+    try:
         # 遍历每个章节链接
         for chapter in chapters[start_index:]:
             time.sleep(0.5)
@@ -173,23 +173,39 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
             # 在小说内容字符串中添加章节标题和内容
             content += f"\n\n\n{chapter_title}\n{chapter_text}"
 
-            # 根据编码转换小说内容字符串为二进制数据
-            data = content.encode(encoding, errors='ignore')
-
-            f.write(data)
-
             # 打印进度信息
             print(f"已获取 {chapter_title}")
 
-    # 保存小说更新源文件
-    upd_file_path = os.path.join(data_folder, f"{title}.upd")
-    # 获取当前系统时间
-    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # 创建要写入元信息文件的内容
-    new_content = f"{current_time}\n{url}\n{chapter_id}\n{encoding}"
-    # 打开文件并完全覆盖内容
-    with open(upd_file_path, "w") as file:
-        file.write(new_content)
+        # 保存小说更新源文件
+        upd_file_path = os.path.join(data_folder, f"{title}.upd")
+        # 获取当前系统时间
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        # 创建要写入元信息文件的内容
+        new_content = f"{current_time}\n{url}\n{chapter_id}\n{encoding}"
+        # 打开文件并完全覆盖内容
+        with open(upd_file_path, "w") as file:
+            file.write(new_content)
 
-    # 打印完成信息
-    print(f"已保存{title}.txt")
+        # 根据编码转换小说内容字符串为二进制数据
+        data = content.encode(encoding, errors='ignore')
+
+        # 保存文件
+        with open(file_path, "wb") as f:
+            f.write(data)
+
+        # 打印完成信息
+        print(f"已保存{title}.txt")
+
+    except Exception as e:
+        # 捕获所有异常，及时保存文件
+        print(f"发生异常: \n{e}")
+        print("正在尝试保存文件...")
+        # 根据编码转换小说内容字符串为二进制数据
+        data = content.encode(encoding, errors='ignore')
+
+        # 保存文件
+        with open(file_path, "wb") as f:
+            f.write(data)
+
+        print("文件已保存！")
+        return
