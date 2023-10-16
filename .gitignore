@@ -1,4 +1,4 @@
 # 忽略IDE文件
 .idea/
 src/__pycache__/
-src/setup/__pycache__/
+src/list_edition/__pycache__/
