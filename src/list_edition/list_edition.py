@@ -74,6 +74,9 @@ def main():
     # 设置窗口大小
     root.geometry("600x400")
 
+    # 禁止窗口缩放
+    root.resizable(False, False)
+
     output_text = tk.Text(root, state='disabled')
     output_text.pack()
 
