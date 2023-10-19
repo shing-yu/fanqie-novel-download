@@ -29,6 +29,7 @@ import fanqie_update as fu
 import os
 import re
 import requests
+import platform
 from sys import exit
 from packaging import version
 
@@ -377,4 +378,8 @@ def compare_versions(version1, version2):
 
 
 def clear_screen():
-    os.system('cls')
+    # 根据系统类型执行不同的清屏指令
+    if platform.system() == 'Windows':
+        os.system('cls')  # Windows系统清屏命令
+    else:
+        os.system('clear')  # Unix/Linux/Mac系统清屏命令
