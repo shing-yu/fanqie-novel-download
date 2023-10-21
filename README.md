@@ -76,3 +76,5 @@ pip install -r requirements.txt
 如果您想要支持我的开发，欢迎赞赏，感谢您的支持！
 
 ![mm_reward_qrcode_1696844640908](https://xyy-1314663891.cos.ap-nanjing.myqcloud.com/202310091746639.png)
+
+![1697873019858](https://xyy-1314663891.cos.ap-nanjing.myqcloud.com/202310211527121.jpg)
