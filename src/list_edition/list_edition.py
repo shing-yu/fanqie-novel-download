@@ -19,7 +19,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 
 无论您对程序进行了任何操作，请始终保留此信息。
 """
-
+import multiprocessing
 import queue
 import threading
 import tkinter as tk
@@ -159,4 +159,5 @@ def main():
 
 
 if __name__ == "__main__":
+    multiprocessing.freeze_support()
     main()
