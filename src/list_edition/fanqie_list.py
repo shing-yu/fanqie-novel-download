@@ -150,7 +150,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
         output_queue.put(f"完成时间:{current_time}")
 
-    except Exception as e:
+    except BaseException as e:
         # 捕获所有异常，及时保存文件
         output_queue.put(f"发生异常: \n{e}")
         output_queue.put("正在尝试保存文件...")

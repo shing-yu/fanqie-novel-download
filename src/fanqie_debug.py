@@ -224,7 +224,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
         # 打印完成信息
         print(f"已保存{title}.txt")
-    except Exception as e:
+    except BaseException as e:
         # 捕获所有异常，及时保存文件
         print(f"发生异常: \n{e}")
         print("正在尝试保存文件...")
