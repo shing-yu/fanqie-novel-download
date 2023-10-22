@@ -340,26 +340,30 @@ def check_update(now_version):
     print("正在检查更新...")
     print(f"当前版本: v{now_version}")
 
-    # 发送GET请求以获取最新的发行版信息
-    response = requests.get(api_url)
+    try:
+        # 发送GET请求以获取最新的发行版信息
+        response = requests.get(api_url)
 
-    if response.status_code == 200:
-        release_info = response.json()
-        if "tag_name" in release_info:
-            latest_version = release_info["tag_name"]
-            print(f"最新的发行版是：v{latest_version}")
-            result = compare_versions(now_version, latest_version)
-            if result == -1:
-                print("检测到新版本\n更新可用！请到 https://gitee.com/xingyv1024/fanqie-novel-download/releases 下载最新版")
-                input("按Enter键继续...\n")
+        if response.status_code == 200:
+            release_info = response.json()
+            if "tag_name" in release_info:
+                latest_version = release_info["tag_name"]
+                print(f"最新的发行版是：v{latest_version}")
+                result = compare_versions(now_version, latest_version)
+                if result == -1:
+                    print("检测到新版本\n更新可用！请到 https://gitee.com/xingyv1024/fanqie-novel-download/releases 下载最新版")
+                    input("按Enter键继续...\n")
+                else:
+                    print("您正在使用最新版")
+
             else:
-                print("您正在使用最新版")
-
+                print("未获取到发行版信息。")
+                input("按Enter键继续...\n")
         else:
-            print("未获取到发行版信息。")
+            print(f"请求失败，状态码：{response.status_code}")
             input("按Enter键继续...\n")
-    else:
-        print(f"请求失败，状态码：{response.status_code}")
+    except BaseException:
+        print(":(  检查更新失败...")
         input("按Enter键继续...\n")
 
 
