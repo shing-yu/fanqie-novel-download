@@ -13,7 +13,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 本软件提供的是按"原样"提供的，没有任何明示或暗示的保证，包括但不限于适销性和特定用途的适用性。作者不对任何直接或间接损害或其他责任承担任何责任。在适用法律允许的最大范围内，作者明确放弃了所有明示或暗示的担保和条件。
 
 免责声明：
-该程序仅用于学习和研究Python网络爬虫和网页处理技术，不得用于任何非法活动或侵犯他人权益的行为。使用本程序所产生的一切法律责任和风险，均由用户自行承担，与作者和项目贡献者无关。作者不对因使用该程序而导致的任何损失或损害承担任何责任。
+该程序仅用于学习和研究Python网络爬虫和网页处理技术，不得用于任何非法活动或侵犯他人权益的行为。使用本程序所产生的一切法律责任和风险，均由用户自行承担，与作者和项目协作者、贡献者无关。作者不对因使用该程序而导致的任何损失或损害承担任何责任。
 
 请在使用本程序之前确保遵守相关法律法规和网站的使用政策，如有疑问，请咨询法律顾问。
 
@@ -26,6 +26,7 @@ import fanqie_debug as fd
 import fanqie_batch as fb
 import fanqie_chapter as fc
 import fanqie_update as fu
+# import fanqie_word as fw
 import os
 import re
 import requests
@@ -88,6 +89,11 @@ def start():
         print("6. 更新已下载的小说")
         print("7. 查看贡献（赞助）者名单")
         print("8. 不同意，退出程序")
+        # print("5. 同意并进入Docx模式(测试)")
+        # print("6. 查看更多")
+        # print("7. 更新已下载的小说")
+        # print("8. 查看贡献（赞助）者名单")
+        # print("9. 不同意，退出程序")
         choice = input("请输入您的选择（1/2/3/4/5/6/7）:（默认“1”）\n")
 
         # 通过用户选择，决定模式，给mode赋值
@@ -114,6 +120,12 @@ def start():
             clear_screen()
             print("您已进入Debug模式，将会给出更多选项和调试信息。\n")
             break
+        # elif choice == '5':
+        #     mode = 4
+        #     clear_screen()
+        #     print("您已进入Docx模式，将保留一定的小说格式。\n")
+        #     break
+        # elif choice == '6':
         elif choice == '5':
             clear_screen()
             print("""作者：星隅（xing-yv）
@@ -142,12 +154,14 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
 """)
             input("按Enter键返回...")
             clear_screen()
+        # elif choice == '7':
         elif choice == '6':
             clear_screen()
             print("您已进入更新模式")
             # 调用番茄更新函数
             return_info = fu.fanqie_update(ua, data_path)
             return
+        # elif choice == '8':
         elif choice == '7':
             clear_screen()
             contributors_url = 'https://gitee.com/xingyv1024/fanqie-novel-download/raw/main/CONTRIBUTORS.md'
@@ -164,6 +178,7 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
                 print(f"发生错误: {e}")
             input("按Enter键返回...")
             clear_screen()
+        # elif choice == '9':
         elif choice == '8':
             clear_screen()
             # 确认退出
@@ -329,6 +344,9 @@ def perform_user_mode_action():
     elif mode == 3:
         # 调用番茄分章模式函数
         return_info = fc.fanqie_c(page_url, txt_encoding, ua, type_path_num, start_chapter_id)
+    # elif mode == 4:
+    #     # 调用番茄word模式函数
+    #     return_info = fw.fanqie_w(page_url, txt_encoding, ua, type_path_num, data_path, start_chapter_id)
 
 
 # 检查更新
