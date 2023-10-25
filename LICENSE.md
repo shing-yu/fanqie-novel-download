@@ -630,8 +630,8 @@ attach them to the start of each source file to most effectively state
 the exclusion of warranty; and each file should have at least the
 "copyright" line and a pointer to where the full notice is found.
 
-        fanqie-novel-download: A tool for downloading novels from fanqienovel.com.
-        Copyright (C) 2023  xing-yv(shingyu)
+        <one line to give the program's name and a brief idea of what it does.>
+        Copyright (C) <year>  <name of author>
 
         This program is free software: you can redistribute it and/or modify
         it under the terms of the GNU General Public License as published by
@@ -652,7 +652,7 @@ mail.
 If the program does terminal interaction, make it output a short
 notice like this when it starts in an interactive mode:
 
-        "fanqie-novel-download" Project  Copyright (C) 2023  xing-yv(shingyu)
+        <program>  Copyright (C) <year>  <name of author>
         This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
         This is free software, and you are welcome to redistribute it
         under certain conditions; type `show c' for details.
