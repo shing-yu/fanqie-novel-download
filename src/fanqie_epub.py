@@ -188,6 +188,7 @@ def fanqie_epub(url, user_agent, path_choice, start_chapter_id):
 
                 # 打印进度信息
                 print(f"已获取 {chapter_title}")
+            # 加入书籍索引
             book.toc = book.toc + ((epub.Section(volume_title, href=first_chapter),
                                    toc_index,),)
     except BaseException as e:
