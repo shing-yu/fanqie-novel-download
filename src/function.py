@@ -340,7 +340,7 @@ def perform_user_mode_action():
         return_info = fc.fanqie_c(page_url, txt_encoding, ua, type_path_num, start_chapter_id)
     elif mode == 4:
         # 调用番茄epub电子书模式函数
-        return_info = fe.fanqie_epub(page_url, txt_encoding, ua, type_path_num, data_path, start_chapter_id)
+        return_info = fe.fanqie_epub(page_url, ua, type_path_num, start_chapter_id)
 
 
 # 检查更新

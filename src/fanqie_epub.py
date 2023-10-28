@@ -26,15 +26,13 @@ from bs4 import BeautifulSoup
 from ebooklib import epub
 from urllib.parse import urljoin
 import re
-import datetime
-import os
 import time
 import json
 import public as p
 
 
 # 定义正常模式用来下载番茄小说的函数
-def fanqie_epub(url, encoding, user_agent, path_choice, data_folder, start_chapter_id):
+def fanqie_epub(url, user_agent, path_choice, start_chapter_id):
     headers = {
         "User-Agent": user_agent
     }
@@ -56,7 +54,7 @@ def fanqie_epub(url, encoding, user_agent, path_choice, data_folder, start_chapt
     title = p.rename(title)
 
     # 获取小说信息
-    info = soup.find("div", class_="page-header-info").get_text()
+    # info = soup.find("div", class_="page-header-info").get_text()
 
     # 获取小说简介
     intro = soup.find("div", class_="page-abstract-content").get_text()
@@ -126,7 +124,7 @@ def fanqie_epub(url, encoding, user_agent, path_choice, data_folder, start_chapt
                     start_index = i
 
             # 定义目录索引
-            SY = ()
+            toc_index = ()
 
             chapter_id_name = 0
             # 遍历每个章节链接
@@ -175,7 +173,7 @@ def fanqie_epub(url, encoding, user_agent, path_choice, data_folder, start_chapt
                 text = epub.EpubHtml(title=chapter_title, file_name=f'chapter_{volume_id}_{chapter_id_name}.xhtml')
                 text.content = chapter_text
 
-                SY = SY + (text,)
+                toc_index = toc_index + (text,)
                 book.spine.append(text)
 
                 # 加入epub
@@ -184,7 +182,7 @@ def fanqie_epub(url, encoding, user_agent, path_choice, data_folder, start_chapt
                 # 打印进度信息
                 print(f"已获取 {chapter_title}")
             book.toc = book.toc + ((epub.Section(volume_title),
-                                   SY,),)
+                                   toc_index,),)
     except BaseException as e:
         # 捕获所有异常，及时保存文件
         print(f"发生异常: \n{e}")
@@ -229,8 +227,7 @@ def fanqie_epub(url, encoding, user_agent, path_choice, data_folder, start_chapt
         # 定义文件名
         file_path = title + ".epub"
 
-    epub.write_epub(file_path, book,{})
+    epub.write_epub(file_path, book, {})
 
     print("文件已保存！")
     return
-
