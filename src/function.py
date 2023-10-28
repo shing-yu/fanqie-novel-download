@@ -53,7 +53,6 @@ def print_usage():
     print("欢迎使用此程序！")
     print("""用户须知：
 此程序开源免费，如果您付费获取，那么您已经被骗了。
-
 本程序灵感及api来自于ibxff所作用户脚本，脚本链接请到更多中查看；
 为保护此程序不被用于不良商业行为，此程序使用GPLv3许可证，
 
@@ -90,7 +89,7 @@ def start():
         print("7. 更新已下载的小说")
         print("8. 查看贡献（赞助）者名单")
         print("9. 不同意，退出程序")
-        choice = input("请输入您的选择（1/2/3/4/5/6/7）:（默认“1”）\n")
+        choice = input("请输入您的选择（1/2/3/4/5/6/7/8/9）:（默认“1”）\n")
 
         # 通过用户选择，决定模式，给mode赋值
         if not choice:
@@ -268,7 +267,7 @@ def get_parameter(retry):
         else:
             print("输入无效，请重新输入。")
 
-    if mode !=4:
+    if mode != 4:
         print(f"你选择的保存编码是：{txt_encoding}")
 
     # 初始化“ua”
@@ -361,10 +360,12 @@ def check_update(now_version):
             release_info = response.json()
             if "tag_name" in release_info:
                 latest_version = release_info["tag_name"]
+                release_describe = release_info["body"]
                 print(f"最新的发行版是：v{latest_version}")
                 result = compare_versions(now_version, latest_version)
                 if result == -1:
                     print("检测到新版本\n更新可用！请到 https://gitee.com/xingyv1024/fanqie-novel-download/releases 下载最新版")
+                    print(f"更新内容:\n{release_describe}")
                     input("按Enter键继续...\n")
                 else:
                     print("您正在使用最新版")
