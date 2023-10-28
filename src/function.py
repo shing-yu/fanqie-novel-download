@@ -26,7 +26,7 @@ import fanqie_debug as fd
 import fanqie_batch as fb
 import fanqie_chapter as fc
 import fanqie_update as fu
-# import fanqie_word as fw
+import fanqie_epub as fe
 import os
 import re
 import requests
@@ -82,18 +82,14 @@ def start():
         print_usage()
         print("请选择以下操作：")
         print("1. 同意并进入正常模式")
-        print("2. 同意并进入自动批量模式(测试)")
+        print("2. 同意并进入自动批量模式")
         print("3. 同意并进入分章保存模式(测试)")
         print("4. 同意并进入Debug模式")
-        print("5. 查看更多")
-        print("6. 更新已下载的小说")
-        print("7. 查看贡献（赞助）者名单")
-        print("8. 不同意，退出程序")
-        # print("5. 同意并进入Docx模式(测试)")
-        # print("6. 查看更多")
-        # print("7. 更新已下载的小说")
-        # print("8. 查看贡献（赞助）者名单")
-        # print("9. 不同意，退出程序")
+        print("5. 同意并进入Epub电子书模式(测试)")
+        print("6. 查看更多")
+        print("7. 更新已下载的小说")
+        print("8. 查看贡献（赞助）者名单")
+        print("9. 不同意，退出程序")
         choice = input("请输入您的选择（1/2/3/4/5/6/7）:（默认“1”）\n")
 
         # 通过用户选择，决定模式，给mode赋值
@@ -120,13 +116,12 @@ def start():
             clear_screen()
             print("您已进入Debug模式，将会给出更多选项和调试信息。\n")
             break
-        # elif choice == '5':
-        #     mode = 4
-        #     clear_screen()
-        #     print("您已进入Docx模式，将保留一定的小说格式。\n")
-        #     break
-        # elif choice == '6':
         elif choice == '5':
+            mode = 4
+            clear_screen()
+            print("您已进入Epub模式，将保留一定的小说格式。\n")
+            break
+        elif choice == '6':
             clear_screen()
             print("""作者：星隅（xing-yv）
 版权所有（C）2023 星隅（xing-yv）
@@ -154,15 +149,13 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
 """)
             input("按Enter键返回...")
             clear_screen()
-        # elif choice == '7':
-        elif choice == '6':
+        elif choice == '7':
             clear_screen()
             print("您已进入更新模式")
             # 调用番茄更新函数
             return_info = fu.fanqie_update(ua, data_path)
             return
-        # elif choice == '8':
-        elif choice == '7':
+        elif choice == '8':
             clear_screen()
             contributors_url = 'https://gitee.com/xingyv1024/fanqie-novel-download/raw/main/CONTRIBUTORS.md'
             try:
@@ -178,8 +171,7 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
                 print(f"发生错误: {e}")
             input("按Enter键返回...")
             clear_screen()
-        # elif choice == '9':
-        elif choice == '8':
+        elif choice == '9':
             clear_screen()
             # 确认退出
             while True:
@@ -259,6 +251,8 @@ def get_parameter(retry):
 
     # 让用户选择保存文件的编码
     while True:
+        if mode == 4:
+            break
         txt_encoding_num = input("请输入保存文件所使用的编码(默认:1)：1 -> utf-8 | 2 -> gb2312\n")
 
         if not txt_encoding_num:
@@ -274,7 +268,8 @@ def get_parameter(retry):
         else:
             print("输入无效，请重新输入。")
 
-    print(f"你选择的保存编码是：{txt_encoding}")
+    if mode !=4:
+        print(f"你选择的保存编码是：{txt_encoding}")
 
     # 初始化“ua”
     ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
@@ -344,9 +339,9 @@ def perform_user_mode_action():
     elif mode == 3:
         # 调用番茄分章模式函数
         return_info = fc.fanqie_c(page_url, txt_encoding, ua, type_path_num, start_chapter_id)
-    # elif mode == 4:
-    #     # 调用番茄word模式函数
-    #     return_info = fw.fanqie_w(page_url, txt_encoding, ua, type_path_num, data_path, start_chapter_id)
+    elif mode == 4:
+        # 调用番茄epub电子书模式函数
+        return_info = fe.fanqie_epub(page_url, txt_encoding, ua, type_path_num, data_path, start_chapter_id)
 
 
 # 检查更新
