@@ -268,7 +268,7 @@ def get_parameter(retry):
         else:
             print("输入无效，请重新输入。")
 
-    if mode !=4:
+    if mode != 4:
         print(f"你选择的保存编码是：{txt_encoding}")
 
     # 初始化“ua”
