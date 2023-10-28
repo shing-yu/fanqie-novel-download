@@ -132,7 +132,7 @@ def fanqie_epub(url, encoding, user_agent, path_choice, data_folder, start_chapt
             # 遍历每个章节链接
             for chapter in chapters[start_index:]:
                 chapter_id_name += 1
-                time.sleep(0.1)
+                time.sleep(0.25)
                 # 获取章节标题
                 chapter_title = chapter.find("a").get_text()
 
