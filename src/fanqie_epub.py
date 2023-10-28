@@ -108,224 +108,129 @@ def fanqie_epub(url, encoding, user_agent, path_choice, data_folder, start_chapt
     book.toc = (epub.Link('intro.xhtml', '简介', 'intro'),)
     book.spine = ['nav', intro_e]
 
-    volume_id = 0
-    for div in nested_divs:
-        volume_id += 1
-        volume_div = div.find('div', class_='volume')
-        # 提取 "卷名" 文本
-        volume_title = volume_div.text
-        print(volume_title)
-        chapters = soup.find_all("div", class_="chapter-item")
-        start_index = None
-        for i, chapter in enumerate(chapters):
-            chapter_url_tmp = urljoin(url, chapter.find("a")["href"])
-            chapter_id_tmp = re.search(r"/(\d+)", chapter_url_tmp).group(1)
-            if chapter_id_tmp == start_chapter_id:  # 将 开始索引设置为用户的值
-                start_index = i
-        SY = ()
+    try:
+        volume_id = 0
+        # 遍历每个卷
+        for div in nested_divs:
+            volume_id += 1
+            volume_div = div.find('div', class_='volume')
+            # 提取 "卷名" 文本
+            volume_title = volume_div.text
+            print(volume_title)
+            chapters = soup.find_all("div", class_="chapter-item")
+            start_index = None
+            for i, chapter in enumerate(chapters):
+                chapter_url_tmp = urljoin(url, chapter.find("a")["href"])
+                chapter_id_tmp = re.search(r"/(\d+)", chapter_url_tmp).group(1)
+                if chapter_id_tmp == start_chapter_id:  # 将 开始索引设置为用户的值
+                    start_index = i
 
-        chapter_id_name = 0
-        # 遍历每个章节链接
-        for chapter in chapters[start_index:]:
-            chapter_id_name += 1
-            time.sleep(0.1)
-            # 获取章节标题
-            chapter_title = chapter.find("a").get_text()
+            # 定义目录索引
+            SY = ()
 
-            # 获取章节网址
-            chapter_url = urljoin(url, chapter.find("a")["href"])
+            chapter_id_name = 0
+            # 遍历每个章节链接
+            for chapter in chapters[start_index:]:
+                chapter_id_name += 1
+                time.sleep(0.1)
+                # 获取章节标题
+                chapter_title = chapter.find("a").get_text()
 
-            # 获取章节 id
-            chapter_id = re.search(r"/(\d+)", chapter_url).group(1)
+                # 获取章节网址
+                chapter_url = urljoin(url, chapter.find("a")["href"])
 
-            # 构造 api 网址
-            api_url = f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id={chapter_id}&item_id={chapter_id}"
+                # 获取章节 id
+                chapter_id = re.search(r"/(\d+)", chapter_url).group(1)
 
-            # 尝试获取章节内容
-            chapter_content = None
-            retry_count = 1
-            while retry_count < 4:  # 设置最大重试次数
-                # 获取 api 响应
-                api_response = requests.get(api_url, headers=headers)
+                # 构造 api 网址
+                api_url = f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id={chapter_id}&item_id={chapter_id}"
 
-                # 解析 api 响应为 json 数据
-                api_data = api_response.json()
+                # 尝试获取章节内容
+                chapter_content = None
+                retry_count = 1
+                while retry_count < 4:  # 设置最大重试次数
+                    # 获取 api 响应
+                    api_response = requests.get(api_url, headers=headers)
 
-                if "data" in api_data and "content" in api_data["data"]:
-                    chapter_content = api_data["data"]["content"]
-                    break  # 如果成功获取章节内容，跳出重试循环
-                else:
-                    if retry_count == 1:
-                        print(f"{chapter_title} 获取失败，正在尝试重试...")
-                    print(f"第 ({retry_count}/3) 次重试获取章节内容")
-                    retry_count += 1  # 否则重试
+                    # 解析 api 响应为 json 数据
+                    api_data = api_response.json()
 
-            if retry_count == 4:
-                print(f"无法获取章节内容: {chapter_title}，跳过。")
-                continue  # 重试次数过多后，跳过当前章节
+                    if "data" in api_data and "content" in api_data["data"]:
+                        chapter_content = api_data["data"]["content"]
+                        break  # 如果成功获取章节内容，跳出重试循环
+                    else:
+                        if retry_count == 1:
+                            print(f"{chapter_title} 获取失败，正在尝试重试...")
+                        print(f"第 ({retry_count}/3) 次重试获取章节内容")
+                        retry_count += 1  # 否则重试
 
-            # 提取文章标签中的文本
-            chapter_text = re.search(r"<article>([\s\S]*?)</article>", chapter_content).group(1)
+                if retry_count == 4:
+                    print(f"无法获取章节内容: {chapter_title}，跳过。")
+                    continue  # 重试次数过多后，跳过当前章节
 
-            # 在小说内容字符串中添加章节标题和内容
-            text = epub.EpubHtml(title=chapter_title, file_name=f'chapter_{volume_id}_{chapter_id_name}.xhtml')
-            text.content = chapter_text
+                # 提取文章标签中的文本
+                chapter_text = re.search(r"<article>([\s\S]*?)</article>", chapter_content).group(1)
 
-            SY = SY + (text,)
-            book.spine.append(text)
+                # 在小说内容字符串中添加章节标题和内容
+                text = epub.EpubHtml(title=chapter_title, file_name=f'chapter_{volume_id}_{chapter_id_name}.xhtml')
+                text.content = chapter_text
 
-            # 加入epub
-            book.add_item(text)
+                SY = SY + (text,)
+                book.spine.append(text)
 
-            # 打印进度信息
-            print(f"已获取 {chapter_title}")
-        book.toc = book.toc + ((epub.Section(volume_title),
-                               SY,),)
+                # 加入epub
+                book.add_item(text)
+
+                # 打印进度信息
+                print(f"已获取 {chapter_title}")
+            book.toc = book.toc + ((epub.Section(volume_title),
+                                   SY,),)
+    except BaseException as e:
+        # 捕获所有异常，及时保存文件
+        print(f"发生异常: \n{e}")
+        return
 
     # 添加 navigation 文件
     book.add_item(epub.EpubNcx())
     book.add_item(epub.EpubNav())
 
-    epub.write_epub(f'{title}.epub', book,{})
+    file_path = None
+    # 根据main.py中用户选择的路径方式，选择自定义路径或者默认
+    if path_choice == 1:
+        import tkinter as tk
+        from tkinter import filedialog
+        # 创建一个Tkinter窗口，但不显示它
+        root = tk.Tk()
+        root.withdraw()
 
-    #
-    # # 获取所有章节链接
-    # chapters = soup.find_all("div", class_="chapter-item")
-    #
-    # # 检查用户是否指定起始章节
-    # start_index = 0
-    # if start_chapter_id == '0':
-    #     pass
-    # else:
-    #     # 找到起始章节的索引
-    #     for i, chapter in enumerate(chapters):
-    #         chapter_url_tmp = urljoin(url, chapter.find("a")["href"])
-    #         chapter_id_tmp = re.search(r"/(\d+)", chapter_url_tmp).group(1)
-    #         if chapter_id_tmp == start_chapter_id:  # 将 开始索引设置为用户的值
-    #             start_index = i
-    # file_path = None
-    # # 根据main.py中用户选择的路径方式，选择自定义路径或者默认
-    # if path_choice == 1:
-    #     import tkinter as tk
-    #     from tkinter import filedialog
-    #     # 创建一个Tkinter窗口，但不显示它
-    #     root = tk.Tk()
-    #     root.withdraw()
-    #
-    #     print("您选择了自定义保存路径，请您在弹出窗口中选择路径。")
-    #
-    #     # 设置默认文件名和扩展名
-    #     default_extension = ".epub"
-    #     default_filename = f"{title}"
-    #
-    #     while True:
-    #
-    #         # 弹出文件对话框以选择保存位置和文件名
-    #         file_path = filedialog.asksaveasfilename(
-    #             defaultextension=default_extension,
-    #             filetypes=[("Text Files", "*" + default_extension)],
-    #             initialfile=default_filename
-    #         )
-    #
-    #         # 检查用户是否取消了对话框
-    #         if not file_path:
-    #             # 用户取消了对话框，提示重新选择
-    #             print("您没有选择路径，请重新选择！")
-    #             continue
-    #         break
-    #
-    # elif path_choice == 0:
-    #     # 定义文件名
-    #     file_path = title + ".epub"
-    #
-    # chapter_id = None
-    #
-    # try:
-    #     # 遍历每个章节链接
-    #     for chapter in chapters[start_index:]:
-    #         time.sleep(0.25)
-    #         # 获取章节标题
-    #         chapter_title = chapter.find("a").get_text()
-    #
-    #         # 获取章节网址
-    #         chapter_url = urljoin(url, chapter.find("a")["href"])
-    #
-    #         # 获取章节 id
-    #         chapter_id = re.search(r"/(\d+)", chapter_url).group(1)
-    #
-    #         # 构造 api 网址
-    #         api_url = f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id={chapter_id}&item_id={chapter_id}"
-    #
-    #         # 尝试获取章节内容
-    #         chapter_content = None
-    #         retry_count = 1
-    #         while retry_count < 4:  # 设置最大重试次数
-    #             # 获取 api 响应
-    #             api_response = requests.get(api_url, headers=headers)
-    #
-    #             # 解析 api 响应为 json 数据
-    #             api_data = api_response.json()
-    #
-    #             if "data" in api_data and "content" in api_data["data"]:
-    #                 chapter_content = api_data["data"]["content"]
-    #                 break  # 如果成功获取章节内容，跳出重试循环
-    #             else:
-    #                 if retry_count == 1:
-    #                     print(f"{chapter_title} 获取失败，正在尝试重试...")
-    #                 print(f"第 ({retry_count}/3) 次重试获取章节内容")
-    #                 retry_count += 1  # 否则重试
-    #
-    #         if retry_count == 4:
-    #             print(f"无法获取章节内容: {chapter_title}，跳过。")
-    #             continue  # 重试次数过多后，跳过当前章节
-    #
-    #         # 提取文章标签中的文本
-    #         chapter_text = re.search(r"<article>([\s\S]*?)</article>", chapter_content).group(1)
-    #
-    #         # 将 <p> 标签替换为换行符
-    #         chapter_text = re.sub(r"<p>", "\n", chapter_text)
-    #
-    #         # 去除其他 html 标签
-    #         chapter_text = re.sub(r"</?\w+>", "", chapter_text)
-    #
-    #         chapter_text = p.fix_publisher(chapter_text)
-    #
-    #         # 在小说内容字符串中添加章节标题和内容
-    #         content += f"\n\n\n{chapter_title}\n{chapter_text}"
-    #
-    #         # 打印进度信息
-    #         print(f"已获取 {chapter_title}")
-    #
-    #     # 保存小说更新源文件
-    #     upd_file_path = os.path.join(data_folder, f"{title}.upd")
-    #     # 获取当前系统时间
-    #     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    #     # 创建要写入元信息文件的内容
-    #     new_content = f"{current_time}\n{url}\n{chapter_id}\n{encoding}"
-    #     # 打开文件并完全覆盖内容
-    #     with open(upd_file_path, "w") as file:
-    #         file.write(new_content)
-    #
-    #     # 根据编码转换小说内容字符串为二进制数据
-    #     data = content.encode(encoding, errors='ignore')
-    #
-    #     # 保存文件
-    #     with open(file_path, "wb") as f:
-    #         f.write(data)
-    #
-    #     # 打印完成信息
-    #     print(f"已保存{title}.txt")
-    #
-    # except BaseException as e:
-    #     # 捕获所有异常，及时保存文件
-    #     print(f"发生异常: \n{e}")
-    #     print("正在尝试保存文件...")
-    #     # 根据编码转换小说内容字符串为二进制数据
-    #     data = content.encode(encoding, errors='ignore')
-    #
-    #     # 保存文件
-    #     with open(file_path, "wb") as f:
-    #         f.write(data)
-    #
-    #     print("文件已保存！")
-    #     return
+        print("您选择了自定义保存路径，请您在弹出窗口中选择路径。")
+
+        # 设置默认文件名和扩展名
+        default_extension = ".epub"
+        default_filename = f"{title}"
+
+        while True:
+
+            # 弹出文件对话框以选择保存位置和文件名
+            file_path = filedialog.asksaveasfilename(
+                defaultextension=default_extension,
+                filetypes=[("Text Files", "*" + default_extension)],
+                initialfile=default_filename
+            )
+
+            # 检查用户是否取消了对话框
+            if not file_path:
+                # 用户取消了对话框，提示重新选择
+                print("您没有选择路径，请重新选择！")
+                continue
+            break
+
+    elif path_choice == 0:
+        # 定义文件名
+        file_path = title + ".epub"
+
+    epub.write_epub(file_path, book,{})
+
+    print("文件已保存！")
+    return
+
