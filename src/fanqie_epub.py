@@ -117,7 +117,7 @@ def fanqie_epub(url, encoding, user_agent, path_choice, data_folder, start_chapt
             # 提取 "卷名" 文本
             volume_title = volume_div.text
             print(volume_title)
-            chapters = soup.find_all("div", class_="chapter-item")
+            chapters = div.find_all("div", class_="chapter-item")
             start_index = None
             for i, chapter in enumerate(chapters):
                 chapter_url_tmp = urljoin(url, chapter.find("a")["href"])
