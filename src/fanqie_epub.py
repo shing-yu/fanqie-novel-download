@@ -110,6 +110,7 @@ def fanqie_epub(url, user_agent, path_choice, start_chapter_id):
         volume_id = 0
         # 遍历每个卷
         for div in nested_divs:
+            first_chapter = None
             volume_id += 1
             volume_div = div.find('div', class_='volume')
             # 提取 "卷名" 文本
@@ -141,7 +142,9 @@ def fanqie_epub(url, user_agent, path_choice, start_chapter_id):
                 chapter_id = re.search(r"/(\d+)", chapter_url).group(1)
 
                 # 构造 api 网址
-                api_url = f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id={chapter_id}&item_id={chapter_id}"
+                api_url = (f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&"
+                           f"parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id="
+                           f"{chapter_id}&item_id={chapter_id}")
 
                 # 尝试获取章节内容
                 chapter_content = None
@@ -176,12 +179,16 @@ def fanqie_epub(url, user_agent, path_choice, start_chapter_id):
                 toc_index = toc_index + (text,)
                 book.spine.append(text)
 
+                # 寻找第一章
+                if chapter_id_name == 1:
+                    first_chapter = f'chapter_{volume_id}_{chapter_id_name}.xhtml'
+
                 # 加入epub
                 book.add_item(text)
 
                 # 打印进度信息
                 print(f"已获取 {chapter_title}")
-            book.toc = book.toc + ((epub.Section(volume_title),
+            book.toc = book.toc + ((epub.Section(volume_title, href=first_chapter),
                                    toc_index,),)
     except BaseException as e:
         # 捕获所有异常，及时保存文件
