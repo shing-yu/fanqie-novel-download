@@ -162,13 +162,13 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
             # 提取文章标签中的文本
             chapter_text = re.search(r"<article>([\s\S]*?)</article>", chapter_content).group(1)
 
-            # # 将 <p> 标签替换为换行符
-            # chapter_text = re.sub(r"<p>", "\n", chapter_text)
-            #
-            # # 去除其他 html 标签
-            # chapter_text = re.sub(r"</?\w+>", "", chapter_text)
-            #
-            # chapter_text = p.fix_publisher(chapter_text)
+            # 将 <p> 标签替换为换行符
+            chapter_text = re.sub(r"<p>", "\n", chapter_text)
+
+            # 去除其他 html 标签
+            chapter_text = re.sub(r"</?\w+>", "", chapter_text)
+
+            chapter_text = p.fix_publisher(chapter_text)
 
             # 在小说内容字符串中添加章节标题和内容
             content += f"\n\n\n{chapter_title}\n{chapter_text}"

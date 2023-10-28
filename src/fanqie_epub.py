@@ -19,6 +19,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 
 无论您对程序进行了任何操作，请始终保留此信息。
 """
+import os
 
 # 导入必要的模块
 import requests
@@ -82,6 +83,9 @@ def fanqie_epub(url, user_agent, path_choice, start_chapter_id):
 
     # 创建一个封面图片
     book.set_cover("image.jpg", open('cover.jpg', 'rb').read())
+
+    # 删除封面
+    os.remove('cover.jpg')
 
     # 设置书的元数据
     book.set_title(title)
