@@ -82,7 +82,7 @@ def start():
         print_usage()
         print("请选择以下操作：")
         print("1. 同意并进入正常模式")
-        print("2. 同意并进入自动批量模式(测试)")
+        print("2. 同意并进入自动批量模式")
         print("3. 同意并进入分章保存模式(测试)")
         print("4. 同意并进入Debug模式")
         print("5. 同意并进入Epub电子书模式(测试)")
