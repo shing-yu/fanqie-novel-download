@@ -26,7 +26,7 @@ import fanqie_debug as fd
 import fanqie_batch as fb
 import fanqie_chapter as fc
 import fanqie_update as fu
-# import fanqie_word as fw
+import fanqie_epub as fe
 import os
 import re
 import requests
@@ -89,11 +89,7 @@ def start():
         print("6. 更新已下载的小说")
         print("7. 查看贡献（赞助）者名单")
         print("8. 不同意，退出程序")
-        # print("5. 同意并进入Docx模式(测试)")
-        # print("6. 查看更多")
-        # print("7. 更新已下载的小说")
-        # print("8. 查看贡献（赞助）者名单")
-        # print("9. 不同意，退出程序")
+        print("9. 同意并进入Docx模式(测试)")
         choice = input("请输入您的选择（1/2/3/4/5/6/7）:（默认“1”）\n")
 
         # 通过用户选择，决定模式，给mode赋值
@@ -117,6 +113,11 @@ def start():
             break
         elif choice == '4':
             mode = 1
+            clear_screen()
+            print("您已进入Debug模式，将会给出更多选项和调试信息。\n")
+            break
+        elif choice == '9':
+            mode = 4
             clear_screen()
             print("您已进入Debug模式，将会给出更多选项和调试信息。\n")
             break
@@ -344,9 +345,9 @@ def perform_user_mode_action():
     elif mode == 3:
         # 调用番茄分章模式函数
         return_info = fc.fanqie_c(page_url, txt_encoding, ua, type_path_num, start_chapter_id)
-    # elif mode == 4:
-    #     # 调用番茄word模式函数
-    #     return_info = fw.fanqie_w(page_url, txt_encoding, ua, type_path_num, data_path, start_chapter_id)
+    elif mode == 4:
+        # 调用番茄word模式函数
+        return_info = fe.fanqie_epub(page_url, txt_encoding, ua, type_path_num, data_path, start_chapter_id)
 
 
 # 检查更新
