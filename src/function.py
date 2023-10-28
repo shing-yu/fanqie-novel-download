@@ -361,10 +361,12 @@ def check_update(now_version):
             release_info = response.json()
             if "tag_name" in release_info:
                 latest_version = release_info["tag_name"]
+                release_describe = release_info["body"]
                 print(f"最新的发行版是：v{latest_version}")
                 result = compare_versions(now_version, latest_version)
                 if result == -1:
                     print("检测到新版本\n更新可用！请到 https://gitee.com/xingyv1024/fanqie-novel-download/releases 下载最新版")
+                    print(f"更新内容:\n{release_describe}")
                     input("按Enter键继续...\n")
                 else:
                     print("您正在使用最新版")
