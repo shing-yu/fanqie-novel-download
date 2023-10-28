@@ -23,7 +23,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 import function as f
 from sys import exit
 
-version = "2.5"
+version = "2.6"
 
 # 检查更新
 f.check_update(version)
