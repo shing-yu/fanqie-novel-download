@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>API调用表单</h2>
+
+<form id="apiForm">
+  <label for="url">URL:</label><br>
+  <input type="text" id="url" name="url" value="http://localhost:5000/api"><br>
+  <label for="class">类别:</label><br>
+  <select id="class" name="class">
+    <option value="add">添加</option>
+    <option value="search">查询</option>
+    <!-- 在这里添加更多的选项 -->
+  </select><br>
+  <label for="id">ID:</label><br>
+  <input type="text" id="id" name="id"><br>
+  <input type="submit" value="提交">
+</form>
+
+<p id="result"></p>
+
+<script>
+document.getElementById("apiForm").addEventListener("submit", function(event){
+  event.preventDefault()
+  
+  var url = document.getElementById('url').value;
+  
+  var data = {
+    class: document.getElementById('class').value,
+    id: document.getElementById('id').value
+  };
+  
+  fetch(url, {
+    method: 'POST', 
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data) 
+  })
+  .then(response => response.json())
+  .then(data => {
+    document.getElementById('result').textContent = JSON.stringify(data);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+});
+</script>
+
+</body>
+</html>
