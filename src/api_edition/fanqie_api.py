@@ -80,7 +80,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
     try:
         # 遍历每个章节链接
         for chapter in chapters:
-            time.sleep(1)
+            time.sleep(0.5)
             # 获取章节标题
             chapter_title = chapter.find("a").get_text()
 
