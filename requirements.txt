@@ -2,4 +2,7 @@ requests
 beautifulsoup4
 packaging
 ebooklib
+
+# api版本
 flask
+flask_cors
