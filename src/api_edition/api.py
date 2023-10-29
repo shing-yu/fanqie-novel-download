@@ -84,7 +84,7 @@ def api():
 
     # 如果'class'字段的值为'add'，则尝试将URL添加到队列中，并返回相应的信息和位置
     if data['class'] == 'add':
-        url = 'http://example.com/page/' + data['id']
+        url = 'https://fanqienovel.com/page/' + data['id']
         message = spider.add_url(url)
         position = list(spider.url_queue.queue).index(url) + 1 if url in list(spider.url_queue.queue) else None
         status = spider.task_status.get(url, None)
@@ -92,7 +92,7 @@ def api():
 
     # 如果'class'字段的值为'search'，则检查URL是否在队列中，并返回相应的信息和位置或不存在的信息
     elif data['class'] == 'search':
-        url = 'http://example.com/page/' + data['id']
+        url = 'https://fanqienovel.com/page/' + data['id']
         position = list(spider.url_queue.queue).index(url) + 1 if url in list(spider.url_queue.queue) else None
         status = spider.task_status.get(url, None)
         return jsonify({'exists': status is not None, 'position': position, 'status': status})
