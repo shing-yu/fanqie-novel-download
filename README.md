@@ -35,7 +35,7 @@
 您可以使用pip安装所需的库：
 
 ```
-pip install requests beautifulsoup4 packaging ebooklib
+pip install requests beautifulsoup4 packaging ebooklib flask
 ```
 
 或
