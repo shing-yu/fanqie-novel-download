@@ -10,6 +10,7 @@
 - 从番茄网站下载小说。
 - 允许用户在保存文件时选择UTF-8和GB2312编码之间的编码格式。
 - 用户友好的命令行界面，具有提示和选项。
+- 支持保存txt、epub两种格式
 
 ## 使用方法
 
@@ -27,14 +28,14 @@
 在封装&修改此脚本之前，请确保已安装以下内容：
 
 - Python 3.x
-- 所需的Python库：requests、beautifulsoup4、packaging
+- 所需的Python库：requests、beautifulsoup4、packaging、ebooklib
 
 您可以从从src目录获取程序源代码
 
 您可以使用pip安装所需的库：
 
 ```
-pip install requests beautifulsoup4 packaging
+pip install requests beautifulsoup4 packaging ebooklib
 ```
 
 或
