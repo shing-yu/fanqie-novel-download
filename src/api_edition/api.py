@@ -27,8 +27,10 @@ from multiprocessing import Process
 import time
 import fanqie_api as fa
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 
 # 定义爬虫类
