@@ -32,13 +32,13 @@
 
 您可以从从src目录获取程序源代码
 
-您可以使用pip安装所需的库：
+您可以使用pip安装所需的库（普通版本）：
 
 ```
-pip install requests beautifulsoup4 packaging ebooklib flask
+pip install requests beautifulsoup4 packaging ebooklib
 ```
 
-或
+或（全部版本）
 
 ```
 pip install -r requirements.txt
