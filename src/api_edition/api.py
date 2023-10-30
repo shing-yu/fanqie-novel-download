@@ -46,6 +46,7 @@ class Spider:
     @staticmethod
     def crawl(url):
         try:
+            print(f"Crawling for URL: {url}")
             with Manager() as manager:
                 return_dict = manager.dict()
                 # 创建一个新的进程来运行爬虫函数
