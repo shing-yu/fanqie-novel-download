@@ -38,6 +38,9 @@ def fanqie_l(url, encoding, return_dict):
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
         }
 
+        # 提取书籍ID
+        book_id = re.search(r'page/(\d+)', url)
+
         # 获取网页源码
         response = requests.get(url, headers=headers)
         html = response.text
@@ -72,7 +75,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         chapters = soup.find_all("div", class_="chapter-item")
 
         # 定义文件名
-        file_path = path.join('output', f'{title}.txt')
+        file_path = path.join('output', f'{title}_{book_id}.txt')
 
         os.makedirs("output", exist_ok=True)
 
