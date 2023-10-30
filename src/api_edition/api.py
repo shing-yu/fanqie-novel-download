@@ -23,7 +23,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 import multiprocessing
 import queue
 import threading
-from multiprocessing import Process
+from multiprocessing import Process, Manager
 import time
 import fanqie_api as fa
 from flask import Flask, request, jsonify
@@ -46,11 +46,17 @@ class Spider:
     @staticmethod
     def crawl(url):
         try:
-            # 创建一个新的进程来运行爬虫函数
-            p = Process(target=fa.fanqie_l, args=(url, 'utf-8'))
-            p.start()
-            time.sleep(2)
-            return True
+            with Manager() as manager:
+                return_dict = manager.dict()
+                # 创建一个新的进程来运行爬虫函数
+                p = Process(target=fa.fanqie_l, args=(url, 'utf-8', return_dict))
+                p.start()
+                p.join()  # 等待进程结束
+                if 'error' in return_dict:
+                    print(f"Error: {return_dict['error']}")
+                    return False
+                else:
+                    return True
         except Exception as e:
             print(f"Error: {e}")
             return False
@@ -61,6 +67,7 @@ class Spider:
             try:
                 # 从URL队列中获取URL
                 url = self.url_queue.get(timeout=1)
+                self.task_status[url] = "进行中"
                 # 调用爬虫函数爬取URL，如果出错则标记为失败并跳过这个任务进行下一个
                 if Spider.crawl(url):
                     self.task_status[url] = "已完成"
