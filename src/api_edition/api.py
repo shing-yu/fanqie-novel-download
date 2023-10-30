@@ -91,9 +91,9 @@ class Spider:
             if url not in self.task_status or self.task_status[url] == "失败":
                 self.url_queue.put(url)
                 self.task_status[url] = "等待中"
-                return "URL已添加到下载队列"
+                return "此书籍已添加到下载队列"
             else:
-                return "URL已存在"
+                return "此书籍已存在"
 
     def stop(self):
         # 设置运行状态为False以停止工作线程
