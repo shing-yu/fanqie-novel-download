@@ -33,7 +33,7 @@ import public as p
 
 
 # 定义正常模式用来下载番茄小说的函数
-def fanqie_epub(url, user_agent, path_choice, start_chapter_id):
+def fanqie_epub(url, user_agent, path_choice):
     headers = {
         "User-Agent": user_agent
     }
@@ -125,7 +125,7 @@ def fanqie_epub(url, user_agent, path_choice, start_chapter_id):
             for i, chapter in enumerate(chapters):
                 chapter_url_tmp = urljoin(url, chapter.find("a")["href"])
                 chapter_id_tmp = re.search(r"/(\d+)", chapter_url_tmp).group(1)
-                if chapter_id_tmp == start_chapter_id:  # 将 开始索引设置为用户的值
+                if chapter_id_tmp == '0':  # epub模式不支持起始章节
                     start_index = i
 
             # 定义目录索引

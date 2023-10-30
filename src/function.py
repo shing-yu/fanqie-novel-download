@@ -103,7 +103,7 @@ def start():
         elif choice == '2':
             mode = 2
             clear_screen()
-            print("您已进入自动批量下载模式(测试);")
+            print("您已进入自动批量下载模式:")
             break
         elif choice == '3':
             mode = 3
@@ -239,7 +239,8 @@ def get_parameter(retry):
             # 当用户按下Ctrl+C是，可以自定义起始章节id
             except KeyboardInterrupt:
                 while True:
-                    start_chapter_id = input("您已按下Ctrl+C，请输入起始章节的id\n(输入help以查看帮助，再次按下Ctrl+C以强制关闭程序):\n")
+                    start_chapter_id = input("您已按下Ctrl+C，请输入起始章节的id\n(输入help以查看帮助，"
+                                             "epub电子书模式不支持起始章节，再次按下Ctrl+C以强制关闭程序):\n")
                     if start_chapter_id == 'help':
                         print("\n打开小说章节阅读界面，上方链接中的数字即为章节id\n请输入您想要开始下载的章节的id\n")
                         continue
@@ -340,7 +341,7 @@ def perform_user_mode_action():
         return_info = fc.fanqie_c(page_url, txt_encoding, ua, type_path_num, start_chapter_id)
     elif mode == 4:
         # 调用番茄epub电子书模式函数
-        return_info = fe.fanqie_epub(page_url, ua, type_path_num, start_chapter_id)
+        return_info = fe.fanqie_epub(page_url, ua, type_path_num)
 
 
 # 检查更新
