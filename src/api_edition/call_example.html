@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
+<head>
+<meta charset="UTF-8">
+</head>
 <body>
 
-<h2>API调用表单</h2>
+<h2>API调用示例</h2>
 
 <form id="apiForm">
-  <label for="url">URL:</label><br>
+  <label for="url">API URL:</label><br>
   <input type="text" id="url" name="url" value="http://localhost:5000/api"><br>
   <label for="class">类别:</label><br>
   <select id="class" name="class">
@@ -13,40 +16,83 @@
     <option value="search">查询</option>
     <!-- 在这里添加更多的选项 -->
   </select><br>
-  <label for="id">ID:</label><br>
+  <label for="id">书籍ID:</label><br>
   <input type="text" id="id" name="id"><br>
   <input type="submit" value="提交">
 </form>
 
 <p id="result"></p>
+<p>此页面是番茄小说下载项目API模式的调用示例</p>
+<p>项目地址：https://github.com/xing-yv/fanqie-novel-download<br>Gitee：https://gitee.com/xingyv1024/fanqie-novel-download</p>
+<p>使用教程：<br>1.在API URL里填入你获取或自建的API地址<br>2.选择是添加下载列表还是查询下载状态<br>3.在书籍ID里填入你要下载或查询的书籍的ID（如何获取见下文）<br>4.点击“提交”，等待API服务告诉你是否添加至下载列表或者查询到的信息<br>5.获取下载的书籍（见下文）</p>
+
+<div>
+<p>如何获取书籍ID：<br>
+电脑端：<br>在书籍目录页复制网址<br>网址中“/page/”后的一串数字即为书籍ID（问号前）<br>
+手机端：<br>分享书籍并复制链接<br>链接中“book_id=”后的一串数字即为书籍ID</p>
+</div>
+
+<p>如何获取下载好的文件：<br>如果您使用别人提供的API：请向提供者咨询<br>如果您自建API，请到API程序文件夹下output文件夹中寻找</p>
+
+<footer>
+  <p>&copy; 2023 星隅 (xing-yv, shingyu). 版权所有。</p>
+
+</footer>
 
 <script>
-document.getElementById("apiForm").addEventListener("submit", function(event){
-  event.preventDefault()
-  
-  var url = document.getElementById('url').value;
-  
-  var data = {
-    class: document.getElementById('class').value,
-    id: document.getElementById('id').value
-  };
-  
-  fetch(url, {
-    method: 'POST', 
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data) 
-  })
-  .then(response => response.json())
-  .then(data => {
-    document.getElementById('result').textContent = JSON.stringify(data);
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
-});
-</script>
+  document.getElementById("apiForm").addEventListener("submit", function(event){
+   event.preventDefault()
+
+   var url = document.getElementById('url').value;
+
+   var data = {
+     class: document.getElementById('class').value,
+     id: document.getElementById('id').value
+   };
+
+   var requestClass = data.class; // 存储请求中的class字段
+
+   console.log("发送的数据：", data);
+
+   fetch(url, {
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json'
+     },
+     body: JSON.stringify(data)
+   })
+   .then(response => {
+     console.log("收到的响应：", response);
+     return response.json();
+   })
+   .then(data => {
+     console.log("解析后的数据：", data);
+
+     var resultText = '';
+     if (data.error) {
+        resultText = '错误：' + data.error;
+      } else if (requestClass == 'add') { // 使用存储的requestClass变量
+        resultText = '消息：' + data.message + '<br>' +
+                      (data.position ? ('位置：' + data.position + '<br>') : '') +
+                      (data.status ? ('状态：' + data.status) : '');
+      } else if (requestClass == 'search') { // 使用存储的requestClass变量
+        resultText = '存在：' + (data.exists ? '是' : '否') + '<br>' +
+                      (data.position ? ('位置：' + data.position + '<br>') : '') +
+                      (data.status ? ('状态：' + data.status) : '');
+      }
+
+
+     console.log("显示的结果：", resultText);
+
+     document.getElementById('result').innerHTML = resultText;
+   })
+   .catch((error) => {
+     console.error('Error:', error);
+   });
+ });
+
+  </script>
+
 
 </body>
 </html>

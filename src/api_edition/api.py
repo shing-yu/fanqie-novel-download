@@ -23,7 +23,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 import multiprocessing
 import queue
 import threading
-from multiprocessing import Process
+from multiprocessing import Process, Manager
 import time
 import fanqie_api as fa
 from flask import Flask, request, jsonify
@@ -46,11 +46,18 @@ class Spider:
     @staticmethod
     def crawl(url):
         try:
-            # 创建一个新的进程来运行爬虫函数
-            p = Process(target=fa.fanqie_l, args=(url, 'utf-8'))
-            p.start()
-            time.sleep(2)
-            return True
+            print(f"Crawling for URL: {url}")
+            with Manager() as manager:
+                return_dict = manager.dict()
+                # 创建一个新的进程来运行爬虫函数
+                p = Process(target=fa.fanqie_l, args=(url, 'utf-8', return_dict))
+                p.start()
+                p.join()  # 等待进程结束
+                if 'error' in return_dict:
+                    print(f"Error: {return_dict['error']}")
+                    return False
+                else:
+                    return True
         except Exception as e:
             print(f"Error: {e}")
             return False
@@ -61,6 +68,7 @@ class Spider:
             try:
                 # 从URL队列中获取URL
                 url = self.url_queue.get(timeout=1)
+                self.task_status[url] = "进行中"
                 # 调用爬虫函数爬取URL，如果出错则标记为失败并跳过这个任务进行下一个
                 if Spider.crawl(url):
                     self.task_status[url] = "已完成"
@@ -84,9 +92,9 @@ class Spider:
             if url not in self.task_status or self.task_status[url] == "失败":
                 self.url_queue.put(url)
                 self.task_status[url] = "等待中"
-                return "URL已添加到下载队列"
+                return "此书籍已添加到下载队列"
             else:
-                return "URL已存在"
+                return "此书籍已存在"
 
     def stop(self):
         # 设置运行状态为False以停止工作线程
@@ -102,9 +110,9 @@ spider.start()
 def api():
     # 获取请求数据
     data = request.get_json()
-    # 检查请求数据是否包含'class'和'id'字段，如果没有则返回400错误
+    # 检查请求数据是否包含'class'和'id'字段，如果没有则返回418错误
     if 'class' not in data or 'id' not in data:
-        return jsonify({'error': 'Bad Request'}), 400
+        return jsonify({'error': 'I\'m a teapot' }), 418
 
     # 如果'class'字段的值为'add'，则尝试将URL添加到队列中，并返回相应的信息和位置
     if data['class'] == 'add':
@@ -122,7 +130,7 @@ def api():
         return jsonify({'exists': status is not None, 'position': position, 'status': status})
 
     else:
-        return jsonify({'error': 'Bad Request'}), 400
+        return jsonify({'error': 'I\'m a teapot'}), 418
 
 
 if __name__ == "__main__":
