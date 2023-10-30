@@ -39,7 +39,7 @@ def fanqie_l(url, encoding, return_dict):
         }
 
         # 提取书籍ID
-        book_id = re.search(r'page/(\d+)', url)
+        book_id = re.search(r'page/(\d+)', url).group(1)
 
         # 获取网页源码
         response = requests.get(url, headers=headers)
