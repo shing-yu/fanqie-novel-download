@@ -102,9 +102,9 @@ spider.start()
 def api():
     # 获取请求数据
     data = request.get_json()
-    # 检查请求数据是否包含'class'和'id'字段，如果没有则返回400错误
+    # 检查请求数据是否包含'class'和'id'字段，如果没有则返回418错误
     if 'class' not in data or 'id' not in data:
-        return jsonify({'error': 'Bad Request'}), 400
+        return jsonify({'error': 'I\'m a teapot' }), 418
 
     # 如果'class'字段的值为'add'，则尝试将URL添加到队列中，并返回相应的信息和位置
     if data['class'] == 'add':
@@ -122,7 +122,7 @@ def api():
         return jsonify({'exists': status is not None, 'position': position, 'status': status})
 
     else:
-        return jsonify({'error': 'Bad Request'}), 400
+        return jsonify({'error': 'I\'m a teapot'}), 418
 
 
 if __name__ == "__main__":
