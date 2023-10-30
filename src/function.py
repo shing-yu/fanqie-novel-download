@@ -357,25 +357,25 @@ def check_update(now_version):
         # 发送GET请求以获取最新的发行版信息
         response = requests.get(api_url)
 
-        if response.status_code == 200:
-            release_info = response.json()
-            if "tag_name" in release_info:
-                latest_version = release_info["tag_name"]
-                release_describe = release_info["body"]
-                print(f"最新的发行版是：v{latest_version}")
-                result = compare_versions(now_version, latest_version)
-                if result == -1:
-                    print("检测到新版本\n更新可用！请到 https://gitee.com/xingyv1024/fanqie-novel-download/releases 下载最新版")
-                    print(f"更新内容:\n{release_describe}")
-                    input("按Enter键继续...\n")
-                else:
-                    print("您正在使用最新版")
-
-            else:
-                print("未获取到发行版信息。")
-                input("按Enter键继续...\n")
-        else:
+        if response.status_code != 200:
             print(f"请求失败，状态码：{response.status_code}")
+            input("按Enter键继续...\n")
+            return 0
+        release_info = response.json()
+        if "tag_name" in release_info:
+            latest_version = release_info["tag_name"]
+            release_describe = release_info["body"]
+            print(f"最新的发行版是：v{latest_version}")
+            result = compare_versions(now_version, latest_version)
+            if result == -1:
+                print("检测到新版本\n更新可用！请到 https://gitee.com/xingyv1024/fanqie-novel-download/releases 下载最新版")
+                print(f"更新内容:\n{release_describe}")
+                input("按Enter键继续...\n")
+            else:
+                print("您正在使用最新版")
+
+        else:
+            print("未获取到发行版信息。")
             input("按Enter键继续...\n")
     except BaseException:
         print(":(  检查更新失败...")
@@ -398,7 +398,4 @@ def compare_versions(version1, version2):
 
 def clear_screen():
     # 根据系统类型执行不同的清屏指令
-    if platform.system() == 'Windows':
-        os.system('cls')  # Windows系统清屏命令
-    else:
-        os.system('clear')  # Unix/Linux/Mac系统清屏命令
+    os.system('cls') if platform.system() == 'Windows' else os.system('clear')
