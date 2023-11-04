@@ -3,3 +3,4 @@
 src/__pycache__/
 src/list_edition/__pycache__/
 src/api_edition/__pycache__/
+venv/
