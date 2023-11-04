@@ -138,7 +138,7 @@ spider.start()
 
 
 @app.route('/api', methods=['POST'])
-@limiter.limit("15/minute")  # 限制每分钟最多20次请求
+@limiter.limit("15/minute;200/hour;300/day")  # 限制请求
 def api():
     # 获取请求数据
     data = request.get_json()
