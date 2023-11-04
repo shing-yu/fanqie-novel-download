@@ -4,3 +4,19 @@ src/__pycache__/
 src/list_edition/__pycache__/
 src/api_edition/__pycache__/
 venv/
+# 忽略日志文件
+logs/
+# 忽略编译文件
+dist/
+# 忽略编译文件
+build/
+# 忽略编译文件
+.egg-info/
+# 忽略编译文件
+.eggs/
+# 忽略编译文件
+.cache/
+# 忽略编译文件
+.pytest_cache/
+# 忽略编译文件
+.mypy_cache/
