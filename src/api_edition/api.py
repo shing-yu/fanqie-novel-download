@@ -28,9 +28,40 @@ import time
 import fanqie_api as fa
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 CORS(app)
+limiter = Limiter(
+    key_func=get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"]
+)
+
+# 存储被限制的IP和他们的限制解除时间
+blacklist = {}
+
+
+@app.before_request
+def block_method():
+    ip = get_remote_address()
+    # 检查IP是否在黑名单中
+    if ip in blacklist:
+        # 检查限制是否已经解除
+        if datetime.now() < blacklist[ip]:
+            return "Too many requests. You have been added to the blacklist for 1 hour.", 429
+        else:
+            # 如果限制已经解除，那么从黑名单中移除这个IP
+            del blacklist[ip]
+
+
+@app.errorhandler(429)
+def ratelimit_handler(e):
+    # 将触发限制的IP添加到黑名单中，限制解除时间为1小时后
+    blacklist[get_remote_address()] = datetime.now() + timedelta(hours=1)
+    return "Too many requests. You have been added to the blacklist for 1 hour.", 429
 
 
 # 定义爬虫类
@@ -107,12 +138,13 @@ spider.start()
 
 
 @app.route('/api', methods=['POST'])
+@limiter.limit("15/minute")  # 限制每分钟最多20次请求
 def api():
     # 获取请求数据
     data = request.get_json()
     # 检查请求数据是否包含'class'和'id'字段，如果没有则返回418错误
     if 'class' not in data or 'id' not in data:
-        return jsonify({'error': 'I\'m a teapot' }), 418
+        return jsonify({'error': 'I\'m a teapot'}), 418
 
     # 如果'class'字段的值为'add'，则尝试将URL添加到队列中，并返回相应的信息和位置
     if data['class'] == 'add':
