@@ -272,7 +272,12 @@ def get_parameter(retry):
         print(f"你选择的保存编码是：{txt_encoding}")
 
     # 初始化“ua”
-    ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
+    ua = (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/118.0.0.0 "
+        "Safari/537.36"
+    )
 
     # 定义 User-Agent
     if mode == 1:  # 判断用户是否处于调试模式
@@ -353,6 +358,7 @@ def check_update(now_version):
     print("正在检查更新...")
     print(f"当前版本: v{now_version}")
 
+    # noinspection PyBroadException
     try:
         # 发送GET请求以获取最新的发行版信息
         response = requests.get(api_url)
@@ -377,6 +383,7 @@ def check_update(now_version):
         else:
             print("未获取到发行版信息。")
             input("按Enter键继续...\n")
+
     except BaseException:
         print(":(  检查更新失败...")
         input("按Enter键继续...\n")
