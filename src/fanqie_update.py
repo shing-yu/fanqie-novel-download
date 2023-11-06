@@ -156,8 +156,9 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
             chapter_id = re.search(r"/(\d+)", chapter_url).group(1)
 
             # 构造 api 网址
-            api_url = f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id={chapter_id}&item_id={chapter_id}"
-
+            api_url = (f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&"
+                       f"parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id="
+                       f"{chapter_id}&item_id={chapter_id}")
             # 尝试获取章节内容
             chapter_content = None
             retry_count = 1

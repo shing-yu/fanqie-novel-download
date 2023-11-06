@@ -115,8 +115,14 @@ def main():
 
     output_queue = Queue()
 
-    spider = Spider(lambda text: output_text.config(state='normal') or output_text.insert(tk.END, text + "\n") or output_text.config(state='disabled'), output_queue)
-
+    spider = Spider(
+        lambda text: (
+                output_text.config(state='normal') or
+                output_text.insert(tk.END, text + "\n") or
+                output_text.config(state='disabled')
+        ),
+        output_queue
+    )
     spider.start()
 
     def add_url():

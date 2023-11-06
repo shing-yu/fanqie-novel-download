@@ -157,8 +157,9 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
             print(f"[DEBUG]章节id:{chapter_id}")
 
             # 构造 api 网址
-            api_url = f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id={chapter_id}&item_id={chapter_id}"
-
+            api_url = (f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&"
+                       f"parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id="
+                       f"{chapter_id}&item_id={chapter_id}")
             print(f"[DEBUG]api网址:{api_url}")
 
             # 尝试获取章节内容

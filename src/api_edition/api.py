@@ -58,7 +58,7 @@ def block_method():
 
 
 @app.errorhandler(429)
-def ratelimit_handler(e):
+def ratelimit_handler(_e):
     # 将触发限制的IP添加到黑名单中，限制解除时间为1小时后
     blacklist[get_remote_address()] = datetime.now() + timedelta(hours=1)
     return "Too many requests. You have been added to the blacklist for 1 hour.", 429
