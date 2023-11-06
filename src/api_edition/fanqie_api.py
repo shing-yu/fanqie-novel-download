@@ -34,8 +34,14 @@ import public as p
 # 定义正常模式用来下载番茄小说的函数
 def fanqie_l(url, encoding, return_dict):
     try:
+        ua = (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/118.0.0.0 "
+            "Safari/537.36"
+        )
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
+            "User-Agent": ua
         }
 
         # 提取书籍ID
@@ -93,8 +99,9 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
                 chapter_id = re.search(r"/(\d+)", chapter_url).group(1)
 
                 # 构造 api 网址
-                api_url = f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id={chapter_id}&item_id={chapter_id}"
-
+                api_url = (f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&"
+                           f"parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id="
+                           f"{chapter_id}&item_id={chapter_id}")
                 # 尝试获取章节内容
                 chapter_content = None
                 retry_count = 1
