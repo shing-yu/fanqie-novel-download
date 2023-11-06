@@ -8,6 +8,7 @@ venv/
 logs/
 # 忽略编译文件
 dist/
+*.spec
 # 忽略编译文件
 build/
 # 忽略编译文件
