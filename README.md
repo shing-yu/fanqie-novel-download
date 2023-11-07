@@ -41,7 +41,7 @@
 - 请确保您的代码在所有操作系统上都能正常运行。
 - 如果您想在本项目中添加新功能，请先创建一个issue，并在issue中详细描述您的想法。
 - 建议：在您的代码中添加明确注释，以帮助其他人理解。
-- 可选：在你的commit信息中使用[约定式提交](https://www.conventionalcommits.org/zh-hans/v1.0.0/)规范。
+- 可选：在您的commit信息中使用[约定式提交](https://www.conventionalcommits.org/zh-hans/v1.0.0/)规范。
 - 可选：使用 GPG 密钥签名您的提交。  
 
 (使用可选项可以帮助我们快速审查您的Pull Request。)
