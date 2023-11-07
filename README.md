@@ -23,6 +23,35 @@
 7. 程序将下载小说章节并将它们保存到以小说标题命名的文本文件中。
 8. 下载完成后，您可以在选择的目录中找的小说文件。
 
+## 贡献
+
+我们非常欢迎并感谢所有的贡献者。如果你对这个项目有兴趣并希望做出贡献，以下是一些你可以参与的方式：
+
+### 报告问题
+
+如果你在使用过程中发现了问题，或者有任何改进的建议，欢迎通过 [Issues](https://github.com/xing-yv/fanqie-novel-download/issues) 页面提交问题或建议。
+
+### 提交代码
+
+如果你想直接改进代码，可以 [Fork 本项目](https://github.com/xing-yv/fanqie-novel-download/fork)，然后提交 Pull Request。
+
+在提交 Pull Request 之前：
+
+- 请确保您的代码符合Python的PEP8规范。
+- 请确保您的代码在所有操作系统上都能正常运行。
+- 如果您想在本项目中添加新功能，请先创建一个issue，并在issue中详细描述您的想法。
+- 建议：在您的代码中添加明确注释，以帮助其他人理解。
+- 可选：在你的commit信息中使用[约定式提交](https://www.conventionalcommits.org/zh-hans/v1.0.0/)规范。
+- 可选：使用 GPG 密钥签名您的提交。  
+
+(使用可选项可以帮助我们快速审查您的Pull Request。)
+
+我们会将您的贡献计入贡献者名单。您可以在[此处](https://github.com/xing-yv/fanqie-novel-download/blob/main/CONTRIBUTORS.md)获取贡献和赞助者名单。
+感谢您的贡献！
+
+
+
+
 ## 自行封装&修改
 
 在封装&修改此脚本之前，请确保已安装以下内容：
@@ -72,9 +101,9 @@ pip install -r requirements.txt
 
 如果您遇到问题或有改进建议，请将其提交到此项目的[GitHub issues](https://github.com/xing-yv/fanqie-novel-download/issues)页面。
 
-## 赞赏
+## 赞助
 
-如果您想要支持我的开发，欢迎赞赏，感谢您的支持！
+如果您想要支持我的开发，欢迎赞助，感谢您的支持！
 
 ![mm_reward_qrcode_1696844640908](https://xyy-1314663891.cos.ap-nanjing.myqcloud.com/202310091746639.png)
 
