@@ -160,11 +160,19 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         chapter_content = None
         retry_count = 1
         while retry_count < 4:  # 设置最大重试次数
-            # 获取 api 响应
-            api_response = requests.get(api_url, headers=headers)
+            try:
+                # 获取 api 响应
+                api_response = requests.get(api_url, headers=headers)
 
-            # 解析 api 响应为 json 数据
-            api_data = api_response.json()
+                # 解析 api 响应为 json 数据
+                api_data = api_response.json()
+            except Exception as e:
+                if retry_count == 1:
+                    print(f"错误：{e}")
+                    print(f"{chapter_title} 获取失败，正在尝试重试...")
+                print(f"第 ({retry_count}/3) 次重试获取章节内容")
+                retry_count += 1  # 否则重试
+                continue
 
             if "data" in api_data and "content" in api_data["data"]:
                 chapter_content = api_data["data"]["content"]
