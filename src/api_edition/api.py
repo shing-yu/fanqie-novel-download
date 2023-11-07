@@ -26,7 +26,7 @@ import threading
 from multiprocessing import Process, Manager
 import time
 import fanqie_api as fa
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -51,7 +51,11 @@ def block_method():
     if ip in blacklist:
         # 检查限制是否已经解除
         if datetime.now() < blacklist[ip]:
-            return "Too many requests. You have been added to the blacklist for 1 hour.", 429
+            response = make_response("Too many requests. You have been added to the blacklist for 1 hour.", 429)
+            # 计算剩余的封禁时间（以秒为单位），并添加到'Retry-After'头部
+            retry_after = int((blacklist[ip] - datetime.now()).total_seconds())
+            response.headers['Retry-After'] = str(retry_after)
+            return response
         else:
             # 如果限制已经解除，那么从黑名单中移除这个IP
             del blacklist[ip]
@@ -61,7 +65,9 @@ def block_method():
 def ratelimit_handler(_e):
     # 将触发限制的IP添加到黑名单中，限制解除时间为1小时后
     blacklist[get_remote_address()] = datetime.now() + timedelta(hours=1)
-    return "Too many requests. You have been added to the blacklist for 1 hour.", 429
+    response = make_response("Too many requests. You have been added to the blacklist for 1 hour.", 429)
+    response.headers['Retry-After'] = str(3600)  # 1小时的秒数
+    return response
 
 
 # 定义爬虫类
@@ -142,27 +148,27 @@ spider.start()
 def api():
     # 获取请求数据
     data = request.get_json()
-    # 检查请求数据是否包含'class'和'id'字段，如果没有则返回418错误
-    if 'class' not in data or 'id' not in data:
-        return jsonify({'error': 'I\'m a teapot'}), 418
+    # 检查请求数据是否包含'action'和'id'字段，如果没有则返回418错误
+    if 'action' not in data or 'id' not in data:
+        return "Bad Request.The request is missing necessary json data.", 400
 
-    # 如果'class'字段的值为'add'，则尝试将URL添加到队列中，并返回相应的信息和位置
-    if data['class'] == 'add':
+    # 如果'action'字段的值为'add'，则尝试将URL添加到队列中，并返回相应的信息和位置
+    if data['action'] == 'add':
         url = 'https://fanqienovel.com/page/' + data['id']
         message = spider.add_url(url)
         position = list(spider.url_queue.queue).index(url) + 1 if url in list(spider.url_queue.queue) else None
         status = spider.task_status.get(url, None)
         return jsonify({'message': message, 'position': position, 'status': status})
 
-    # 如果'class'字段的值为'search'，则检查URL是否在队列中，并返回相应的信息和位置或不存在的信息
-    elif data['class'] == 'search':
+    # 如果'action'字段的值为'query'，则检查URL是否在队列中，并返回相应的信息和位置或不存在的信息
+    elif data['action'] == 'query':
         url = 'https://fanqienovel.com/page/' + data['id']
         position = list(spider.url_queue.queue).index(url) + 1 if url in list(spider.url_queue.queue) else None
         status = spider.task_status.get(url, None)
         return jsonify({'exists': status is not None, 'position': position, 'status': status})
 
     else:
-        return jsonify({'error': 'I\'m a teapot'}), 418
+        return "Bad Request.The value of ‘action’ can only be ‘add’ or ‘query’.", 400
 
 
 if __name__ == "__main__":
