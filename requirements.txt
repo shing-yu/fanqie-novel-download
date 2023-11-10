@@ -4,8 +4,3 @@ packaging
 ebooklib
 tqdm
 colorama
-
-# api版本
-flask
-flask_cors
-Flask-Limiter

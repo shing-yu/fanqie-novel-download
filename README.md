@@ -61,16 +61,16 @@
 
 您可以从从src目录获取程序源代码
 
-您可以使用pip安装所需的库（普通版本）：
+您可以使用pip安装所需的库（标准版本）：
 
-```
-pip install requests beautifulsoup4 packaging ebooklib
+```shell
+pip install -r requirements.txt
 ```
 
 或（全部版本）
 
-```
-pip install -r requirements.txt
+```shell
+pip install -r requirements-all.txt
 ```
 
 ## 许可证
