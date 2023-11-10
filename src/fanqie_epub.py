@@ -31,6 +31,9 @@ import time
 import json
 from tqdm import tqdm
 import public as p
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 
 # 定义正常模式用来下载番茄小说的函数
@@ -163,7 +166,7 @@ def fanqie_epub(url, user_agent, path_choice):
                         api_data = api_response.json()
                     except Exception as e:
                         if retry_count == 1:
-                            tqdm.write(f"错误：{e}")
+                            tqdm.write(Fore.RED + Style.BRIGHT + f"发生异常: {e}")
                             tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
                         tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
                         retry_count += 1  # 否则重试
@@ -206,7 +209,7 @@ def fanqie_epub(url, user_agent, path_choice):
                                    toc_index,),)
     except BaseException as e:
         # 捕获所有异常，及时保存文件
-        print(f"发生异常: \n{e}")
+        print(Fore.RED + Style.BRIGHT + f"发生异常: \n{e}")
         return
 
     # 添加 navigation 文件

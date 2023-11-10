@@ -31,6 +31,9 @@ import time
 from tqdm import tqdm
 import hashlib
 import public as p
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 
 # 定义调试模式用来下载番茄小说的函数
@@ -50,24 +53,24 @@ def fanqie_d(url, encoding, user_agent, path_choice, data_folder, start_chapter_
     # 获取小说标题
     title = soup.find("h1").get_text()
 
-    print(f"[DEBUG]已获取小说标题")
+    print(Fore.YELLOW + Style.BRIGHT + f"[DEBUG]已获取小说标题")
 
     # 替换非法字符
     title = p.rename(title)
 
-    print(f"[DEBUG]已尝试替换非法字符")
+    print(Fore.YELLOW + Style.BRIGHT + f"[DEBUG]已尝试替换非法字符")
 
     # 获取小说信息
     info = soup.find("div", class_="page-header-info").get_text()
 
     # if mode == 1:
-    print(f"[DEBUG]已获取小说信息")
+    print(Fore.YELLOW + Style.BRIGHT + f"[DEBUG]已获取小说信息")
 
     # 获取小说简介
     intro = soup.find("div", class_="page-abstract-content").get_text()
 
     # if mode == 1:
-    print(f"[DEBUG]已获取小说简介")
+    print(Fore.YELLOW + Style.BRIGHT + f"[DEBUG]已获取小说简介")
 
     # 拼接小说内容字符串
     content = f"""如果需要小说更新，请勿修改文件名
@@ -82,13 +85,13 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 """
 
     # if mode == 1:
-    print(f"[DEBUG]已拼接小说简介字符串")
+    print(Fore.YELLOW + Style.BRIGHT + f"[DEBUG]已拼接小说简介字符串")
 
     # 获取所有章节链接
     chapters = soup.find_all("div", class_="chapter-item")
 
     # if mode == 1:
-    print(f"[DEBUG]已获取所有章节链接")
+    print(Fore.YELLOW + Style.BRIGHT + f"[DEBUG]已获取所有章节链接")
 
     # 检查用户是否指定起始章节
     start_index = 0
@@ -111,7 +114,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         # 创建一个Tkinter窗口，但不显示它
         root = tk.Tk()
         root.withdraw()
-        print("[DEBUG]已创建tkinter隐形窗口")
+        print(Fore.YELLOW + Style.BRIGHT + "[DEBUG]已创建tkinter隐形窗口")
 
         print("您选择了自定义保存路径，请您在弹出窗口中选择路径。")
 
@@ -148,7 +151,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
             time.sleep(0.25)
             # 获取章节标题
             chapter_title = chapter.find("a").get_text()
-            tqdm.write(f"[DEBUG]正在获取章节:{chapter_title}")
+            tqdm.write(Fore.YELLOW + Style.BRIGHT + f"[DEBUG]正在获取章节:{chapter_title}")
 
             # 获取章节网址
             chapter_url = urljoin(url, chapter.find("a")["href"])
@@ -156,13 +159,13 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
             # 获取章节 id
             chapter_id = re.search(r"/(\d+)", chapter_url).group(1)
 
-            tqdm.write(f"[DEBUG]章节id:{chapter_id}")
+            tqdm.write(Fore.YELLOW + Style.BRIGHT + f"[DEBUG]章节id:{chapter_id}")
 
             # 构造 api 网址
             api_url = (f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&"
                        f"parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id="
                        f"{chapter_id}&item_id={chapter_id}")
-            tqdm.write(f"[DEBUG]api网址:{api_url}")
+            tqdm.write(Fore.YELLOW + Style.BRIGHT + f"[DEBUG]api网址:{api_url}")
 
             # 尝试获取章节内容
             chapter_content = None
@@ -172,14 +175,14 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
                     # 获取 api 响应
                     api_response = requests.get(api_url, headers=headers)
 
-                    tqdm.write(f"[DEBUG]HTTP状态码:{api_response}")
+                    tqdm.write(Fore.YELLOW + Style.BRIGHT + f"[DEBUG]HTTP状态码:{api_response}")
 
                     # 解析 api 响应为 json 数据
                     api_data = api_response.json()
 
                 except Exception as e:
                     if retry_count == 1:
-                        tqdm.write(f"错误：{e}")
+                        tqdm.write(Fore.RED + Style.BRIGHT + f"发生异常: {e}")
                         tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
                     tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
                     retry_count += 1  # 否则重试
@@ -242,7 +245,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         # 打开文件并完全覆盖内容
         with open(upd_file_path, "w") as file:
             file.write(meta_content)
-        print("[DEBUG]已保存.upd更新元数据文件到用户文件夹")
+        print(Fore.YELLOW + Style.BRIGHT + "[DEBUG]已保存.upd更新元数据文件到用户文件夹")
         print("已完成")
 
     except BaseException as e:

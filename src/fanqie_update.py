@@ -30,6 +30,9 @@ import os
 from tqdm import tqdm
 import hashlib
 import public as p
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 
 # 定义番茄更新函数
@@ -98,7 +101,7 @@ def fanqie_update(user_agent, data_folder):
                     hash_sha256.update(chunk)
             fact_sha256 = hash_sha256.hexdigest()
             if fact_sha256 != save_sha256:
-                print("hash校验未通过！")
+                print(Fore.RED + Style.BRIGHT + "hash校验未通过！")
                 while True:
                     upd_choice = input(f"这往往意味着文件已被修改，是否继续更新？(yes/no):")
                     if upd_choice == "yes":
@@ -110,10 +113,10 @@ def fanqie_update(user_agent, data_folder):
                     else:
                         print("输入错误，请重新输入")
                 if skip_this == 1:
-                    print(f"《{novel_name}》的更新已取消")
+                    print(Fore.RED + Style.BRIGHT + f"《{novel_name}》的更新已取消")
                     continue
             else:
-                print("hash校验通过！")
+                print(Fore.GREEN + Style.BRIGHT + "hash校验通过！")
             print(f"上次更新时间{last_update_time}")
             result = download_novel(url, encoding, user_agent, last_chapter_id, txt_file_path)
             if result == "DN":
@@ -196,7 +199,7 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
                     api_data = api_response.json()
                 except Exception as e:
                     if retry_count == 1:
-                        tqdm.write(f"错误：{e}")
+                        tqdm.write(Fore.RED + Style.BRIGHT + f"发生异常: {e}")
                         tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
                     tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
                     retry_count += 1  # 否则重试
@@ -295,18 +298,18 @@ def onefile(user_agent, data_folder):
                 hash_sha256.update(chunk)
         fact_sha256 = hash_sha256.hexdigest()
         if fact_sha256 != save_sha256:
-            print("hash校验未通过！")
+            print(Fore.RED + Style.BRIGHT + "hash校验未通过！")
             while True:
                 upd_choice = input(f"这往往意味着文件已被修改，是否继续更新？(yes/no):")
                 if upd_choice == "yes":
                     break
                 elif upd_choice == "no":
-                    print("更新已取消")
+                    print(Fore.RED + Style.BRIGHT + "更新已取消")
                     return
                 else:
                     print("输入错误，请重新输入")
         else:
-            print("hash校验通过！")
+            print(Fore.GREEN + Style.BRIGHT + "hash校验通过！")
         print(f"上次更新时间{last_update_time}")
         result = download_novel(url, encoding, user_agent, last_chapter_id, txt_file_path)
         if result == "DN":

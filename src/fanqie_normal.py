@@ -31,6 +31,9 @@ import time
 from tqdm import tqdm
 import hashlib
 import public as p
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 
 # 定义正常模式用来下载番茄小说的函数
@@ -151,7 +154,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
                     api_data = api_response.json()
                 except Exception as e:
                     if retry_count == 1:
-                        tqdm.write(f"错误：{e}")
+                        tqdm.write(Fore.RED + Style.BRIGHT + f"发生异常: {e}")
                         tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
                     tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
                     retry_count += 1  # 否则重试
@@ -216,8 +219,9 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         print("已完成")
 
     except BaseException as e:
+
         # 捕获所有异常，及时保存文件
-        print(f"发生异常: \n{e}")
+        print(Fore.RED + Style.BRIGHT + f"发生异常: \n{e}")
         print("正在尝试保存文件...")
         # 根据编码转换小说内容字符串为二进制数据
         data = content.encode(encoding, errors='ignore')
