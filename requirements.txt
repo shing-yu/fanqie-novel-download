@@ -2,6 +2,7 @@ requests
 beautifulsoup4
 packaging
 ebooklib
+tqdm
 
 # api版本
 flask

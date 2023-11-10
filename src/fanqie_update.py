@@ -27,6 +27,7 @@ from urllib.parse import urljoin
 import datetime
 import re
 import os
+from tqdm import tqdm
 import public as p
 
 
@@ -145,7 +146,7 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
     # 打开文件
     with open(txt_file_path, 'ab') as f:
         # 从起始章节开始遍历每个章节链接
-        for chapter in chapters[start_index:]:
+        for chapter in tqdm(chapters[start_index:]):
             # 获取章节标题
             chapter_title = chapter.find("a").get_text()
 
@@ -171,9 +172,9 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
                     api_data = api_response.json()
                 except Exception as e:
                     if retry_count == 1:
-                        print(f"错误：{e}")
-                        print(f"{chapter_title} 获取失败，正在尝试重试...")
-                    print(f"第 ({retry_count}/3) 次重试获取章节内容")
+                        tqdm.write(f"错误：{e}")
+                        tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
+                    tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
                     retry_count += 1  # 否则重试
                     continue
 
@@ -182,12 +183,12 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
                     break  # 如果成功获取章节内容，跳出重试循环
                 else:
                     if retry_count == 1:
-                        print(f"{chapter_title} 获取失败，正在尝试重试...")
-                    print(f"第 ({retry_count}/3) 次重试获取章节内容")
+                        tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
+                    tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
                     retry_count += 1  # 否则重试
 
             if retry_count == 4:
-                print(f"无法获取章节内容: {chapter_title}，跳过。")
+                tqdm.write(f"无法获取章节内容: {chapter_title}，跳过。")
                 continue  # 重试次数过多后，跳过当前章节
 
             # 提取文章标签中的文本
@@ -211,7 +212,7 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
             f.write(data)
 
             # 打印进度信息
-            print(f"已增加: {chapter_title}")
+            tqdm.write(f"已增加: {chapter_title}")
 
     # 返回更新完成
     return last_chapter_id

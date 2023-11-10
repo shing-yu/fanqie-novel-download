@@ -27,6 +27,7 @@ from urllib.parse import urljoin
 import re
 import os
 import time
+from tqdm import tqdm
 import public as p
 
 
@@ -94,7 +95,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
                 start_index = i
 
     # 遍历每个章节链接
-    for chapter in chapters[start_index:]:
+    for chapter in tqdm(chapters[start_index:]):
 
         time.sleep(0.25)
         # 获取章节标题
@@ -125,9 +126,9 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
                 api_data = api_response.json()
             except Exception as e:
                 if retry_count == 1:
-                    print(f"错误：{e}")
-                    print(f"{chapter_title} 获取失败，正在尝试重试...")
-                print(f"第 ({retry_count}/3) 次重试获取章节内容")
+                    tqdm.write(f"错误：{e}")
+                    tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
+                tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
                 retry_count += 1  # 否则重试
                 continue
 
@@ -136,12 +137,12 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
                 break  # 如果成功获取章节内容，跳出重试循环
             else:
                 if retry_count == 1:
-                    print(f"{chapter_title} 获取失败，正在尝试重试...")
-                print(f"第 ({retry_count}/3) 次重试获取章节内容")
+                    tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
+                tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
                 retry_count += 1  # 否则重试
 
         if retry_count == 4:
-            print(f"无法获取章节内容: {chapter_title}，跳过。")
+            tqdm.write(f"无法获取章节内容: {chapter_title}，跳过。")
             continue  # 重试次数过多后，跳过当前章节
 
         # 提取文章标签中的文本
@@ -177,7 +178,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
         if introduction_use is False:
             with open(introduction_path, "wb") as f:
                 f.write(introduction_data)
-            print("简介已保存")
+            tqdm.write("简介已保存")
             # 将简介保存标记为已完成
             introduction_use = True
 
@@ -185,7 +186,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
             f.write(data)
 
         # 打印进度信息
-        print(f"已获取: {chapter_title}")
+        tqdm.write(f"已获取: {chapter_title}")
 
 
 def get_folder_path(path_choice, title):

@@ -29,6 +29,7 @@ from urllib.parse import urljoin
 import re
 import time
 import json
+from tqdm import tqdm
 import public as p
 
 
@@ -133,7 +134,7 @@ def fanqie_epub(url, user_agent, path_choice):
 
             chapter_id_name = 0
             # 遍历每个章节链接
-            for chapter in chapters[start_index:]:
+            for chapter in tqdm(chapters[start_index:]):
                 chapter_id_name += 1
                 time.sleep(0.25)
                 # 获取章节标题
@@ -162,9 +163,9 @@ def fanqie_epub(url, user_agent, path_choice):
                         api_data = api_response.json()
                     except Exception as e:
                         if retry_count == 1:
-                            print(f"错误：{e}")
-                            print(f"{chapter_title} 获取失败，正在尝试重试...")
-                        print(f"第 ({retry_count}/3) 次重试获取章节内容")
+                            tqdm.write(f"错误：{e}")
+                            tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
+                        tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
                         retry_count += 1  # 否则重试
                         continue
 
@@ -173,12 +174,12 @@ def fanqie_epub(url, user_agent, path_choice):
                         break  # 如果成功获取章节内容，跳出重试循环
                     else:
                         if retry_count == 1:
-                            print(f"{chapter_title} 获取失败，正在尝试重试...")
-                        print(f"第 ({retry_count}/3) 次重试获取章节内容")
+                            tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
+                        tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
                         retry_count += 1  # 否则重试
 
                 if retry_count == 4:
-                    print(f"无法获取章节内容: {chapter_title}，跳过。")
+                    tqdm.write(f"无法获取章节内容: {chapter_title}，跳过。")
                     continue  # 重试次数过多后，跳过当前章节
 
                 # 提取文章标签中的文本
@@ -199,7 +200,7 @@ def fanqie_epub(url, user_agent, path_choice):
                 book.add_item(text)
 
                 # 打印进度信息
-                print(f"已获取 {chapter_title}")
+                tqdm.write(f"已获取 {chapter_title}")
             # 加入书籍索引
             book.toc = book.toc + ((epub.Section(volume_title, href=first_chapter),
                                    toc_index,),)
