@@ -29,6 +29,7 @@ import datetime
 import os
 import time
 from tqdm import tqdm
+import hashlib
 import public as p
 
 
@@ -215,17 +216,6 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
             # 打印进度信息
             tqdm.write(f"已获取 {chapter_title}")
 
-        # 保存小说更新源文件
-        upd_file_path = os.path.join(data_folder, f"{title}.upd")
-        # 获取当前系统时间
-        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        # 创建要写入元信息文件的内容
-        new_content = f"{current_time}\n{url}\n{chapter_id}\n{encoding}"
-        # 打开文件并完全覆盖内容
-        with open(upd_file_path, "w") as file:
-            file.write(new_content)
-        print("[DEBUG]已保存.upd更新元数据文件")
-
         # 根据编码转换小说内容字符串为二进制数据
         data = content.encode(encoding, errors='ignore')
 
@@ -235,6 +225,26 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
         # 打印完成信息
         print(f"已保存{title}.txt")
+
+        # 计算文件 sha256 值
+        hash_sha256 = hashlib.sha256()
+        with open(file_path, "rb") as f:
+            for chunk in iter(lambda: f.read(4096), b""):
+                hash_sha256.update(chunk)
+        sha256_hash = hash_sha256.hexdigest()
+
+        # 保存小说更新源文件
+        upd_file_path = os.path.join(data_folder, f"{title}.upd")
+        # 获取当前系统时间
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        # 创建要写入元信息文件的内容
+        meta_content = f"{current_time}\n{url}\n{chapter_id}\n{encoding}\n{sha256_hash}"
+        # 打开文件并完全覆盖内容
+        with open(upd_file_path, "w") as file:
+            file.write(meta_content)
+        print("[DEBUG]已保存.upd更新元数据文件到用户文件夹")
+        print("已完成")
+
     except BaseException as e:
         # 捕获所有异常，及时保存文件
         print(f"发生异常: \n{e}")
