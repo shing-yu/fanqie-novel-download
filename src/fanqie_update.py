@@ -94,29 +94,36 @@ def fanqie_update(user_agent, data_folder):
             url = lines[1].strip()
             last_chapter_id = lines[2].strip()
             encoding = lines[3].strip()
-            save_sha256 = lines[4].strip()
+            if len(lines) >= 5:
+                save_sha256 = lines[4].strip()
+                skip_hash = 0
+            else:
+                print(Fore.YELLOW + Style.BRIGHT + "此小说可能由老版本下载，跳过hash校验")
+                save_sha256 = None
+                skip_hash = 1
             hash_sha256 = hashlib.sha256()
             with open(txt_file_path, "rb") as f:
                 for chunk in iter(lambda: f.read(4096), b""):
                     hash_sha256.update(chunk)
             fact_sha256 = hash_sha256.hexdigest()
-            if fact_sha256 != save_sha256:
-                print(Fore.RED + Style.BRIGHT + "hash校验未通过！")
-                while True:
-                    upd_choice = input(f"这往往意味着文件已被修改，是否继续更新？(yes/no):")
-                    if upd_choice == "yes":
-                        skip_this = 0
-                        break
-                    elif upd_choice == "no":
-                        skip_this = 1
-                        break
-                    else:
-                        print("输入错误，请重新输入")
-                if skip_this == 1:
-                    print(Fore.RED + Style.BRIGHT + f"《{novel_name}》的更新已取消")
-                    continue
-            else:
-                print(Fore.GREEN + Style.BRIGHT + "hash校验通过！")
+            if skip_hash == 0:
+                if fact_sha256 != save_sha256:
+                    print(Fore.RED + Style.BRIGHT + "hash校验未通过！")
+                    while True:
+                        upd_choice = input(f"这往往意味着文件已被修改，是否继续更新？(yes/no):")
+                        if upd_choice == "yes":
+                            skip_this = 0
+                            break
+                        elif upd_choice == "no":
+                            skip_this = 1
+                            break
+                        else:
+                            print("输入错误，请重新输入")
+                    if skip_this == 1:
+                        print(Fore.RED + Style.BRIGHT + f"《{novel_name}》的更新已取消")
+                        continue
+                else:
+                    print(Fore.GREEN + Style.BRIGHT + "hash校验通过！")
             print(f"上次更新时间{last_update_time}")
             result = download_novel(url, encoding, user_agent, last_chapter_id, txt_file_path)
             if result == "DN":
@@ -291,25 +298,32 @@ def onefile(user_agent, data_folder):
         url = lines[1].strip()
         last_chapter_id = lines[2].strip()
         encoding = lines[3].strip()
-        save_sha256 = lines[4].strip()
+        if len(lines) >= 5:
+            save_sha256 = lines[4].strip()
+            skip_hash = 0
+        else:
+            print(Fore.YELLOW + Style.BRIGHT + "此小说可能由老版本下载，跳过hash校验")
+            save_sha256 = None
+            skip_hash = 1
         hash_sha256 = hashlib.sha256()
         with open(txt_file_path, "rb") as f:
             for chunk in iter(lambda: f.read(4096), b""):
                 hash_sha256.update(chunk)
         fact_sha256 = hash_sha256.hexdigest()
-        if fact_sha256 != save_sha256:
-            print(Fore.RED + Style.BRIGHT + "hash校验未通过！")
-            while True:
-                upd_choice = input(f"这往往意味着文件已被修改，是否继续更新？(yes/no):")
-                if upd_choice == "yes":
-                    break
-                elif upd_choice == "no":
-                    print(Fore.RED + Style.BRIGHT + "更新已取消")
-                    return
-                else:
-                    print("输入错误，请重新输入")
-        else:
-            print(Fore.GREEN + Style.BRIGHT + "hash校验通过！")
+        if skip_hash == 0:
+            if fact_sha256 != save_sha256:
+                print(Fore.RED + Style.BRIGHT + "hash校验未通过！")
+                while True:
+                    upd_choice = input(f"这往往意味着文件已被修改，是否继续更新？(yes/no):")
+                    if upd_choice == "yes":
+                        break
+                    elif upd_choice == "no":
+                        print(Fore.RED + Style.BRIGHT + "更新已取消")
+                        return
+                    else:
+                        print("输入错误，请重新输入")
+            else:
+                print(Fore.GREEN + Style.BRIGHT + "hash校验通过！")
         print(f"上次更新时间{last_update_time}")
         result = download_novel(url, encoding, user_agent, last_chapter_id, txt_file_path)
         if result == "DN":
