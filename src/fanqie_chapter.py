@@ -26,13 +26,21 @@ import re
 import os
 import time
 from tqdm import tqdm
+from requests.exceptions import Timeout
 import public as p
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 
 # 定义分章节保存模式用来下载番茄小说的函数
 def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id):
 
-    headers, title, introduction, chapters = p.get_fanqie(url, user_agent)
+    try:
+        headers, title, introduction, chapters = p.get_fanqie(url, user_agent)
+    except Timeout:
+        print(Fore.RED + Style.BRIGHT + "连接超时，请检查网络连接是否正常。")
+        return
 
     # 获取保存路径
     book_folder = get_folder_path(path_choice, title)

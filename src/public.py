@@ -73,7 +73,8 @@ def get_fanqie(url, user_agent):
     }
 
     # 获取网页源码
-    response = requests.get(url, headers=headers)
+
+    response = requests.get(url, headers=headers, timeout=20)
     html = response.text
 
     # 解析网页源码
@@ -129,7 +130,7 @@ def get_api(chapter, headers, url):
     while retry_count < 4:  # 设置最大重试次数
         try:
             # 获取 api 响应
-            api_response = requests.get(api_url, headers=headers)
+            api_response = requests.get(api_url, headers=headers, timeout=5)
 
             # 解析 api 响应为 json 数据
             api_data = api_response.json()

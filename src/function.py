@@ -158,7 +158,7 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
             clear_screen()
             contributors_url = 'https://gitee.com/xingyv1024/fanqie-novel-download/raw/main/CONTRIBUTORS.md'
             try:
-                contributors = requests.get(contributors_url)
+                contributors = requests.get(contributors_url, timeout=5)
 
                 # 检查响应状态码
                 if contributors.status_code == 200:
@@ -363,7 +363,7 @@ def check_update(now_version):
     # noinspection PyBroadException
     try:
         # 发送GET请求以获取最新的发行版信息
-        response = requests.get(api_url)
+        response = requests.get(api_url, timeout=5)
 
         if response.status_code != 200:
             print(f"请求失败，状态码：{response.status_code}")

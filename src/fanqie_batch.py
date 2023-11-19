@@ -26,7 +26,11 @@ import time
 import datetime
 from tqdm import tqdm
 import hashlib
+from requests.exceptions import Timeout
 import public as p
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 
 def fanqie_b(encoding, user_agent, path_choice, data_folder):
@@ -95,7 +99,12 @@ def fanqie_b(encoding, user_agent, path_choice, data_folder):
 # 定义批量模式用来下载番茄小说的函数
 def download_novels(url, encoding, user_agent, path_choice, folder_path, data_folder):
 
-    headers, title, content, chapters = p.get_fanqie(url, user_agent)
+    try:
+        headers, title, content, chapters = p.get_fanqie(url, user_agent)
+    except Timeout:
+        print(Fore.RED + Style.BRIGHT + "连接超时，请检查网络连接是否正常。")
+        print(Fore.RED + Style.BRIGHT + "跳过此书籍")
+        return
 
     print(f"\n开始 《{title}》 的下载")
 

@@ -29,6 +29,7 @@ import time
 from tqdm import tqdm
 import hashlib
 import public as p
+from requests.exceptions import Timeout
 from colorama import Fore, Style, init
 
 init(autoreset=True)
@@ -36,8 +37,11 @@ init(autoreset=True)
 
 # 定义正常模式用来下载番茄小说的函数
 def fanqie_n(url, encoding, user_agent, path_choice, data_folder, start_chapter_id):
-
-    headers, title, content, chapters = p.get_fanqie(url, user_agent)
+    try:
+        headers, title, content, chapters = p.get_fanqie(url, user_agent)
+    except Timeout:
+        print(Fore.RED + Style.BRIGHT + "连接超时，请检查网络连接是否正常。")
+        return
 
     # 检查用户是否指定起始章节
     start_index = 0
