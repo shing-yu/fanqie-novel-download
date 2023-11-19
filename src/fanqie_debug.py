@@ -255,7 +255,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
     except BaseException as e:
         # 捕获所有异常，及时保存文件
-        print(f"发生异常: \n{e}")
+        print(Fore.RED + Style.BRIGHT + f"发生异常: \n{e}")
         print("正在尝试保存文件...")
         # 根据编码转换小说内容字符串为二进制数据
         data = content.encode(encoding, errors='ignore')
