@@ -239,8 +239,10 @@ def get_parameter(retry):
             # 当用户按下Ctrl+C是，可以自定义起始章节id
             except KeyboardInterrupt:
                 while True:
-                    start_chapter_id = input("您已按下Ctrl+C，请输入起始章节的id\n(输入help以查看帮助，"
-                                             "epub电子书模式不支持起始章节，再次按下Ctrl+C以强制关闭程序):\n")
+                    if mode == 4:
+                        input("epub模式不支持指定开始章节id，请按Enter继续，或按Ctrl+C退出程序...")
+                        break
+                    start_chapter_id = input("您已按下Ctrl+C，请输入起始章节的id(输入help以查看帮助):\n")
                     if start_chapter_id == 'help':
                         print("\n打开小说章节阅读界面，上方链接中的数字即为章节id\n请输入您想要开始下载的章节的id\n")
                         continue
