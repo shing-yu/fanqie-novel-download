@@ -46,19 +46,20 @@ blacklist = {}
 
 @app.before_request
 def block_method():
-    ip = get_remote_address()
-    # 检查IP是否在黑名单中
-    if ip in blacklist:
-        # 检查限制是否已经解除
-        if datetime.now() < blacklist[ip]:
-            response = make_response("Too many requests. You have been added to the blacklist for 1 hour.", 429)
-            # 计算剩余的封禁时间（以秒为单位），并添加到'Retry-After'头部
-            retry_after = int((blacklist[ip] - datetime.now()).total_seconds())
-            response.headers['Retry-After'] = str(retry_after)
-            return response
-        else:
-            # 如果限制已经解除，那么从黑名单中移除这个IP
-            del blacklist[ip]
+    if request.method == 'POST':
+        ip = get_remote_address()
+        # 检查IP是否在黑名单中
+        if ip in blacklist:
+            # 检查限制是否已经解除
+            if datetime.now() < blacklist[ip]:
+                response = make_response("Too many requests. You have been added to the blacklist for 1 hour.", 429)
+                # 计算剩余的封禁时间（以秒为单位），并添加到'Retry-After'头部
+                retry_after = int((blacklist[ip] - datetime.now()).total_seconds())
+                response.headers['Retry-After'] = str(retry_after)
+                return response
+            else:
+                # 如果限制已经解除，那么从黑名单中移除这个IP
+                del blacklist[ip]
 
 
 @app.errorhandler(429)
