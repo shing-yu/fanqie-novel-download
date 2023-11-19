@@ -21,8 +21,6 @@ https://www.gnu.org/licenses/gpl-3.0.html
 """
 
 # 导入必要的模块
-import requests
-from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import datetime
 import re
@@ -149,19 +147,7 @@ def fanqie_update(user_agent, data_folder):
 # 定义更新番茄小说的函数
 def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
 
-    headers = {
-        "User-Agent": user_agent
-    }
-
-    # 获取网页源码
-    response = requests.get(url, headers=headers)
-    html = response.text
-
-    # 解析网页源码
-    soup = BeautifulSoup(html, "html.parser")
-
-    # 获取所有章节链接
-    chapters = soup.find_all("div", class_="chapter-item")
+    headers, _, content, chapters = p.get_fanqie(url, user_agent)
 
     last_chapter_id = None
     # 找到起始章节的索引
@@ -179,74 +165,44 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
 
     # 打开文件
     with open(txt_file_path, 'ab') as f:
-        # 从起始章节开始遍历每个章节链接
-        for chapter in tqdm(chapters[start_index:]):
-            # 获取章节标题
-            chapter_title = chapter.find("a").get_text()
+        try:
+            # 从起始章节开始遍历每个章节链接
+            for chapter in tqdm(chapters[start_index:]):
 
-            # 获取章节网址
-            chapter_url = urljoin(url, chapter.find("a")["href"])
+                chapter_id_now = re.search(r"/reader/(\d+)", str(chapter)).group(1)
 
-            # 获取章节 id
-            chapter_id = re.search(r"/(\d+)", chapter_url).group(1)
+                result = p.get_api(chapter, headers, url)
 
-            # 构造 api 网址
-            api_url = (f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&"
-                       f"parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id="
-                       f"{chapter_id}&item_id={chapter_id}")
-            # 尝试获取章节内容
-            chapter_content = None
-            retry_count = 1
-            while retry_count < 4:  # 设置最大重试次数
-                try:
-                    # 获取 api 响应
-                    api_response = requests.get(api_url, headers=headers)
-
-                    # 解析 api 响应为 json 数据
-                    api_data = api_response.json()
-                except Exception as e:
-                    if retry_count == 1:
-                        tqdm.write(Fore.RED + Style.BRIGHT + f"发生异常: {e}")
-                        tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
-                    tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
-                    retry_count += 1  # 否则重试
+                if result is None:
                     continue
-
-                if "data" in api_data and "content" in api_data["data"]:
-                    chapter_content = api_data["data"]["content"]
-                    break  # 如果成功获取章节内容，跳出重试循环
                 else:
-                    if retry_count == 1:
-                        tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
-                    tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
-                    retry_count += 1  # 否则重试
+                    chapter_title, chapter_text = result
 
-            if retry_count == 4:
-                tqdm.write(f"无法获取章节内容: {chapter_title}，跳过。")
-                continue  # 重试次数过多后，跳过当前章节
+                # 在小说内容字符串中添加章节标题和内容
+                content += f"\n\n\n{chapter_title}\n{chapter_text}"
 
-            # 提取文章标签中的文本
-            chapter_text = re.search(r"<article>([\s\S]*?)</article>", chapter_content).group(1)
+                # 打印进度信息
+                tqdm.write(f"已获取 {chapter_title}")
 
-            # 将 <p> 标签替换为换行符
-            chapter_text = re.sub(r"<p>", "\n", chapter_text)
+                # 在小说内容字符串中添加章节标题和内容
+                content = f"\n\n\n{chapter_title}\n{chapter_text}"
 
-            # 去除其他 html 标签
-            chapter_text = re.sub(r"</?\w+>", "", chapter_text)
+                # 根据编码转换小说内容字符串为二进制数据
+                data = content.encode(encoding, errors='ignore')
 
-            chapter_text = p.fix_publisher(chapter_text)
+                # 将数据追加到文件中
+                f.write(data)
 
-            # 在小说内容字符串中添加章节标题和内容
-            content = f"\n\n\n{chapter_title}\n{chapter_text}"
+                # 打印进度信息
+                tqdm.write(f"已增加: {chapter_title}")
 
-            # 根据编码转换小说内容字符串为二进制数据
-            data = content.encode(encoding, errors='ignore')
+        except BaseException as e:
 
-            # 将数据追加到文件中
-            f.write(data)
+            # 捕获所有异常，及时保存文件
+            print(Fore.RED + Style.BRIGHT + f"发生异常: \n{e}")
+            print(Fore.RED + Style.BRIGHT + f"更新已被中断")
 
-            # 打印进度信息
-            tqdm.write(f"已增加: {chapter_title}")
+            return chapter_id_now
 
     # 返回更新完成
     return last_chapter_id
