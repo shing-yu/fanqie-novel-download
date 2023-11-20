@@ -26,11 +26,14 @@ import threading
 from multiprocessing import Process, Manager
 import time
 import fanqie_api as fa
-from flask import Flask, request, jsonify, make_response
+import os
+from flask import Flask, request, jsonify, make_response, send_from_directory
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from datetime import datetime, timedelta
+
+os.makedirs("output", exist_ok=True)
 
 app = Flask(__name__)
 CORS(app)
@@ -170,6 +173,20 @@ def api():
 
     else:
         return "Bad Request.The value of ‘action’ can only be ‘add’ or ‘query’.", 400
+
+
+@app.route('/list')
+@limiter.limit("20/minute;200/hour;500/day")
+def file_list():
+    files = os.listdir('output')  # 替换为你的文件夹路径
+    file_links = ['<a href="/download/{}">{}</a>'.format(f, f) for f in files]
+    return '<html><body>{}</body></html>'.format('<br>'.join(file_links))
+
+
+@app.route('/download/<path:filename>')
+@limiter.limit("10/minute;100/hour;300/day")
+def download_file(filename):
+    return send_from_directory('output', filename, as_attachment=True)  # 替换为你的文件夹路径
 
 
 if __name__ == "__main__":
