@@ -186,7 +186,8 @@ def file_list():
 @app.route('/download/<path:filename>')
 @limiter.limit("10/minute;100/hour;300/day")
 def download_file(filename):
-    return send_from_directory('output', filename, as_attachment=True)  # 替换为你的文件夹路径
+    directory = os.path.abspath('output')
+    return send_from_directory(directory, filename, as_attachment=True)  # 替换为你的文件夹路径
 
 
 if __name__ == "__main__":
