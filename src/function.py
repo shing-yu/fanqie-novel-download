@@ -363,7 +363,7 @@ def check_update(now_version):
     print("正在检查更新...")
     print(f"当前版本: {now_version}")
 
-    if 'dev' or 'alpha' or 'beta' in now_version:
+    if 'dev' in now_version or 'alpha' in now_version or 'beta' in now_version:
         print(Fore.YELLOW + Style.BRIGHT + '测试版本，检查更新已关闭！')
         print(Fore.YELLOW + Style.BRIGHT + '注意！您正在使用测试/预览版本！\n该版本可能极不稳定，不建议在生产环境中使用！')
         input('按Enter键继续...')
