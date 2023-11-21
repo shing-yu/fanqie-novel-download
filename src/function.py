@@ -33,6 +33,9 @@ import requests
 import platform
 from sys import exit
 from packaging import version
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 # 定义全局变量
 mode = None
@@ -358,7 +361,13 @@ def check_update(now_version):
     api_url = f"https://gitee.com/api/v5/repos/{owner}/{repo}/releases/latest"
 
     print("正在检查更新...")
-    print(f"当前版本: v{now_version}")
+    print(f"当前版本: {now_version}")
+
+    if 'dev' or 'alpha' or 'beta' in now_version:
+        print(Fore.YELLOW + Style.BRIGHT + '测试版本，检查更新已关闭！')
+        print(Fore.YELLOW + Style.BRIGHT + '注意！您正在使用测试/预览版本！\n该版本可能极不稳定，不建议在生产环境中使用！')
+        input('按Enter键继续...')
+        return
 
     # noinspection PyBroadException
     try:
@@ -373,7 +382,7 @@ def check_update(now_version):
         if "tag_name" in release_info:
             latest_version = release_info["tag_name"]
             release_describe = release_info["body"]
-            print(f"最新的发行版是：v{latest_version}")
+            print(f"最新的发行版是：{latest_version}")
             result = compare_versions(now_version, latest_version)
             if result == -1:
                 print("检测到新版本\n更新可用！请到 https://gitee.com/xingyv1024/fanqie-novel-download/releases 下载最新版")
