@@ -115,10 +115,10 @@ def get_api(chapter, headers, url):
     chapter_title = chapter.find("a").get_text()
 
     # 获取章节网址
-    chapter_url = urljoin(url, chapter.find("a")["href"])
+    chapter_url = chapter.find("a")["href"]
 
     # 获取章节 id
-    chapter_id = re.search(r"/(\d+)", chapter_url).group(1)
+    chapter_id = re.search(r"/reader/(\d+)", chapter_url).group(1)
 
     # 构造 api 网址
     api_url = (f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&"

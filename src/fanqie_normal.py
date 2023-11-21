@@ -21,7 +21,6 @@ https://www.gnu.org/licenses/gpl-3.0.html
 """
 
 # 导入必要的模块
-from urllib.parse import urljoin
 import re
 import datetime
 import os
@@ -50,8 +49,8 @@ def fanqie_n(url, encoding, user_agent, path_choice, data_folder, start_chapter_
     else:
         # 找到起始章节的索引
         for i, chapter in enumerate(chapters):
-            chapter_url_tmp = urljoin(url, chapter.find("a")["href"])
-            chapter_id_tmp = re.search(r"/(\d+)", chapter_url_tmp).group(1)
+            chapter_url_tmp = chapter.find("a")["href"]
+            chapter_id_tmp = re.search(r"/reader/(\d+)", chapter_url_tmp).group(1)
             if chapter_id_tmp == start_chapter_id:  # 将 开始索引设置为用户的值
                 start_index = i
     file_path = None
