@@ -178,7 +178,10 @@ def api():
 @app.route('/list')
 @limiter.limit("20/minute;200/hour;500/day")
 def file_list():
-    files = os.listdir('output')  # 替换为你的文件夹路径
+    folder_path = 'output'  # 替换为你的文件夹路径
+    files = os.listdir(folder_path)
+    # 按最后修改时间排序
+    files.sort(key=lambda x: os.path.getmtime(os.path.join(folder_path, x)), reverse=True)
     file_links = ['<a href="/download/{}">{}</a>'.format(f, f) for f in files]
     return '<html><body>{}</body></html>'.format('<br>'.join(file_links))
 
