@@ -130,19 +130,13 @@ def fanqie_epub(url, user_agent, path_choice):
             volume_title = volume_div.text
             print(volume_title)
             chapters = div.find_all("div", class_="chapter-item")
-            start_index = None
-            for i, chapter in enumerate(chapters):
-                chapter_url_tmp = urljoin(url, chapter.find("a")["href"])
-                chapter_id_tmp = re.search(r"/(\d+)", chapter_url_tmp).group(1)
-                if chapter_id_tmp == '0':  # epub模式不支持起始章节
-                    start_index = i
 
             # 定义目录索引
             toc_index = ()
 
             chapter_id_name = 0
             # 遍历每个章节链接
-            for chapter in tqdm(chapters[start_index:]):
+            for chapter in tqdm(chapters):
                 chapter_id_name += 1
                 time.sleep(0.25)
                 # 获取章节标题
