@@ -39,7 +39,7 @@ jobs:
         if [ "${{ matrix.os }}" == "windows-latest" ]; then
           pyinstaller --onefile --add-data "src/assets;." -n fanqie_tool_windows -i main.ico src/main.py
         elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-          pyinstaller --onefile --add-data "src/assets:." -n fanqie_tool_macos -i main.icns src/main.py
+          pyinstaller --onefile --add-data "src/assets:." -n fanqie_tool_macos --icon main.icns src/main.py
         else
           pyinstaller --onefile --add-data "src/assets:." -n fanqie_tool_ubuntu -i main.ico src/main.py
         fi
