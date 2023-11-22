@@ -121,7 +121,7 @@ def start():
         elif choice == '5':
             mode = 4
             clear_screen()
-            print("您已进入Epub模式，将保留一定的小说格式。\n")
+            print("您已进入Epub模式，将输出epub电子书格式。\n")
             break
         elif choice == '6':
             clear_screen()
