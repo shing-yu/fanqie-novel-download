@@ -75,7 +75,7 @@ def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id):
         if result is None:
             continue
         else:
-            chapter_title, chapter_text = result
+            chapter_title, chapter_text, _ = result
 
         # 在章节内容字符串中添加章节标题和内容
         content_all = f"{chapter_title}\n{chapter_text}"

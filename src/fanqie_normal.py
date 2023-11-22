@@ -100,7 +100,7 @@ def fanqie_n(url, encoding, user_agent, path_choice, data_folder, start_chapter_
             if result is None:
                 continue
             else:
-                chapter_title, chapter_text = result
+                chapter_title, chapter_text, chapter_id = result
 
             # 在小说内容字符串中添加章节标题和内容
             content += f"\n\n\n{chapter_title}\n{chapter_text}"

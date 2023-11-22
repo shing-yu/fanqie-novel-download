@@ -92,6 +92,9 @@ def fanqie_update(user_agent, data_folder):
             last_update_time = lines[0].strip()
             url = lines[1].strip()
             last_chapter_id = lines[2].strip()
+            if last_chapter_id == "None":
+                print(Fore.RED + Style.BRIGHT + "信息文件已损坏，可能由于使用2.8.0/1/2版本导致，请重新下载此小说")
+                continue
             encoding = lines[3].strip()
             if len(lines) >= 5:
                 save_sha256 = lines[4].strip()
@@ -189,7 +192,7 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
                 if result is None:
                     continue
                 else:
-                    chapter_title, chapter_text = result
+                    chapter_title, chapter_text, chapter_id_now = result
 
                 # 在小说内容字符串中添加章节标题和内容
                 content += f"\n\n\n{chapter_title}\n{chapter_text}"
@@ -266,6 +269,9 @@ def onefile(user_agent, data_folder):
         last_update_time = lines[0].strip()
         url = lines[1].strip()
         last_chapter_id = lines[2].strip()
+        if last_chapter_id == "None":
+            print(Fore.RED + Style.BRIGHT + "信息文件已损坏，可能由于使用2.8.0/1/2版本导致，请重新下载此小说")
+            return
         encoding = lines[3].strip()
         if len(lines) >= 5:
             save_sha256 = lines[4].strip()

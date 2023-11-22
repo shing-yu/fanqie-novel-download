@@ -166,4 +166,4 @@ def get_api(chapter, headers, url):
 
     chapter_text = fix_publisher(chapter_text)
 
-    return chapter_title, chapter_text
+    return chapter_title, chapter_text, chapter_id
