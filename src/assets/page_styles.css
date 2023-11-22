@@ -1,0 +1,9 @@
+@page {
+  margin-bottom: 5pt;
+  margin-top: 5pt;
+}
+@font-face {
+  font-family: "Xingyv Regular";
+  panose-1: 0 0 5 0 0 0 0 0 0 0;
+  src: url(fonts/Xingyv-Regular.ttf);
+}
