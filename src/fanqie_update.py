@@ -131,10 +131,16 @@ def fanqie_update(user_agent, data_folder):
                 print(Fore.RED + "更新失败")
             else:
                 print(f"{novel_name} 已更新完成。\n")
+                # 计算文件 sha256 值
+                hash_sha256 = hashlib.sha256()
+                with open(txt_file_path, "rb") as f:
+                    for chunk in iter(lambda: f.read(4096), b""):
+                        hash_sha256.update(chunk)
+                sha256_hash = hash_sha256.hexdigest()
                 # 获取当前系统时间
                 current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 # 创建要写入元信息文件的内容
-                new_content = f"{current_time}\n{url}\n{result}\n{encoding}"
+                new_content = f"{current_time}\n{url}\n{result}\n{encoding}\n{sha256_hash}"
                 # 打开文件并完全覆盖内容
                 with open(upd_file_path, "w") as file:
                     file.write(new_content)
@@ -201,7 +207,7 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
                 f.write(data)
 
                 # 打印进度信息
-                tqdm.write(f"已增加: {chapter_title}")
+                # tqdm.write(f"已增加: {chapter_title}")
 
         except BaseException as e:
 
@@ -293,10 +299,16 @@ def onefile(user_agent, data_folder):
             print(f"{novel_name} 已是最新，不需要更新。\n")
         else:
             print(f"{novel_name} 已更新完成。\n")
+            # 计算文件 sha256 值
+            hash_sha256 = hashlib.sha256()
+            with open(txt_file_path, "rb") as f:
+                for chunk in iter(lambda: f.read(4096), b""):
+                    hash_sha256.update(chunk)
+            sha256_hash = hash_sha256.hexdigest()
             # 获取当前系统时间
             current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             # 创建要写入元信息文件的内容
-            new_content = f"{current_time}\n{url}\n{result}\n{encoding}"
+            new_content = f"{current_time}\n{url}\n{result}\n{encoding}\n{sha256_hash}"
             # 打开文件并完全覆盖内容
             with open(upd_file_path, "w") as file:
                 file.write(new_content)
