@@ -1,7 +1,7 @@
-.calibre {
+html, .calibre {
   line-height: 1.4;
 }
-.calibre1 {
+body, .calibre1 {
   display: block;
   font-family: "Xingyv Regular", serif;
   font-size: 1em;
@@ -10,7 +10,7 @@
   padding-right: 0;
   margin: 0 5pt;
 }
-.calibre2 {
+p, .calibre2 {
   border-bottom: 0;
   border-top: 0;
   display: block;
