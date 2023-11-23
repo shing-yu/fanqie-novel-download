@@ -70,7 +70,7 @@ def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id):
 
         time.sleep(0.25)
 
-        result = p.get_api(chapter, headers, url)
+        result = p.get_api(chapter, headers)
 
         if result is None:
             continue

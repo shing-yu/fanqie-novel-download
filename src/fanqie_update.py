@@ -187,7 +187,7 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
 
                 chapter_id_now = re.search(r"/reader/(\d+)", str(chapter)).group(1)
 
-                result = p.get_api(chapter, headers, url)
+                result = p.get_api(chapter, headers)
 
                 if result is None:
                     continue

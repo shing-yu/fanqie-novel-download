@@ -115,7 +115,7 @@ def download_novels(url, encoding, user_agent, path_choice, folder_path, data_fo
 
         time.sleep(1)
 
-        result = p.get_api(chapter, headers, url)
+        result = p.get_api(chapter, headers)
 
         if result is None:
             continue

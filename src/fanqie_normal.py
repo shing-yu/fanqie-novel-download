@@ -95,7 +95,7 @@ def fanqie_n(url, encoding, user_agent, path_choice, data_folder, start_chapter_
         for chapter in tqdm(chapters[start_index:]):
             time.sleep(0.25)
 
-            result = p.get_api(chapter, headers, url)
+            result = p.get_api(chapter, headers)
 
             if result is None:
                 continue

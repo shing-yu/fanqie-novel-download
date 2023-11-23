@@ -20,7 +20,6 @@ https://www.gnu.org/licenses/gpl-3.0.html
 无论您对程序进行了任何操作，请始终保留此信息。
 """
 import os
-import sys
 
 # 导入必要的模块
 import requests

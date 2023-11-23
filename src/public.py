@@ -26,7 +26,6 @@ import sys
 from bs4 import BeautifulSoup
 import requests
 from tqdm import tqdm
-from urllib.parse import urljoin
 from colorama import Fore, Style, init
 
 init(autoreset=True)
@@ -112,7 +111,7 @@ def get_fanqie(url, user_agent):
     return headers, title, content, chapters
 
 
-def get_api(chapter, headers, url):
+def get_api(chapter, headers):
     # 获取章节标题
     chapter_title = chapter.find("a").get_text()
 
