@@ -81,10 +81,10 @@ def start():
     global mode  # 声明mode为全局变量
     global return_info
 
-    # 定义变量flag控制是否退出程序
-    flag = True
-    flag2 = True
     while True:
+        # 定义变量flag控制是否退出程序
+        flag = True
+        flag2 = True
         print_usage()
         print("请选择以下操作：")
         print("1. 进入正常模式")
