@@ -128,12 +128,6 @@ def download_novels(url, encoding, user_agent, path_choice, folder_path, data_fo
         # 打印进度信息
         tqdm.write(f"已获取 {chapter_title}")
 
-        # 在小说内容字符串中添加章节标题和内容
-        content += f"\n\n\n{chapter_title}\n{chapter_text}"
-
-        # 打印进度信息
-        tqdm.write(f"已获取 {chapter_title}")
-
     # 根据main.py中用户选择的路径方式，选择自定义路径或者默认
 
     file_path = None
