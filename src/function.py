@@ -417,3 +417,106 @@ def compare_versions(version1, version2):
 def clear_screen():
     # 根据系统类型执行不同的清屏指令
     os.system('cls') if platform.system() == 'Windows' else os.system('clear')
+
+
+def check_eula():
+    eula_file = "eula.txt"
+    eula_url = "https://gitee.com/xingyv1024/fanqie-novel-download/raw/main/EULA.md"
+    license_url = "https://gitee.com/xingyv1024/fanqie-novel-download/raw/main/LICENSE.md"
+    eula_path = os.path.join(data_path, eula_file)
+    if os.path.exists(eula_path):
+        with open(eula_path, "r", encoding="utf-8") as f:
+            eula_txt = f.read()
+        agreed = eula_txt.splitlines()[3]
+        if agreed != "yes":
+            agree_eula(eula_path, eula_url, license_url)
+            return True
+        eula_date_old = eula_txt.splitlines()[5]
+        # noinspection PyBroadException
+        try:
+            eula_text = requests.get(eula_url, timeout=10).text
+        except Exception:
+            print("获取最终用户许可协议失败，请检查网络连接")
+            input("按Enter键继续...\n")
+            exit(0)
+        eula_date_new = eula_text.splitlines()[3]
+        if eula_date_old != eula_date_new:
+            while True:
+                print(Fore.YELLOW + Style.BRIGHT + "最终用户许可协议（EULA）已更新")
+                print(Fore.YELLOW + Style.BRIGHT + "在继续使用之前，请阅读并同意以下协议：")
+                print("1. 最终用户许可协议（EULA）")
+                print("输入序号以查看对应协议，输入yes表示同意，输入no以退出程序。")
+                input_num = input("请输入：")
+                if input_num == "1":
+                    clear_screen()
+                    print(eula_text)
+                    input("按Enter键继续...")
+                    clear_screen()
+                elif input_num == "yes":
+                    with open(eula_path, "w", encoding="utf-8") as f:
+                        eula_txt = f"""eula_url: {eula_url}
+license_url: {license_url}
+agreed: 
+yes
+eula_date: 
+{eula_date_new}
+
+"""
+                        f.write(eula_txt)
+                    break
+                elif input_num == "no":
+                    print("感谢您的使用！")
+                    exit(0)
+                else:
+                    clear_screen()
+                    print("输入无效，请重新输入。")
+    else:
+        agree_eula(eula_path, eula_url, license_url)
+        return True
+    return True
+
+
+def agree_eula(eula_path, eula_url, license_url):
+    # noinspection PyBroadException
+    try:
+        eula_text = requests.get(eula_url, timeout=10).text
+    except Exception:
+        print("获取最终用户许可协议失败，请检查网络连接")
+        input("按Enter键继续...\n")
+        exit(0)
+    eula_date = eula_text.splitlines()[3]
+    license_text = requests.get(license_url).text
+    while True:
+        print(Fore.YELLOW + Style.BRIGHT + "在继续使用之前，请阅读并同意以下协议：")
+        print("1. 最终用户许可协议（EULA）")
+        print("2. GPLv3开源许可证")
+        print("输入序号以查看对应协议，输入yes表示同意，输入no以退出程序。")
+        input_num = input("请输入：")
+        if input_num == "1":
+            clear_screen()
+            print(eula_text)
+            input("按Enter键继续...")
+            clear_screen()
+        elif input_num == "2":
+            clear_screen()
+            print(license_text)
+            input("按Enter键继续...")
+            clear_screen()
+        elif input_num == "yes":
+            with open(eula_path, "w", encoding="utf-8") as f:
+                eula_txt = f"""eula_url: {eula_url}
+license_url: {license_url}
+agreed: 
+yes
+eula_date: 
+{eula_date}
+
+"""
+                f.write(eula_txt)
+            break
+        elif input_num == "no":
+            print("感谢您的使用！")
+            exit(0)
+        else:
+            clear_screen()
+            print("输入无效，请重新输入。")
