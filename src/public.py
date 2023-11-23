@@ -21,6 +21,8 @@ https://www.gnu.org/licenses/gpl-3.0.html
 """
 
 import re
+import os
+import sys
 from bs4 import BeautifulSoup
 import requests
 from tqdm import tqdm
@@ -167,3 +169,10 @@ def get_api(chapter, headers, url):
     chapter_text = fix_publisher(chapter_text)
 
     return chapter_title, chapter_text, chapter_id
+
+
+def asset_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        # noinspection PyProtectedMember
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("assets"), relative_path)

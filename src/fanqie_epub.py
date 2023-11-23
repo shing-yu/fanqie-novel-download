@@ -114,9 +114,9 @@ def fanqie_epub(url, user_agent, path_choice):
                        f'<p>{intro}</p>')
     book.add_item(intro_e)
 
-    font_file = asset_path("Xingyv-Regular.ttf")
-    css1_file = asset_path("page_styles.css")
-    css2_file = asset_path("stylesheet.css")
+    font_file = p.asset_path("Xingyv-Regular.ttf")
+    css1_file = p.asset_path("page_styles.css")
+    css2_file = p.asset_path("stylesheet.css")
     # 打开资源文件
     with open(font_file, 'rb') as f:
         font_content = f.read()
@@ -293,10 +293,3 @@ def fanqie_epub(url, user_agent, path_choice):
 
     print("文件已保存！")
     return
-
-
-def asset_path(relative_path):
-    if hasattr(sys, '_MEIPASS'):
-        # noinspection PyProtectedMember
-        return os.path.join(sys._MEIPASS, relative_path)
-    return os.path.join(os.path.abspath("assets"), relative_path)
