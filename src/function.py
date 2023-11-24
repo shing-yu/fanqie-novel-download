@@ -97,7 +97,7 @@ def start():
         print("8. 查看贡献（赞助）者名单")
         print("9. 退出程序")
         print("10. 撤回同意")
-        choice = input("请输入您的选择（1/2/3/4/5/6/7/8/9）:（默认“1”）\n")
+        choice = input("请输入您的选择（1~10）:（默认“1”）\n")
 
         # 通过用户选择，决定模式，给mode赋值
         if not choice:
