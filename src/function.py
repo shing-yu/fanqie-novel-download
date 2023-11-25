@@ -49,6 +49,7 @@ data_path = os.path.join(user_folder, "fanqie_data")
 eula_path = os.path.join(data_path, "eula.txt")
 eula_url = "https://gitee.com/xingyv1024/fanqie-novel-download/raw/main/EULA.md"
 license_url = "https://gitee.com/xingyv1024/fanqie-novel-download/raw/main/LICENSE.md"
+license_url_zh = "https://gitee.com/xingyv1024/fanqie-novel-download/raw/main/LICENSE-ZH.md"
 os.makedirs(data_path, exist_ok=True)
 book_id = None
 start_chapter_id = "0"
@@ -513,16 +514,17 @@ def agree_eula():
     # noinspection PyBroadException
     try:
         eula_text = requests.get(eula_url, timeout=10).text
+        license_text = requests.get(license_url, timeout=10).text
+        license_text_zh = requests.get(license_url_zh, timeout=10).text
     except Exception:
         print("获取最终用户许可协议失败，请检查网络连接")
         input("按Enter键继续...\n")
         exit(0)
     eula_date = eula_text.splitlines()[3]
-    license_text = requests.get(license_url).text
     while True:
         print(Fore.YELLOW + Style.BRIGHT + "在继续使用之前，请阅读并同意以下协议：")
         print("1. 最终用户许可协议（EULA）")
-        print("2. GPLv3开源许可证")
+        print("2. GPLv3开源许可证 (3. 中文译本（无法律效力）)")
         print("输入序号以查看对应协议，输入yes表示同意，输入no以退出程序。")
         print("您可以随时在程序内撤回同意")
         input_num = input("请输入：")
@@ -534,6 +536,11 @@ def agree_eula():
         elif input_num == "2":
             clear_screen()
             print(license_text)
+            input("按Enter键继续...")
+            clear_screen()
+        elif input_num == "3":
+            clear_screen()
+            print(license_text_zh)
             input("按Enter键继续...")
             clear_screen()
         elif input_num == "yes":
