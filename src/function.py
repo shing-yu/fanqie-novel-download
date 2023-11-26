@@ -35,6 +35,9 @@ from sys import exit
 from packaging import version
 from colorama import Fore, Style, init
 
+from urllib.parse import parse_qs, urlparse
+
+
 init(autoreset=True)
 
 # 定义全局变量
@@ -235,6 +238,24 @@ None
     get_parameter(retry=False)
 
 
+def get_id_from_url(url: str) -> str:
+    return urlparse(url).path.strip("/").split("/")[-1]
+
+
+def guess_id(url: str) -> str:
+    u = urlparse(url)
+
+    match u.netloc:  # 根据域名匹配
+        case "fanqienovel.com":  # Web 端
+            if u.path.startswith("/page/"):  # 书本详情页面
+                return get_id_from_url(url)
+
+        case "changdunovel.com":  # App 分享链接
+            return parse_qs(urlparse(url).query).get("book_id")[0]
+    
+    raise ValueError(f"无法识别的链接 {url}")
+
+
 def get_parameter(retry):
     global page_url
     global txt_encoding
@@ -270,12 +291,18 @@ def get_parameter(retry):
                 #      mode = 3
                 # elif "fanqie" in page_url:
 
-                # 检查 url 是否是小说目录页面
-                if "/page/" not in page_url:
-                    print("请输入正确的小说目录页面链接")
-                else:
-                    book_id = re.search(r"/(\d+)", page_url).group(1)
-                    break  # 如果是正确的链接，则退出循环
+                # # 检查 url 是否是小说目录页面
+                # if "/page/" not in page_url:
+                #     print("请输入正确的小说目录页面链接")
+                # else:
+                #     book_id = re.search(r"/(\d+)", page_url).group(1)
+                #     break  # 如果是正确的链接，则退出循环
+
+                page_url = guess_id(page_url)
+
+                if page_url:
+                    break
+
             # 当用户按下Ctrl+C是，可以自定义起始章节id
             except KeyboardInterrupt:
                 while True:
@@ -290,6 +317,9 @@ def get_parameter(retry):
                         break
                     else:
                         print("无效的输入，请重新输入")
+            except ValueError:
+                print("无效的 URL，请重新输入")
+
 
     # 让用户选择保存文件的编码
     while True:
