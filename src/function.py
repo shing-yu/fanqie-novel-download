@@ -260,7 +260,7 @@ def get_parameter(retry):
         # 不是则让用户输入小说目录页的链接
         while True:
             try:
-                page_url = input("请输入目录页或手机端分享链接：\n")
+                page_url = input("请输入目录页或手机端分享链接（或书籍ID）：\n")
 
                 # 预留七猫小说判断
                 # if "qimao" in page_url:
@@ -270,18 +270,26 @@ def get_parameter(retry):
                 #      mode = 3
                 # elif "fanqie" in page_url:
 
-                # 检查 url 是否是小说目录页面
-                if "/page/" in page_url:
-                    book_id = re.search(r"/(\d+)", page_url).group(1)
-                    page_url = "https://fanqienovel.com/page/" + book_id
-                    break  # 如果是正确的链接，则退出循环
+                # 检查 url 类型
+                try:
+                    if page_url.isdigit():
+                        book_id = page_url
+                        page_url = "https://fanqienovel.com/page/" + book_id
+                        break
 
-                elif "changdunovel.com" in page_url:
-                    book_id = re.search(r"book_id=(\d+)&", page_url).group(1)
-                    page_url = "https://fanqienovel.com/page/" + book_id
-                    break
-                else:
-                    print(Fore.YELLOW + Style.BRIGHT + "请输入正确的小说目录页面或手机端分享链接")
+                    elif "fanqienovel.com/page/" in page_url:
+                        book_id = re.search(r"fanqienovel.com/page/(\d+)", page_url).group(1)
+                        page_url = "https://fanqienovel.com/page/" + book_id
+                        break  # 如果是正确的链接，则退出循环
+
+                    elif "changdunovel.com" in page_url:
+                        book_id = re.search(r"book_id=(\d+)&", page_url).group(1)
+                        page_url = "https://fanqienovel.com/page/" + book_id
+                        break
+                    else:
+                        print(Fore.YELLOW + Style.BRIGHT + "请输入正确的小说目录页面或手机端分享链接（或书籍ID）")
+                except AttributeError:
+                    print(Fore.YELLOW + Style.BRIGHT + "请输入正确的小说目录页面或手机端分享链接（或书籍ID）")
             # 当用户按下Ctrl+C是，可以自定义起始章节id
             except KeyboardInterrupt:
                 while True:
