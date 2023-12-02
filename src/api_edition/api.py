@@ -55,14 +55,14 @@ limiter = Limiter(
 # 存储被限制的IP和他们的限制解除时间
 blacklist = {}
 
+
 # 如果你要限制访问的时间段，可以使用下面的装饰器，将它添加到需要限制的路由上，然后将下面的注释取消掉
-# 注意！该装饰器将使用服务器的本地时区时间，而不是你所在的时区的时间！
-# TODO: 修复时区问题
+# 注意！该装饰器将使用UTC+8北京时间，而不是你所在的时区的时间！
 # def only_on_time_range(start_hour, end_hour):
 #     def decorator(f):
 #         @wraps(f)
 #         def decorated_function(*args, **kwargs):
-#             now = datetime.now().time()
+#             now = datetime.utcnow() + timedelta(hours=8)
 #             if not (start_hour <= now.hour < end_hour):
 #                 return f"此服务只在{start_hour}点到{end_hour}点开放。", 503
 #             return f(*args, **kwargs)
@@ -180,7 +180,7 @@ spider.start()
 @app.route('/api', methods=['POST'])
 @limiter.limit("15/minute;200/hour;300/day")  # 限制请求
 # 如果需要限制访问的时间段，请取消下一行的注释，并将时间段替换为你的时间段
-# 注意！该装饰器将使用服务器的本地时区时间，而不是你所在的时区的时间！
+# 注意！该装饰器将使用UTC+8北京时间，而不是你所在的时区的时间！
 # @only_on_time_range(8, 22)
 def api():
     # 获取请求数据

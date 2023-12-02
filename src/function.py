@@ -309,7 +309,7 @@ def get_parameter(retry):
     while True:
         if mode == 4:
             break
-        txt_encoding_num = input("请输入保存文件所使用的编码(默认:1)：1 -> utf-8 | 2 -> gb2312\n")
+        txt_encoding_num = input("请输入保存文件所使用的编码(默认:1)：1 -> utf-8 | 2 -> gb2312 | 3-> 搜索编码\n")
 
         if not txt_encoding_num:
             txt_encoding_num = '1'
@@ -320,6 +320,9 @@ def get_parameter(retry):
             break
         elif txt_encoding_num == '2':
             txt_encoding = 'gb2312'
+            break
+        elif txt_encoding_num == '3':
+            txt_encoding = get_more_encoding()
             break
         else:
             print("输入无效，请重新输入。")
@@ -383,6 +386,58 @@ def get_parameter(retry):
             print("输入无效，请重新输入。")
             continue
     perform_user_mode_action()
+
+
+def get_more_encoding():
+    encodings = [
+        "utf-8", "ascii", "latin-1", "iso-8859-1", "utf-16",
+        "utf-16-le", "utf-16-be", "utf-32", "utf-32-le", "utf-32-be",
+        "cp1252", "cp437", "cp850", "cp866", "cp932",
+        "cp949", "cp950", "koi8-r", "koi8-u", "macroman",
+        "macintosh", "gb2312", "gbk", "gb18030", "big5",
+        "big5hkscs", "shift_jis", "euc_jp", "euc_kr", "iso2022_jp",
+        "iso2022_jp_1", "iso2022_jp_2", "iso2022_jp_2004", "iso2022_jp_3", "iso2022_jp_ext",
+        "shift_jis_2004", "shift_jisx0213", "euc_jis_2004", "euc_jisx0213", "latin_1",
+        "iso8859_2", "iso8859_3", "iso8859_4", "iso8859_5", "iso8859_6",
+        "iso8859_7", "iso8859_8", "iso8859_9", "iso8859_10", "iso8859_13",
+        "iso8859_14", "iso8859_15", "iso8859_16", "cp500", "cp720",
+        "cp737", "cp775", "cp852", "cp855", "cp857",
+        "cp858", "cp860", "cp861", "cp862", "cp863",
+        "cp864", "cp865", "cp869", "cp874", "cp875",
+        "cp1006", "cp1026", "cp1140", "cp1250", "cp1251",
+        "cp1253", "cp1254", "cp1255", "cp1256", "cp1257",
+        "cp1258", "cp65001", "hz", "iso2022_jp_2004", "iso2022_kr",
+        "iso8859_11", "iso8859_16", "johab", "ptcp154", "utf_7",
+        "utf_8_sig"
+    ]
+
+    while True:
+        query = input("请输入你想要搜索的编码：")
+        query = query.lower()
+        import difflib
+        # 使用difflib库的get_close_matches方法找到相似的编码
+        similar_encodings = difflib.get_close_matches(query, encodings)
+
+        print("以下是与你的搜索内容相似的编码：")
+        for i, encoding in enumerate(similar_encodings):
+            print(f"{i + 1}. {encoding}")
+
+        while True:
+            choice_ = input("请选择一个编码, 输入r以重新搜索：")
+            if choice_ == "r":
+                clear_screen()
+                break
+            elif choice_.isdigit():
+                choice = int(choice_)
+                if choice > len(similar_encodings):
+                    print("输入无效，请重新输入。")
+                    continue
+                chosen_encoding = similar_encodings[choice - 1]
+                print(f"你选择的编码是：{chosen_encoding}")
+                return chosen_encoding
+            else:
+                print("输入无效，请重新输入。")
+                continue
 
 
 def perform_user_mode_action():
