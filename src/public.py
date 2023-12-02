@@ -95,15 +95,15 @@ def get_fanqie(url, user_agent):
 
     # 拼接小说内容字符串
     content = f"""如果需要小说更新，请勿修改文件名
-    使用 @星隅(xing-yv) 所作开源工具下载
-    开源仓库地址:https://github.com/xing-yv/fanqie-novel-download
-    Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
-    任何人无权限制您访问本工具，如果有向您提供代下载服务者未事先告知您工具的获取方式，请向作者举报:xing_yv@outlook.com
+使用 @星隅(xing-yv) 所作开源工具下载
+开源仓库地址:https://github.com/xing-yv/fanqie-novel-download
+Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
+任何人无权限制您访问本工具，如果有向您提供代下载服务者未事先告知您工具的获取方式，请向作者举报:xing_yv@outlook.com
 
-    {title}
-    {info}
-    {intro}
-    """
+{title}
+{info}
+{intro}
+"""
 
     # 获取所有章节链接
     chapters = soup.find_all("div", class_="chapter-item")
