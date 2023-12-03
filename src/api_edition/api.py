@@ -22,7 +22,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 
 import re
 import os
-import subprocess
+import sys
 import multiprocessing
 import queue
 import threading
@@ -243,28 +243,26 @@ def download_file(filename):
     return send_from_directory(directory, filename, as_attachment=True)  # 替换为你的文件夹路径
 
 
-# 检测是否支持IPv6
-def is_ipv6_supported():
-    # noinspection PyBroadException
-    try:
-        # 使用ping命令ping一个已知支持IPv6的服务器
-        result = subprocess.run(["ping", "-6", "-c", "1", "240c::6666"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # 如果ping命令成功，那么返回True
-        return result.returncode == 0
-    except Exception:
-        return False
-
-
 if __name__ == "__main__":
     multiprocessing.freeze_support()
-    # 如果支持IPv6，则同时监听IPv4和IPv6
-    if is_ipv6_supported():
-        print("Your system supports IPv6, so both IPv4 and IPv6 are listened.")
+    # 根据参数判断ipv6
+    if len(sys.argv) < 2:
+        ipv6 = False
+    else:
+        if sys.argv[1] == '6':
+            ipv6 = True
+        elif sys.argv[1] == '4':
+            ipv6 = False
+        else:
+            print("你输入的参数不正确！")
+            sys.exit(1)
+    if ipv6:
+        print("Both IPv4 and IPv6 are listened.")
         app.run(host='::', port=5000, threaded=True)
         # 如果需要启用HTTPS，请取消下一行的注释，并将证书和密钥的路径替换为你的证书和密钥的路径
         # app.run(host='::', port=5000, threaded=True, ssl_context=('path/xxxx.pem', 'path/xxxx.key'))
     else:
-        print("Your system does not support IPv6, so only IPv4 is listened.")
+        print("Only IPv4 is listened.")
         # 否则只监听IPv4
         app.run(host='0.0.0.0', port=5000)
         # 如果需要启用HTTPS，请取消下一行的注释，并将证书和密钥的路径替换为你的证书和密钥的路径
