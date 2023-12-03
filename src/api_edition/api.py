@@ -22,7 +22,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 
 import re
 import os
-import socket
+import subprocess
 import multiprocessing
 import queue
 import threading
@@ -247,8 +247,10 @@ def download_file(filename):
 def is_ipv6_supported():
     # noinspection PyBroadException
     try:
-        socket.socket(socket.AF_INET6)
-        return True
+        # 使用ping命令ping一个已知支持IPv6的服务器
+        result = subprocess.run(["ping", "-6", "-c", "1", "240c::6666"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # 如果ping命令成功，那么返回True
+        return result.returncode == 0
     except Exception:
         return False
 
