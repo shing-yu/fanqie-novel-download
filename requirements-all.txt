@@ -9,3 +9,4 @@ colorama
 flask
 flask_cors
 Flask-Limiter
+cos-python-sdk-v5
