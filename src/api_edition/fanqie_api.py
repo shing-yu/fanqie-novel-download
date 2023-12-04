@@ -30,6 +30,12 @@ from os import path
 import time
 import public as p
 
+from cos_upload import cos_upload
+# noinspection PyPackageRequirements
+from qcloud_cos import CosServiceError
+# noinspection PyPackageRequirements
+from qcloud_cos import CosClientError
+
 
 # 定义正常模式用来下载番茄小说的函数
 def fanqie_l(url, encoding, return_dict):
@@ -150,6 +156,10 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
             with open(file_path, "wb") as f:
                 f.write(data)
 
+            return_dict['results'] = [f"小说《{title}》已保存到本地"]
+
+            return_dict['results'].append(upload_cos(file_path, title))
+
             pass
 
         except BaseException as e:
@@ -160,8 +170,38 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
             # 保存文件
             with open(file_path, "wb") as f:
                 f.write(data)
+
+            return_dict['results'] = [f"小说《{title}》下载失败：{e}"]
+            return_dict['results'] = [f"小说《{title}》已保存到本地（中断保存）"]
+
             raise Exception(f"下载失败: {e}")
             pass
 
     except BaseException as e:
         return_dict['error'] = str(e)
+
+
+def upload_cos(file_path, title):
+
+    result = []
+    # 通过环境变量判断是否上传到COS
+    if os.getenv("IS_COS") == "True":
+        try:
+            cos_upload(file_path)
+            result.append(f"小说《{title}》已上传到COS")
+        except AssertionError as e:
+            result.append(f"上传小说《{title}》，路径：{file_path}，失败：{e}")
+        except KeyError as e:
+            result.append(f"上传小说《{title}》，路径：{file_path}，配置文件格式错误，失败：{e}")
+        except FileNotFoundError as e:
+            result.append(f"上传小说《{title}》，路径：{file_path}，文件未找到，失败：{e}")
+        except CosServiceError as e:
+            result.append(f"上传小说《{title}》，路径：{file_path}，COS服务错误，失败：{e}")
+        except CosClientError as e:
+            result.append(f"上传小说《{title}》，路径：{file_path}，COS客户端错误，失败：{e}")
+        except Exception as e:
+            result.append(f"上传小说《{title}》，路径：{file_path}，其它错误，失败：{e}")
+    else:
+        result.append("未启用COS上传")
+
+    return result

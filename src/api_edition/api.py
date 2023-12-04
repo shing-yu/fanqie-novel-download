@@ -22,11 +22,11 @@ https://www.gnu.org/licenses/gpl-3.0.html
 
 import re
 import os
-import sys
 import multiprocessing
 import queue
 import threading
 from multiprocessing import Process, Manager
+import argparse
 import time
 import fanqie_api as fa
 # noinspection PyPackageRequirements
@@ -124,9 +124,13 @@ class Spider:
                 p.start()
                 p.join()  # 等待进程结束
                 if 'error' in return_dict:
+                    for result in return_dict['results']:
+                        print(result)
                     print(f"Error: {return_dict['error']}")
                     return False
                 else:
+                    for result in return_dict['results']:
+                        print(result)
                     return True
         except Exception as e:
             print(f"Error: {e}")
@@ -245,17 +249,23 @@ def download_file(filename):
 
 if __name__ == "__main__":
     multiprocessing.freeze_support()
-    # 根据参数判断ipv6
-    if len(sys.argv) < 2:
-        ipv6 = False
+    # 根据参数判断ipv6和是否上传到COS
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-6", "--ipv6", action="store_true",
+                        help="Enable IPv6 Support (But in Windows , IPv4 won't be listened)")
+    parser.add_argument("-cos", "--enable-cos", action="store_true",
+                        help="Enable Upload to COS (You need to set up somethings)")
+    args = parser.parse_args()
+
+    ipv6 = args.ipv6
+    cos = args.cos
+
+    # 设置环境变量以启用COS
+    if cos:
+        os.environ["IS_COS"] = "True"
     else:
-        if sys.argv[1] == '6':
-            ipv6 = True
-        elif sys.argv[1] == '4':
-            ipv6 = False
-        else:
-            print("你输入的参数不正确！")
-            sys.exit(1)
+        os.environ["IS_COS"] = "False"
+
     if ipv6:
         print("Both IPv4 and IPv6 are listened.")
         app.run(host='::', port=5000, threaded=True)
