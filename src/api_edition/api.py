@@ -106,13 +106,19 @@ class Spider:
                 p.start()
                 p.join()  # 等待进程结束
                 if 'error' in return_dict:
-                    for result in return_dict['results']:
-                        print(result)
+                    for i in range(1, 5):
+                        try:
+                            print(f"{return_dict[f'result{i}']}")
+                        except KeyError:
+                            continue
                     print(f"Error: {return_dict['error']}")
                     return False
                 else:
-                    for result in return_dict['results']:
-                        print(result)
+                    for i in range(1, 5):
+                        try:
+                            print(f"{return_dict[f'result{i}']}")
+                        except KeyError:
+                            continue
                     return True
         except Exception as e:
             print(f"Error: {e}")
@@ -166,12 +172,17 @@ spider.start()
 @app.route('/api', methods=['POST'])
 @limiter.limit("15/minute;200/hour;300/day")  # 限制请求
 def api():
+
+    # 判断是否在限时范围内
     now = datetime.utcnow() + timedelta(hours=8)
-    if not (start_hour <= now.hour < end_hour):
-        return f"此服务只在{start_hour}点到{end_hour}点开放。", 503
+    if args.time_range is None:
+        pass
+    else:
+        if not (start_hour <= now.hour < end_hour):
+            return f"此服务只在{start_hour}点到{end_hour}点开放。", 503
     # 获取请求数据
     data = request.get_json()
-    # 检查请求数据是否包含'action'和'id'字段，如果没有则返回418错误
+    # 检查请求数据是否包含'action'和'id'字段，如果没有则返回400错误
     if 'action' not in data or 'id' not in data:
         return "Bad Request.The request is missing necessary json data.", 400
     if data['id'].isdigit():
@@ -239,6 +250,10 @@ if __name__ == "__main__":
     parser.add_argument("-cos", "--enable-cos", action="store_true", default=False,
                         help="Enable Upload to COS (You need to set up somethings)")
 
+    # cos基础路径
+    parser.add_argument("-cb", "--cos-base-dir", type=str, default="",
+                        help="Base directory of COS (e.g. Novel/)(Must end with /)")
+
     # 判断https
     parser.add_argument("-s", "--enable-https", action="store_true", default=False,
                         help="Enable HTTPS (You need to set up you ssl)")
@@ -275,6 +290,9 @@ if __name__ == "__main__":
         os.environ["IS_COS"] = "True"
     else:
         os.environ["IS_COS"] = "False"
+
+    # 设置环境变量以启用COS基础路径
+    os.environ["COS_BASE_DIR"] = args.cos_base_dir
 
     if ipv6:
         print("Both IPv4 and IPv6 are listened.")

@@ -33,8 +33,8 @@ def cos_upload(file_path):
         secret_key = os.getenv("TC_SECRET_KEY")  # 替换为用户的 secretKey
         region = os.getenv("COS_REGION")  # 替换为用户的 Region
         bucket = os.getenv("COS_BUCKET")  # 替换为用户的 Bucket
-        token = os.getenv("COS_SESSION_TOKEN")  # 使用临时密钥需要传入 Token，默认为空，可不填
-        scheme = os.getenv("COS_SCHEME")  # 指定使用 http/https 协议来访问 COS，默认为 https，可不填
+        token = os.getenv("COS_SESSION_TOKEN", None)  # 使用临时密钥需要传入 Token，默认为空，可不填
+        scheme = os.getenv("COS_SCHEME", "https")  # 指定使用 http/https 协议来访问 COS，默认为 https，可不填
         assert "-" in bucket, "环境变量 COS_BUCKET 的格式不正确"
 
     # 检查配置的值
@@ -43,9 +43,7 @@ def cos_upload(file_path):
     assert region is not None, "请设置环境变量 COS_REGION"
     assert bucket is not None, "请设置环境变量 COS_BUCKET"
 
-    assert scheme in ["http", "https", None], "环境变量 COS_SCHEME 的值必须为 http 或 https（不设置为 https）"
-    if scheme is None:
-        scheme = "https"
+    assert scheme in ["http", "https"], "环境变量 COS_SCHEME 的值必须为 http 或 https（不设置为 https）"
 
     # 设置用户属性, 包括 secretId, secretKey, region 以及 token
     config = CosConfig(Region=region, SecretId=secret_id, SecretKey=secret_key, Token=token, Scheme=scheme)
@@ -55,9 +53,10 @@ def cos_upload(file_path):
     # 获取文件名
     file_name = os.path.basename(file_path)
     # 拼接cos路径
+    cos_base_dir = os.getenv("COS_BASE_DIR", "")
     cos_dir = "番茄小说"
     # cos不需要使用os.path.join
-    object_name = cos_dir + "/" + file_name
+    object_name = cos_base_dir + cos_dir + "/" + file_name
 
     # 上传文件
     response = client.upload_file(
