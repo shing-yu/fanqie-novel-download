@@ -35,12 +35,6 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from datetime import datetime, timedelta
-# 如果需要限制访问的时间段，请取消下一行的注释
-# from functools import wraps
-
-# 重定向HTTP请求到HTTPS使用：
-# # noinspection PyPackageRequirements
-# from flask import redirect
 
 os.makedirs("output", exist_ok=True)
 
@@ -54,20 +48,6 @@ limiter = Limiter(
 
 # 存储被限制的IP和他们的限制解除时间
 blacklist = {}
-
-
-# 如果你要限制访问的时间段，可以使用下面的装饰器，将它添加到需要限制的路由上，然后将下面的注释取消掉
-# 注意！该装饰器将使用UTC+8北京时间，而不是你所在的时区的时间！
-# def only_on_time_range(start_hour, end_hour):
-#     def decorator(f):
-#         @wraps(f)
-#         def decorated_function(*args, **kwargs):
-#             now = datetime.utcnow() + timedelta(hours=8)
-#             if not (start_hour <= now.hour < end_hour):
-#                 return f"此服务只在{start_hour}点到{end_hour}点开放。", 503
-#             return f(*args, **kwargs)
-#         return decorated_function
-#     return decorator
 
 
 @app.before_request
@@ -86,12 +66,14 @@ def block_method():
             else:
                 # 如果限制已经解除，那么从黑名单中移除这个IP
                 del blacklist[ip]
-        # 如果你需要将HTTP请求重定向到HTTPS，请取消下方代码的注释
-        # if not request.is_secure:
-        #     # noinspection HttpUrlsUsage
-        #     url = request.url.replace('http://', 'https://', 1)
-        #     code = 301
-        #     return redirect(url, code=code)
+        if force_https:
+            # noinspection PyPackageRequirements
+            from flask import redirect
+            if not request.is_secure:
+                # noinspection HttpUrlsUsage
+                url = request.url.replace('http://', 'https://', 1)
+                code = 301
+                return redirect(url, code=code)
 
 
 @app.errorhandler(429)
@@ -183,10 +165,10 @@ spider.start()
 
 @app.route('/api', methods=['POST'])
 @limiter.limit("15/minute;200/hour;300/day")  # 限制请求
-# 如果需要限制访问的时间段，请取消下一行的注释，并将时间段替换为你的时间段
-# 注意！该装饰器将使用UTC+8北京时间，而不是你所在的时区的时间！
-# @only_on_time_range(8, 22)
 def api():
+    now = datetime.utcnow() + timedelta(hours=8)
+    if not (start_hour <= now.hour < end_hour):
+        return f"此服务只在{start_hour}点到{end_hour}点开放。", 503
     # 获取请求数据
     data = request.get_json()
     # 检查请求数据是否包含'action'和'id'字段，如果没有则返回418错误
@@ -248,17 +230,45 @@ def download_file(filename):
 
 
 if __name__ == "__main__":
+    # 如果你使用WSGI服务器，你可以将下面的内容放到你的WSGI服务器配置文件中
     multiprocessing.freeze_support()
     # 根据参数判断ipv6和是否上传到COS
     parser = argparse.ArgumentParser()
-    parser.add_argument("-6", "--ipv6", action="store_true",
+    parser.add_argument("-6", "--ipv6", action="store_true", default=False,
                         help="Enable IPv6 Support (But in Windows , IPv4 won't be listened)")
-    parser.add_argument("-cos", "--enable-cos", action="store_true",
+    parser.add_argument("-cos", "--enable-cos", action="store_true", default=False,
                         help="Enable Upload to COS (You need to set up somethings)")
+
+    # 判断https
+    parser.add_argument("-s", "--enable-https", action="store_true", default=False,
+                        help="Enable HTTPS (You need to set up you ssl)")
+    parser.add_argument("-f", "--force-https", action="store_true", default=False,
+                        help="Force HTTPS (You need to set up you ssl)")
+
+    # 判断限时
+    parser.add_argument("-t", "--time-range", type=str, default=None,
+                        help="Time range of service (UTC+8, e.g. 8-22)")
+
+    # 证书路径
+    parser.add_argument("-cert", "--cert-path", type=str, default=None,
+                        help="Path of your SSL cert")
+    parser.add_argument("-key", "--key-path", type=str, default=None,
+                        help="Path of your SSL key")
+
     args = parser.parse_args()
 
     ipv6 = args.ipv6
-    cos = args.cos
+    cos = args.enable_cos
+    https = args.enable_https
+    force_https = args.force_https
+    cert_path = args.cert_path
+    key_path = args.key_path
+    if args.time_range is not None:
+        start_hour = int(args.time_range.split("-")[0])
+        end_hour = int(args.time_range.split("-")[1])
+    if https:
+        assert cert_path is not None, "请设置证书路径"
+        assert key_path is not None, "请设置密钥路径"
 
     # 设置环境变量以启用COS
     if cos:
@@ -268,12 +278,20 @@ if __name__ == "__main__":
 
     if ipv6:
         print("Both IPv4 and IPv6 are listened.")
-        app.run(host='::', port=5000, threaded=True)
-        # 如果需要启用HTTPS，请取消下一行的注释，并将证书和密钥的路径替换为你的证书和密钥的路径
-        # app.run(host='::', port=5000, threaded=True, ssl_context=('path/xxxx.pem', 'path/xxxx.key'))
+        if https:
+            print("HTTPS is enabled.")
+            # 如果启用了IPv6和HTTPS，则监听IPv6
+            app.run(host='::', port=5000, threaded=True, ssl_context=(cert_path, key_path))
+        else:
+            # 如果启用了IPv6但没有启用HTTPS，则监听IPv6
+            app.run(host='::', port=5000, threaded=True)
+
     else:
         print("Only IPv4 is listened.")
-        # 否则只监听IPv4
-        app.run(host='0.0.0.0', port=5000)
-        # 如果需要启用HTTPS，请取消下一行的注释，并将证书和密钥的路径替换为你的证书和密钥的路径
-        # app.run(host='0.0.0.0', port=5000, ssl_context=('path/xxxx.pem', 'path/xxxx.key'))
+        if https:
+            print("HTTPS is enabled.")
+            # 如果启用了HTTPS但没有启用IPv6，则监听IPv4
+            app.run(host='0.0.0.0', port=5000, ssl_context=(cert_path, key_path))
+        else:
+            # 如果没有启用IPv6和HTTPS，则监听IPv4
+            app.run(host='0.0.0.0', port=5000)
