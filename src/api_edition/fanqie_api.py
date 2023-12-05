@@ -188,7 +188,7 @@ def upload_cos(file_path, title):
     if os.getenv("IS_COS") == "True":
         try:
             cos_upload(file_path)
-            result.append(f"小说《{title}》已上传到COS")
+            result.append(f"小说《{title}》，路径：{file_path}，已上传到COS")
         except AssertionError as e:
             result.append(f"上传小说《{title}》，路径：{file_path}，失败：{e}")
         except KeyError as e:
