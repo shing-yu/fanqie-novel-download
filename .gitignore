@@ -21,7 +21,3 @@ build/
 .pytest_cache/
 # 忽略编译文件
 .mypy_cache/
-
-# 忽略测试文件和个人配置
-src/api_edition/cos-config.json
-src/api_edition/test.txt
