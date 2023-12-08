@@ -181,11 +181,10 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
 
     # 打开文件
     with open(txt_file_path, 'ab') as f:
+        chapter_id_now = start_chapter_id
         try:
             # 从起始章节开始遍历每个章节链接
             for chapter in tqdm(chapters[start_index:]):
-
-                chapter_id_now = re.search(r"/reader/(\d+)", str(chapter)).group(1)
 
                 result = p.get_api(chapter, headers)
 
@@ -193,12 +192,6 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
                     continue
                 else:
                     chapter_title, chapter_text, chapter_id_now = result
-
-                # 在小说内容字符串中添加章节标题和内容
-                content += f"\n\n\n{chapter_title}\n{chapter_text}"
-
-                # 打印进度信息
-                tqdm.write(f"已获取 {chapter_title}")
 
                 # 在小说内容字符串中添加章节标题和内容
                 content = f"\n\n\n{chapter_title}\n{chapter_text}"
@@ -210,7 +203,7 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
                 f.write(data)
 
                 # 打印进度信息
-                # tqdm.write(f"已增加: {chapter_title}")
+                tqdm.write(f"已增加: {chapter_title}")
 
         except BaseException as e:
 
