@@ -103,6 +103,10 @@ pip install -r requirements-all.txt
 
 如果您遇到问题或有改进建议，请将其提交到此项目的[GitHub issues](https://github.com/xing-yv/fanqie-novel-download/issues)页面。
 
+## Star趋势
+
+![Stars](https://api.star-history.com/svg?repos=shing-yu/fanqie-novel-download&type=Date)
+
 ## 赞助
 
 如果您想要支持我的开发，欢迎赞助，感谢您的支持！
