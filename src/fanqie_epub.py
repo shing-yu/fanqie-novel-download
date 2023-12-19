@@ -45,10 +45,14 @@ def fanqie_epub(url, user_agent, path_choice):
 
     # 创建epub电子书
     book = epub.EpubBook()
+    proxies = {
+        "http": None,
+        "https": None
+    }
 
     # 获取网页源码
     try:
-        response = requests.get(url, headers=headers, timeout=20)
+        response = requests.get(url, headers=headers, timeout=20, proxies=proxies)
     except Timeout:
         print(Fore.RED + Style.BRIGHT + "连接超时，请检查网络连接是否正常。")
         return
@@ -194,7 +198,7 @@ def fanqie_epub(url, user_agent, path_choice):
                 while retry_count < 4:  # 设置最大重试次数
                     try:
                         # 获取 api 响应
-                        api_response = requests.get(api_url, headers=headers, timeout=5)
+                        api_response = requests.get(api_url, headers=headers, timeout=5, proxies=proxies)
 
                         # 解析 api 响应为 json 数据
                         api_data = api_response.json()
