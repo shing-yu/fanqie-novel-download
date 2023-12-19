@@ -43,10 +43,14 @@ def fanqie_d(url, encoding, user_agent, path_choice, data_folder, start_chapter_
     headers = {
         "User-Agent": user_agent
     }
+    proxies = {
+        "http": None,
+        "https": None
+    }
 
     # 获取网页源码
     try:
-        response = requests.get(url, headers=headers, timeout=20)
+        response = requests.get(url, headers=headers, timeout=20, proxies=proxies)
     except Timeout:
         print(Fore.RED + Style.BRIGHT + "连接超时，请检查网络连接是否正常。")
         return
@@ -178,7 +182,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
             while retry_count < 4:  # 设置最大重试次数
                 try:
                     # 获取 api 响应
-                    api_response = requests.get(api_url, headers=headers, timeout=5)
+                    api_response = requests.get(api_url, headers=headers, timeout=5, proxies=proxies)
 
                     tqdm.write(Fore.YELLOW + Style.BRIGHT + f"[DEBUG]HTTP状态码:{api_response}")
 

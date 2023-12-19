@@ -29,6 +29,10 @@ from tqdm import tqdm
 from colorama import Fore, Style, init
 
 init(autoreset=True)
+proxies = {
+        "http": None,
+        "https": None
+    }
 
 
 # 替换非法字符
@@ -75,7 +79,7 @@ def get_fanqie(url, user_agent):
 
     # 获取网页源码
 
-    response = requests.get(url, headers=headers, timeout=20)
+    response = requests.get(url, headers=headers, timeout=20, proxies=proxies)
     html = response.text
 
     # 解析网页源码
@@ -133,7 +137,7 @@ def get_api(chapter, headers):
     while retry_count < 4:  # 设置最大重试次数
         try:
             # 获取 api 响应
-            api_response = requests.get(api_url, headers=headers, timeout=5)
+            api_response = requests.get(api_url, headers=headers, timeout=5, proxies=proxies)
 
             # 解析 api 响应为 json 数据
             api_data = api_response.json()
