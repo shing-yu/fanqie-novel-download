@@ -23,7 +23,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 import function as f
 from sys import exit
 
-version = "v2.8.7"
+version = "v2.8.7-post.1"
 
 # 检查EULA
 f.check_eula()

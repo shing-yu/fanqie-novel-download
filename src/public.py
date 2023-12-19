@@ -114,6 +114,8 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 def get_api(chapter, headers):
     # 获取章节标题
     chapter_title = chapter.find("a").get_text()
+    # 去除非法字符
+    chapter_title = rename(chapter_title)
 
     # 获取章节网址
     chapter_url = chapter.find("a")["href"]
