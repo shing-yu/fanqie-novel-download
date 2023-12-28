@@ -27,6 +27,7 @@ import fanqie_batch as fb
 import fanqie_chapter as fc
 import fanqie_update as fu
 import fanqie_epub as fe
+import fanqie_search as fs
 import os
 import re
 import requests
@@ -81,6 +82,7 @@ def print_usage():
 def start():
     global mode  # 声明mode为全局变量
     global return_info
+    global book_id
 
     while True:
         # 定义变量flag控制是否退出程序
@@ -98,7 +100,8 @@ def start():
         print("8. 查看贡献（赞助）者名单")
         print("9. 退出程序")
         print("10. 撤回同意")
-        choice = input("请输入您的选择（1~10）:（默认“1”）\n")
+        print("11. 进入搜索模式")
+        choice = input("请输入您的选择（1~11）:（默认“1”）\n")
 
         # 通过用户选择，决定模式，给mode赋值
         if not choice:
@@ -229,7 +232,12 @@ None
                 print("您已撤回同意")
                 input("按Enter键退出程序...")
                 exit(0)
-
+        elif choice == '11':
+            mode = 11
+            clear_screen()
+            print("您已进入搜索模式：")
+            book_id=fs.fanqie_s(input('关键字：'))
+            break
         else:
             print("无效的选择，请重新输入。")
     get_parameter(retry=False)
@@ -242,6 +250,7 @@ def get_parameter(retry):
     global type_path_num
     global book_id
     global start_chapter_id
+    global mode
 
     page_url = None
 
@@ -256,6 +265,8 @@ def get_parameter(retry):
         elif retry is False:
             print("请在程序同文件夹(或执行目录)下的urls.txt中，以每行一个的形式写入目录页链接")
         input("完成后请按Enter键继续:")
+    elif mode==11:
+        page_url= "https://fanqienovel.com/page/" + book_id
     else:
         # 不是则让用户输入小说目录页的链接
         while True:
@@ -385,6 +396,8 @@ def get_parameter(retry):
         else:
             print("输入无效，请重新输入。")
             continue
+    if mode==11:
+        mode=0
     perform_user_mode_action()
 
 
