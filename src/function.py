@@ -103,8 +103,7 @@ def start():
         print("8. 查看贡献（赞助）者名单")
         print("9. 退出程序")
         print("10. 撤回同意")
-        print("11. 进入搜索模式")
-        choice = input("请输入您的选择（1~11）:（默认“1”）\n")
+        choice = input("请输入您的选择（1~10）:（默认“1”）\n")
 
         # 通过用户选择，决定模式，给mode赋值
         if not choice:
@@ -235,12 +234,6 @@ None
                 print("您已撤回同意")
                 input("按Enter键退出程序...")
                 exit(0)
-        elif choice == '11':
-            mode = 11
-            clear_screen()
-            print("您已进入搜索模式：")
-            book_id=fs.fanqie_s(input('关键字：'))
-            break
         else:
             print("无效的选择，请重新输入。")
     get_parameter(retry=False)
@@ -253,9 +246,10 @@ def get_parameter(retry):
     global type_path_num
     global book_id
     global start_chapter_id
+    global mode
 
     page_url = None
-
+    choice = input('选择小说获取方式：\n 1.在线搜索 2.分享链接 （默认1）')
     # 判断是否是批量下载模式
     if mode == 2:
         if not os.path.exists('urls.txt'):
@@ -268,9 +262,9 @@ def get_parameter(retry):
             print("请在程序同文件夹(或执行目录)下的urls.txt中，以每行一个的形式写入目录页链接")
         input("完成后请按Enter键继续:")
     # 判断是否是搜索模式
-    elif mode==11:
-        # 搜索结果赋值
-        page_url= "https://fanqienovel.com/page/" + book_id
+    elif choice=='1' or choice==None:
+        print("您已进入搜索模式")
+        book_id=fs.fanqie_s(input('关键字：'))
     else:
         # 不是则让用户输入小说目录页的链接
         while True:
