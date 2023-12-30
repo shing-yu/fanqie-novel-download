@@ -265,6 +265,7 @@ def get_parameter(retry):
     elif choice=='1' or choice==None:
         print("您已进入搜索模式")
         book_id=fs.fanqie_s(input('关键字：'))
+        page_url = "https://fanqienovel.com/page/" + book_id
     else:
         # 不是则让用户输入小说目录页的链接
         while True:
