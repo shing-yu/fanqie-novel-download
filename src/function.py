@@ -264,7 +264,7 @@ def get_parameter(retry):
     # 不是则让用户输入小说目录页的链接
         while True:
             try:
-                page_url = input("请输入目录页或手机端分享链接（或书籍ID）/搜索关键字：\n")
+                page_url = input("请输入链接/ID/书名搜索：\n")
 
                 # 检查 url 类型
                 if page_url.isdigit():
