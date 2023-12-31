@@ -103,8 +103,7 @@ def start():
         print("8. 查看贡献（赞助）者名单")
         print("9. 退出程序")
         print("10. 撤回同意")
-        print("11. 进入搜索模式")
-        choice = input("请输入您的选择（1~11）:（默认“1”）\n")
+        choice = input("请输入您的选择（1~10）:（默认“1”）\n")
 
         # 通过用户选择，决定模式，给mode赋值
         if not choice:
@@ -235,12 +234,6 @@ None
                 print("您已撤回同意")
                 input("按Enter键退出程序...")
                 exit(0)
-        elif choice == '11':
-            mode = 11
-            clear_screen()
-            print("您已进入搜索模式：")
-            book_id=fs.fanqie_s(input('关键字：'))
-            break
         else:
             print("无效的选择，请重新输入。")
     get_parameter(retry=False)
@@ -253,9 +246,9 @@ def get_parameter(retry):
     global type_path_num
     global book_id
     global start_chapter_id
+    global mode
 
     page_url = None
-
     # 判断是否是批量下载模式
     if mode == 2:
         if not os.path.exists('urls.txt'):
@@ -267,44 +260,37 @@ def get_parameter(retry):
         elif retry is False:
             print("请在程序同文件夹(或执行目录)下的urls.txt中，以每行一个的形式写入目录页链接")
         input("完成后请按Enter键继续:")
-    # 判断是否是搜索模式
-    elif mode==11:
-        # 搜索结果赋值
-        page_url= "https://fanqienovel.com/page/" + book_id
     else:
-        # 不是则让用户输入小说目录页的链接
+    # 不是则让用户输入小说目录页的链接
         while True:
             try:
-                page_url = input("请输入目录页或手机端分享链接（或书籍ID）：\n")
-
-                # 预留七猫小说判断
-                # if "qimao" in page_url:
-                #   if mode == 0:
-                #      mode = 2
-                #   elif mode == 1:
-                #      mode = 3
-                # elif "fanqie" in page_url:
+                page_url = input("请输入链接/ID/书名搜索：\n")
 
                 # 检查 url 类型
-                try:
-                    if page_url.isdigit():
-                        book_id = page_url
+                if page_url.isdigit():
+                    book_id = page_url
+                    page_url = "https://fanqienovel.com/page/" + book_id
+                    break
+
+                elif "fanqienovel.com/page/" in page_url:
+                    book_id = re.search(r"fanqienovel.com/page/(\d+)", page_url).group(1)
+                    page_url = "https://fanqienovel.com/page/" + book_id
+                    break  # 如果是正确的链接，则退出循环
+
+                elif "changdunovel.com" in page_url:
+                    book_id = re.search(r"book_id=(\d+)&", page_url).group(1)
+                    page_url = "https://fanqienovel.com/page/" + book_id
+                    break
+                else:
+                    try:
+                        book_id=fs.fanqie_s(page_url)
                         page_url = "https://fanqienovel.com/page/" + book_id
                         break
-
-                    elif "fanqienovel.com/page/" in page_url:
-                        book_id = re.search(r"fanqienovel.com/page/(\d+)", page_url).group(1)
-                        page_url = "https://fanqienovel.com/page/" + book_id
-                        break  # 如果是正确的链接，则退出循环
-
-                    elif "changdunovel.com" in page_url:
-                        book_id = re.search(r"book_id=(\d+)&", page_url).group(1)
-                        page_url = "https://fanqienovel.com/page/" + book_id
-                        break
-                    else:
-                        print(Fore.YELLOW + Style.BRIGHT + "请输入正确的小说目录页面或手机端分享链接（或书籍ID）")
-                except AttributeError:
-                    print(Fore.YELLOW + Style.BRIGHT + "请输入正确的小说目录页面或手机端分享链接（或书籍ID）")
+                    except KeyboardInterrupt:
+                        print('您已按下Ctrl+C，请重新输入')
+                        continue
+            except TypeError:
+                continue
             # 当用户按下Ctrl+C是，可以自定义起始章节id
             except KeyboardInterrupt:
                 while True:
