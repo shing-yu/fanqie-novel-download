@@ -261,7 +261,7 @@ def get_parameter(retry):
             print("请在程序同文件夹(或执行目录)下的urls.txt中，以每行一个的形式写入目录页链接")
         input("完成后请按Enter键继续:")
     else:
-    # 不是则让用户输入小说目录页的链接
+        # 不是则让用户输入小说目录页的链接
         while True:
             try:
                 page_url = input("请输入链接/ID/书名搜索：\n")
@@ -283,7 +283,7 @@ def get_parameter(retry):
                     break
                 else:
                     try:
-                        book_id=fs.fanqie_s(page_url)
+                        book_id = fs.fanqie_s(page_url)
                         page_url = "https://fanqienovel.com/page/" + book_id
                         break
                     except KeyboardInterrupt:
