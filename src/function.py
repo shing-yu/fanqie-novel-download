@@ -263,7 +263,7 @@ def get_parameter(retry):
         # 不是则让用户输入小说目录页的链接
         while True:
             try:
-                page_url = input("请输入链接/ID，或输入r以进入搜索模式：\n")
+                page_url = input("请输入链接/ID，或输入s以进入搜索模式：\n")
 
                 # 检查 url 类型
                 if page_url.isdigit():
@@ -280,7 +280,7 @@ def get_parameter(retry):
                     book_id = re.search(r"book_id=(\d+)&", page_url).group(1)
                     page_url = "https://fanqienovel.com/page/" + book_id
                     break
-                elif page_url.lower() == 'r':
+                elif page_url.lower() == 's':
                     print("正在进入搜索模式...")
                     book_id = search()
                     if book_id is None:
