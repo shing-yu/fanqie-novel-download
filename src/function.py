@@ -282,13 +282,9 @@ def get_parameter(retry):
                     page_url = "https://fanqienovel.com/page/" + book_id
                     break
                 else:
-                    try:
-                        book_id = fs.fanqie_s(page_url)
-                        page_url = "https://fanqienovel.com/page/" + book_id
-                        break
-                    except KeyboardInterrupt:
-                        print('您已按下Ctrl+C，请重新输入')
-                        continue
+                    book_id = fs.fanqie_s(page_url)
+                    page_url = "https://fanqienovel.com/page/" + book_id
+                    break
             except TypeError:
                 continue
             # 当用户按下Ctrl+C是，可以自定义起始章节id
