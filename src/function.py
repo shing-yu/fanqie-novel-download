@@ -284,7 +284,7 @@ def get_parameter(retry):
                     print("正在进入搜索模式...")
                     book_id = search()
                     if book_id is None:
-                        print("你取消了搜索，请重新输入。")
+                        print(Fore.YELLOW + Style.BRIGHT + "\n您取消了搜索，请重新输入。")
                         continue
                     page_url = "https://fanqienovel.com/page/" + book_id
                     break
