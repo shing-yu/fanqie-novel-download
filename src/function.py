@@ -27,7 +27,6 @@ import fanqie_batch as fb
 import fanqie_chapter as fc
 import fanqie_update as fu
 import fanqie_epub as fe
-import fanqie_search as fs
 import os
 import re
 import requests
@@ -264,7 +263,7 @@ def get_parameter(retry):
         # 不是则让用户输入小说目录页的链接
         while True:
             try:
-                page_url = input("请输入链接/ID或使用书名搜索：\n")
+                page_url = input("请输入链接/ID，或输入r以进入搜索模式：\n")
 
                 # 检查 url 类型
                 if page_url.isdigit():
@@ -281,8 +280,12 @@ def get_parameter(retry):
                     book_id = re.search(r"book_id=(\d+)&", page_url).group(1)
                     page_url = "https://fanqienovel.com/page/" + book_id
                     break
-                else:
-                    book_id = fs.fanqie_s(page_url)
+                elif page_url.lower() == 'r':
+                    print("正在进入搜索模式...")
+                    book_id = search()
+                    if book_id is None:
+                        print("你取消了搜索，请重新输入。")
+                        continue
                     page_url = "https://fanqienovel.com/page/" + book_id
                     break
             except TypeError:
@@ -627,3 +630,39 @@ eula_date:
         else:
             clear_screen()
             print("输入无效，请重新输入。")
+
+
+def search():
+
+    try:
+
+        while True:
+
+            key = input("请输入搜索关键词（按下Ctrl+C返回）：")
+
+            # 获取搜索结果列表
+            response = requests.get(f'https://fanqienovel.com/api/author/search/'
+                                    f'search_book/v1?filter=127,127,127,127&page_count=10&'
+                                    f'page_index=0&query_type=0&query_word={key}').json()
+            books = response['data']['search_book_data_list']
+
+            for i, book in enumerate(books):
+                print(f"{i + 1}. 名称：{book['book_name']} 作者：{book['author']} ID：{book['book_id']} 字数：{book['word_count']}")
+
+            while True:
+                choice_ = input("请选择一个编码, 输入r以重新搜索：")
+                if choice_ == "r":
+                    clear_screen()
+                    break
+                elif choice_.isdigit():
+                    choice = int(choice_)
+                    if choice > len(books):
+                        print("输入无效，请重新输入。")
+                        continue
+                    chosen_book = books[choice - 1]
+                    return chosen_book['book_id']
+                else:
+                    print("输入无效，请重新输入。")
+                    continue
+    except KeyboardInterrupt:
+        return
