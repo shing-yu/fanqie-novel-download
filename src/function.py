@@ -651,7 +651,7 @@ def search():
                       f"ID：{book['book_id']} 字数：{book['word_count']}")
 
             while True:
-                choice_ = input("请选择一个编码, 输入r以重新搜索：")
+                choice_ = input("请选择一个结果, 输入r以重新搜索：")
                 if choice_ == "r":
                     clear_screen()
                     break
