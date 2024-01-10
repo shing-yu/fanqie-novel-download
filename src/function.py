@@ -647,7 +647,8 @@ def search():
             books = response['data']['search_book_data_list']
 
             for i, book in enumerate(books):
-                print(f"{i + 1}. 名称：{book['book_name']} 作者：{book['author']} ID：{book['book_id']} 字数：{book['word_count']}")
+                print(f"{i + 1}. 名称：{book['book_name']} 作者：{book['author']} "
+                      f"ID：{book['book_id']} 字数：{book['word_count']}")
 
             while True:
                 choice_ = input("请选择一个编码, 输入r以重新搜索：")
