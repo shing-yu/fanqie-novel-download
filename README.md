@@ -2,7 +2,7 @@
 番茄小说下载的Python实现。这是一个用于从番茄小说网站下载小说的Python程序。  
 **如果需要下载七猫小说。可以使用此项目的变体项目 [7mao-novel-downloader](https://github.com/xing-yv/7mao-novel-downloader)。**  
 本程序灵感即api均来源于ibxff所作用户脚本（MIT），你可以在[此处](https://greasyfork.org/zh-CN/scripts/476688-%E7%95%AA%E8%8C%84%E5%85%A8%E6%96%87%E5%9C%A8%E7%BA%BF%E5%85%8D%E8%B4%B9%E8%AF%BB)获取。  
-软件QQ4群（闲聊）：854953755  
+QQ： 外1群：149050832  外2群：667146297  频道：https://pd.qq.com/s/hd0ciuont
 感谢贡献（赞助）者们对本项目的支持，你可以在[此处](https://github.com/xing-yv/fanqie-novel-download/blob/main/CONTRIBUTORS.md)获取贡献和赞助者名单。  
 <br>
 使用本程序代表您已阅读并同意[最终用户许可协议（EULA）](https://github.com/xing-yv/fanqie-novel-download/blob/main/EULA.md)
