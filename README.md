@@ -69,12 +69,6 @@ QQ： 外1群：149050832  外2群：667146297  频道：https://pd.qq.com/s/hd0
 pip install -r requirements.txt
 ```
 
-或（全部版本）
-
-```shell
-pip install -r requirements-all.txt
-```
-
 ## 许可证
 
 为保护此程序不被用于不良商业行为，
