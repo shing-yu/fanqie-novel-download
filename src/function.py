@@ -53,6 +53,10 @@ license_url_zh = "https://gitee.com/xingyv1024/fanqie-novel-download/raw/main/LI
 os.makedirs(data_path, exist_ok=True)
 book_id = None
 start_chapter_id = "0"
+proxies = {
+        "http": None,
+        "https": None
+    }
 
 
 # 用户须知
@@ -168,7 +172,7 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
             clear_screen()
             contributors_url = 'https://gitee.com/xingyv1024/fanqie-novel-download/raw/main/CONTRIBUTORS.md'
             try:
-                contributors = requests.get(contributors_url, timeout=5)
+                contributors = requests.get(contributors_url, timeout=5, proxies=proxies)
 
                 # 检查响应状态码
                 if contributors.status_code == 200:
@@ -230,7 +234,6 @@ None
                 print("您已撤回同意")
                 input("按Enter键退出程序...")
                 exit(0)
-
         else:
             print("无效的选择，请重新输入。")
     get_parameter(retry=False)
@@ -243,9 +246,9 @@ def get_parameter(retry):
     global type_path_num
     global book_id
     global start_chapter_id
+    global mode
 
     page_url = None
-
     # 判断是否是批量下载模式
     if mode == 2:
         if not os.path.exists('urls.txt'):
@@ -261,36 +264,33 @@ def get_parameter(retry):
         # 不是则让用户输入小说目录页的链接
         while True:
             try:
-                page_url = input("请输入目录页或手机端分享链接（或书籍ID）：\n")
-
-                # 预留七猫小说判断
-                # if "qimao" in page_url:
-                #   if mode == 0:
-                #      mode = 2
-                #   elif mode == 1:
-                #      mode = 3
-                # elif "fanqie" in page_url:
+                page_url = input("请输入链接/ID，或输入s以进入搜索模式：\n")
 
                 # 检查 url 类型
-                try:
-                    if page_url.isdigit():
-                        book_id = page_url
-                        page_url = "https://fanqienovel.com/page/" + book_id
-                        break
+                if page_url.isdigit():
+                    book_id = page_url
+                    page_url = "https://fanqienovel.com/page/" + book_id
+                    break
 
-                    elif "fanqienovel.com/page/" in page_url:
-                        book_id = re.search(r"fanqienovel.com/page/(\d+)", page_url).group(1)
-                        page_url = "https://fanqienovel.com/page/" + book_id
-                        break  # 如果是正确的链接，则退出循环
+                elif "fanqienovel.com/page/" in page_url:
+                    book_id = re.search(r"fanqienovel.com/page/(\d+)", page_url).group(1)
+                    page_url = "https://fanqienovel.com/page/" + book_id
+                    break  # 如果是正确的链接，则退出循环
 
-                    elif "changdunovel.com" in page_url:
-                        book_id = re.search(r"book_id=(\d+)&", page_url).group(1)
-                        page_url = "https://fanqienovel.com/page/" + book_id
-                        break
-                    else:
-                        print(Fore.YELLOW + Style.BRIGHT + "请输入正确的小说目录页面或手机端分享链接（或书籍ID）")
-                except AttributeError:
-                    print(Fore.YELLOW + Style.BRIGHT + "请输入正确的小说目录页面或手机端分享链接（或书籍ID）")
+                elif "changdunovel.com" in page_url:
+                    book_id = re.search(r"book_id=(\d+)&", page_url).group(1)
+                    page_url = "https://fanqienovel.com/page/" + book_id
+                    break
+                elif page_url.lower() == 's':
+                    print("正在进入搜索模式...")
+                    book_id = search()
+                    if book_id is None:
+                        print(Fore.YELLOW + Style.BRIGHT + "\n您取消了搜索，请重新输入。")
+                        continue
+                    page_url = "https://fanqienovel.com/page/" + book_id
+                    break
+            except TypeError:
+                continue
             # 当用户按下Ctrl+C是，可以自定义起始章节id
             except KeyboardInterrupt:
                 while True:
@@ -479,7 +479,7 @@ def check_update(now_version):
     # noinspection PyBroadException
     try:
         # 发送GET请求以获取最新的发行版信息
-        response = requests.get(api_url, timeout=5)
+        response = requests.get(api_url, timeout=5, proxies=proxies)
 
         if response.status_code != 200:
             print(f"请求失败，状态码：{response.status_code}")
@@ -537,7 +537,7 @@ def check_eula():
         eula_date_old = eula_txt.splitlines()[5]
         # noinspection PyBroadException
         try:
-            eula_text = requests.get(eula_url, timeout=10).text
+            eula_text = requests.get(eula_url, timeout=10, proxies=proxies).text
         except Exception:
             print("获取最终用户许可协议失败，请检查网络连接")
             input("按Enter键继续...\n")
@@ -583,9 +583,9 @@ eula_date:
 def agree_eula():
     # noinspection PyBroadException
     try:
-        eula_text = requests.get(eula_url, timeout=10).text
-        license_text = requests.get(license_url, timeout=10).text
-        license_text_zh = requests.get(license_url_zh, timeout=10).text
+        eula_text = requests.get(eula_url, timeout=10, proxies=proxies).text
+        license_text = requests.get(license_url, timeout=10, proxies=proxies).text
+        license_text_zh = requests.get(license_url_zh, timeout=10, proxies=proxies).text
     except Exception:
         print("获取最终用户许可协议失败，请检查网络连接")
         input("按Enter键继续...\n")
@@ -631,3 +631,40 @@ eula_date:
         else:
             clear_screen()
             print("输入无效，请重新输入。")
+
+
+def search():
+
+    try:
+
+        while True:
+
+            key = input("请输入搜索关键词（按下Ctrl+C返回）：")
+
+            # 获取搜索结果列表
+            response = requests.get(f'https://fanqienovel.com/api/author/search/'
+                                    f'search_book/v1?filter=127,127,127,127&page_count=10&'
+                                    f'page_index=0&query_type=0&query_word={key}').json()
+            books = response['data']['search_book_data_list']
+
+            for i, book in enumerate(books):
+                print(f"{i + 1}. 名称：{book['book_name']} 作者：{book['author']} "
+                      f"ID：{book['book_id']} 字数：{book['word_count']}")
+
+            while True:
+                choice_ = input("请选择一个结果, 输入r以重新搜索：")
+                if choice_ == "r":
+                    clear_screen()
+                    break
+                elif choice_.isdigit():
+                    choice = int(choice_)
+                    if choice > len(books):
+                        print("输入无效，请重新输入。")
+                        continue
+                    chosen_book = books[choice - 1]
+                    return chosen_book['book_id']
+                else:
+                    print("输入无效，请重新输入。")
+                    continue
+    except KeyboardInterrupt:
+        return
