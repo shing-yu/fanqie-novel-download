@@ -71,7 +71,7 @@ def print_usage():
 您可以使用此程序提供有偿代下载服务，但在提供服务的同时，必须向服务的接收者提供此程序的获取方式，
 以便他们可以自由使用、修改和分发该软件，同时也必须遵守GPLv3协议的所有其他规定。
 
-用户QQ4群(闲聊):854953755
+QQ： 外1群：149050832  外2群：667146297
 如果想要指定开始下载的章节，请在输入目录页链接时按Ctrl+C。
 
 免责声明：
@@ -131,7 +131,8 @@ def start():
         elif choice == '5':
             mode = 4
             clear_screen()
-            print("您已进入Epub模式，将输出epub电子书格式。\n")
+            print("您已进入EPUB模式，将输出epub电子书文件。\n")
+            # print("EPUB模式正在开发中，敬请期待\n")
             break
         elif choice == '6':
             clear_screen()

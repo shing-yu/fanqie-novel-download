@@ -78,7 +78,7 @@ def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id):
             chapter_title, chapter_text, _ = result
 
         # 在章节内容字符串中添加章节标题和内容
-        content_all = f"{chapter_title}\n{chapter_text}"
+        content_all = f"{chapter_title}{chapter_text}"
 
         # 转换章节内容格式
         data = content_all.encode(encoding, errors='ignore')

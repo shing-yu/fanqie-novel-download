@@ -115,9 +115,9 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
     return headers, title, content, chapters
 
 
-def get_api(chapter, headers):
+def get_api(chapter:BeautifulSoup, headers):
     # 获取章节标题
-    chapter_title = chapter.find("a").get_text()
+    chapter_title = chapter.find("a").text
     # 去除非法字符
     chapter_title = rename(chapter_title)
 
@@ -151,6 +151,8 @@ def get_api(chapter, headers):
 
         if "data" in api_data and "content" in api_data["data"]:
             chapter_content = api_data["data"]["content"]
+            # 解析章节内容
+            chapter_content = BeautifulSoup(chapter_content, "html.parser")
             break  # 如果成功获取章节内容，跳出重试循环
         else:
             if retry_count == 1:
@@ -163,15 +165,20 @@ def get_api(chapter, headers):
         return  # 重试次数过多后，跳过当前章节
 
     # 提取文章标签中的文本
-    chapter_text = re.search(r"<article>([\s\S]*?)</article>", chapter_content).group(1)
+    chapter_texts = chapter_content.find("article").find_all("p")
 
-    # 将 <p> 标签替换为换行符
-    chapter_text = re.sub(r"<p>", "\n", chapter_text)
+    chapter_text = ''
+
+    for i in chapter_texts:
+        if i.text != None:
+            chapter_text += str('\n\n' + i.text)
 
     # 去除其他 html 标签
     chapter_text = re.sub(r"</?\w+>", "", chapter_text)
 
     chapter_text = fix_publisher(chapter_text)
+
+    chapter_title = chapter_title.replace('\n', '')
 
     return chapter_title, chapter_text, chapter_id
 
