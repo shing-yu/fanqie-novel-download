@@ -105,6 +105,10 @@ def download_novels(url, encoding, user_agent, path_choice, folder_path, data_fo
         print(Fore.RED + Style.BRIGHT + "连接超时，请检查网络连接是否正常。")
         print(Fore.RED + Style.BRIGHT + "跳过此书籍")
         return
+    except AttributeError:
+        print(Fore.RED + Style.BRIGHT + "获取详情失败：该小说不存在或禁止网页阅读！（或网络连接异常）")
+        print(Fore.RED + Style.BRIGHT + "跳过此书籍")
+        return
 
     print(f"\n开始 《{title}》 的下载")
 

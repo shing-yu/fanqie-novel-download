@@ -131,7 +131,9 @@ def fanqie_update(user_agent, data_folder):
             if result == "DN":
                 print(f"{novel_name} 已是最新，不需要更新。\n")
             elif result == "Timeout":
-                print(Fore.RED + "更新失败")
+                print(Fore.RED + Style.BRIGHT + "更新失败")
+            elif result == "Not Found":
+                print(Fore.RED + Style.BRIGHT + "更新失败")
             else:
                 print(f"{novel_name} 已更新完成。\n")
                 # 计算文件 sha256 值
@@ -164,6 +166,9 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
     except Timeout:
         print(Fore.RED + Style.BRIGHT + "连接超时，请检查网络连接是否正常。")
         return "Timeout"
+    except AttributeError:
+        print(Fore.RED + Style.BRIGHT + "该小说已不存在或禁止网页阅读！（或网络连接异常）")
+        return "Not Found"
 
     last_chapter_id = None
     # 找到起始章节的索引
@@ -296,6 +301,10 @@ def onefile(user_agent, data_folder):
         result = download_novel(url, encoding, user_agent, last_chapter_id, txt_file_path)
         if result == "DN":
             print(f"{novel_name} 已是最新，不需要更新。\n")
+        elif result == "Timeout":
+            print(Fore.RED + Style.BRIGHT + "更新失败")
+        elif result == "Not Found":
+            print(Fore.RED + Style.BRIGHT + "更新失败")
         else:
             print(f"{novel_name} 已更新完成。\n")
             # 计算文件 sha256 值

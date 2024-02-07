@@ -40,6 +40,9 @@ def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id):
     except Timeout:
         print(Fore.RED + Style.BRIGHT + "连接超时，请检查网络连接是否正常。")
         return
+    except AttributeError:
+        print(Fore.RED + Style.BRIGHT + "获取详情失败：该小说不存在或禁止网页阅读！（或网络连接异常）")
+        return
 
     # 获取保存路径
     book_folder = get_folder_path(path_choice, title)

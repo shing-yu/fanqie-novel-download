@@ -54,6 +54,9 @@ def fanqie_d(url, encoding, user_agent, path_choice, data_folder, start_chapter_
     except Timeout:
         print(Fore.RED + Style.BRIGHT + "连接超时，请检查网络连接是否正常。")
         return
+    except AttributeError:
+        print(Fore.RED + Style.BRIGHT + "获取详情失败：该小说不存在或禁止网页阅读！（或网络连接异常）")
+        return
     html = response.text
 
     # 解析网页源码
