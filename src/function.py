@@ -256,9 +256,9 @@ def get_parameter(retry):
                 pass
         if retry is True:
             print("您在urls.txt中输入的内容有误，请重新输入")
-            print("请重新在程序同文件夹(或执行目录)下的urls.txt中，以每行一个的形式写入目录页链接")
+            print("请重新在程序同文件夹(或执行目录)下的urls.txt中，以每行一个的形式写入链接/ID")
         elif retry is False:
-            print("请在程序同文件夹(或执行目录)下的urls.txt中，以每行一个的形式写入目录页链接")
+            print("请在程序同文件夹(或执行目录)下的urls.txt中，以每行一个的形式写入链接/ID")
         input("完成后请按Enter键继续:")
     else:
         # 不是则让用户输入小说目录页的链接

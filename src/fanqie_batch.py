@@ -22,6 +22,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 
 # 导入必要的模块
 import os
+import re
 import time
 import datetime
 from tqdm import tqdm
@@ -49,11 +50,34 @@ def fanqie_b(encoding, user_agent, path_choice, data_folder):
             print("urls.txt文件为空")
             return
         else:
-            # 检查每行是否包含"/page/"，并且不是空行
-            for line in lines:
+            # 检查每行格式，并且不是空行
+            urls = []
+            for i, line in enumerate(lines, start=1):
                 line = line.strip()
-                if line and "/page/" not in line:
-                    print(f"语法错误：第{line}行")
+                # if line and "/page/" not in line:
+                #     print(f"语法错误：第{line}行")
+                #     return "file syntax is incorrect"
+                try:
+                    if line is False:
+                        continue
+                        # 如果是空行，则跳过
+                    elif line.isdigit():
+                        book_id = line
+                        urls.append(f"https://fanqienovel.com/page/{book_id}")
+                        break
+                    elif "fanqienovel.com/page/" in line:
+                        book_id = re.search(r"fanqienovel.com/page/(\d+)", line).group(1)
+                        urls.append(f"https://fanqienovel.com/page/{book_id}")
+                        break  # 如果是正确的链接，则退出循环
+                    elif "changdunovel.com" in line:
+                        book_id = re.search(r"book_id=(\d+)&", line).group(1)
+                        urls.append(f"https://fanqienovel.com/page/{book_id}")
+                        break
+                    else:
+                        print(Fore.YELLOW + Style.BRIGHT + f"无法识别的内容：第{i}行\n内容：{line}")
+                        return "file syntax is incorrect"
+                except TypeError:
+                    print(Fore.YELLOW + Style.BRIGHT + f"链接无法识别：第{i}行\n内容：{line}")
                     return "file syntax is incorrect"
 
         print("urls.txt文件内容符合要求")
@@ -85,14 +109,14 @@ def fanqie_b(encoding, user_agent, path_choice, data_folder):
                     break
 
         # 对于文件中的每个url，执行函数
-        for url in lines:
+        for url in urls:
             url = url.strip()  # 移除行尾的换行符
             if url:  # 如果url不为空（即，跳过空行）
                 download_novels(url, encoding, user_agent, path_choice, folder_path, data_folder)
                 time.sleep(1)
 
     except Exception as e:
-        print(f"发生错误：{str(e)}")
+        print(Fore.RED + Style.BRIGHT + f"发生错误：{str(e)}")
         return f"发生错误：{str(e)}"
 
 
