@@ -37,6 +37,8 @@ f.clear_screen()
 f.start()
 
 if f.return_info is None:
+    # 清除输入缓存
+    f.clear_stdin()
     input("按Enter键退出...")
     exit(0)
 else:

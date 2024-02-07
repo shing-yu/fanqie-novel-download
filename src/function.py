@@ -671,3 +671,14 @@ def search():
                     continue
     except KeyboardInterrupt:
         return
+
+
+def clear_stdin():
+    try:
+        import msvcrt
+        while msvcrt.kbhit():
+            msvcrt.getch()
+    except ImportError:
+        import sys
+        import termios
+        termios.tcflush(sys.stdin, termios.TCIOFLUSH)
