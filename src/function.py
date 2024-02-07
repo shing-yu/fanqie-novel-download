@@ -291,7 +291,7 @@ def get_parameter(retry):
                     break
                 else:
                     print(Fore.YELLOW + Style.BRIGHT + "无法识别的内容，请重新输入。")
-            except TypeError:
+            except AttributeError:
                 print(Fore.YELLOW + Style.BRIGHT + "链接无法识别，请检查并重新输入。")
                 continue
             # 当用户按下Ctrl+C是，可以自定义起始章节id

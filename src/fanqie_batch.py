@@ -76,7 +76,7 @@ def fanqie_b(encoding, user_agent, path_choice, data_folder):
                     else:
                         print(Fore.YELLOW + Style.BRIGHT + f"无法识别的内容：第{i}行\n内容：{line}")
                         return "file syntax is incorrect"
-                except TypeError:
+                except AttributeError:
                     print(Fore.YELLOW + Style.BRIGHT + f"链接无法识别：第{i}行\n内容：{line}")
                     return "file syntax is incorrect"
 
