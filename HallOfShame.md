@@ -30,6 +30,15 @@ List of violation evidence:   (1)...  (2)...
 
 <br/>
 
+1.违规者：ficj7376; 违规链接：https://www.bilibili.com/video/BV11w411W7kB/;   
+QQ:2816819*** Bilibili: https://space.bilibili.com/31917587;  
+举报人：None1- https://space.bilibili.com/551392659;  
+违规证据列表：  
+（1）https://www.bilibili.com/video/BV11w411W7kB/
+（2）QQ群：934279100
+
+<br/>
+
 (我们希望该名单内永远不要出现任何实体)
 
 (We hope that no entities will ever appear on this list.)
