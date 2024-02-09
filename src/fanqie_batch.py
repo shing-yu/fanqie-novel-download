@@ -64,15 +64,12 @@ def fanqie_b(encoding, user_agent, path_choice, data_folder):
                     elif line.isdigit():
                         book_id = line
                         urls.append(f"https://fanqienovel.com/page/{book_id}")
-                        break
                     elif "fanqienovel.com/page/" in line:
                         book_id = re.search(r"fanqienovel.com/page/(\d+)", line).group(1)
                         urls.append(f"https://fanqienovel.com/page/{book_id}")
-                        break  # 如果是正确的链接，则退出循环
                     elif "changdunovel.com" in line:
                         book_id = re.search(r"book_id=(\d+)&", line).group(1)
                         urls.append(f"https://fanqienovel.com/page/{book_id}")
-                        break
                     else:
                         print(Fore.YELLOW + Style.BRIGHT + f"无法识别的内容：第{i}行\n内容：{line}")
                         return "file syntax is incorrect"
