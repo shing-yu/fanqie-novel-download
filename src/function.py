@@ -259,6 +259,11 @@ def get_parameter(retry):
             print("请重新在程序同文件夹(或执行目录)下的urls.txt中，以每行一个的形式写入链接/ID")
         elif retry is False:
             print("请在程序同文件夹(或执行目录)下的urls.txt中，以每行一个的形式写入链接/ID")
+            try:
+                os.startfile('urls.txt')
+                print("您正在使用Windows，文件应该已自动弹出窗口")
+            except AttributeError:
+                print("您正在使用非Windows系统，请手动打开文件")
         input("完成后请按Enter键继续:")
     else:
         # 不是则让用户输入小说目录页的链接
