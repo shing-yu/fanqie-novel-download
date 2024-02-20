@@ -65,13 +65,12 @@ def print_usage():
     print("欢迎使用", end=" ")
     print(Fore.YELLOW + Style.BRIGHT + "番茄小说下载工具")
     print("""用户须知：
-此程序开源免费，如果您付费获取，那么您已经被骗了。
-本程序灵感及api来自于ibxff所作用户脚本，脚本链接请到更多中查看；
-为保护此程序不被用于不良商业行为，此程序使用GPLv3许可证，
+此程序开源免费，如果您付费获取，请您立即举报商家。
+本程序灵感及api来自于ibxff所作用户脚本，详情请到更多中查看；；
+此程序使用GPLv3开源许可证发布。
 
-您可以自由地复制、修改和分发本程序副本，但不能销售它。
-您可以使用此程序提供有偿代下载服务，但在提供服务的同时，必须向服务的接收者提供此程序的获取方式，
-以便他们可以自由使用、修改和分发该软件，同时也必须遵守GPLv3协议的所有其他规定。
+使用本程序代表您已阅读并同意本程序最终用户许可协议(EULA)（初次启动时已展示，可在更多中再次阅读）。
+（包括不得销售此程序副本，提供代下载服务需明确告知用户开源地址等）
 
 QQ： 外1群：149050832  外2群：667146297
 如果想要指定开始下载的章节，请在输入目录页链接时按Ctrl+C。
@@ -156,11 +155,13 @@ https://www.gnu.org/licenses/gpl-3.0.html
 请在使用本程序之前确保遵守相关法律法规和网站的使用政策，如有疑问，请咨询法律顾问。
 
 ibxff所作用户脚本:https://greasyfork.org/zh-CN/scripts/476688
-开源仓库地址:https://github.com/xing-yv/fanqie-novel-download
+开源仓库地址:https://github.com/shing-yu/fanqie-novel-download
 gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
 作者B站主页:https://space.bilibili.com/1920711824
-提出反馈:https://github.com/xing-yv/fanqie-novel-download/issues/new
+提出反馈:https://github.com/shing-yu/fanqie-novel-download/issues/new
 (请在右侧Label处选择issue类型以得到更快回复)
+
+最终用户许可协议(EULA)：https://gitee.com/xingyv1024/fanqie-novel-download/blob/main/EULA.md
 """)
             input("按Enter键返回...")
             clear_screen()
