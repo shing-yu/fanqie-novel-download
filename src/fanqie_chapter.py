@@ -24,6 +24,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 import re
 import os
 import time
+import json
 from tqdm import tqdm
 from requests.exceptions import Timeout
 import public as p
@@ -33,7 +34,8 @@ init(autoreset=True)
 
 
 # 定义分章节保存模式用来下载番茄小说的函数
-def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id):
+def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id,
+             config_path):
 
     try:
         headers, title, introduction, chapters = p.get_fanqie(url, user_agent)
@@ -45,7 +47,7 @@ def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id):
         return
 
     # 获取保存路径
-    book_folder = get_folder_path(path_choice, title)
+    book_folder = get_folder_path(path_choice, title, config_path)
     # 创建保存文件夹
     os.makedirs(book_folder, exist_ok=True)
 
@@ -112,7 +114,7 @@ def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id):
         tqdm.write(f"已获取: {chapter_title}")
 
 
-def get_folder_path(path_choice, title):
+def get_folder_path(path_choice, title, config_path):
     folder_path = None
     # 如果用户选择自定义路径
     if path_choice == 1:
@@ -126,7 +128,7 @@ def get_folder_path(path_choice, title):
 
         while True:
 
-            # 弹出文件对话框以选择保存位置和文件名
+            # 弹出文件对话框以选择保存位置
             folder_path = filedialog.askdirectory()
 
             # 检查用户是否取消了对话框
@@ -137,11 +139,32 @@ def get_folder_path(path_choice, title):
             else:
                 print("已选择保存文件夹")
                 break
+        # 询问用户是否保存此路径
+        cho = input("是否使用此路径覆盖此模式默认保存路径（y/n(d)）？")
+        if not cho or cho == "n":
+            pass
+        else:
+            # 如果配置文件不存在，则创建
+            if not os.path.exists(config_path):
+                with open(config_path, "w") as c:
+                    json.dump({"path": {"chapter": folder_path}}, c)
+            else:
+                with open(config_path, "r") as c:
+                    config = json.load(c)
+                config["path"]["chapter"] = folder_path
+                with open(config_path, "w") as c:
+                    json.dump(config, c)
     elif path_choice == 0:
 
-        # 在程序文件夹下新建output文件夹，并定义文件路径
-
-        folder_path = "output"
-
+        # 定义文件名，检测是否有默认路径
+        if not os.path.exists(config_path):
+            folder_path = "output"
+        else:
+            with open(config_path, "r") as c:
+                config = json.load(c)
+            if "chapter" in config["path"]:
+                folder_path = config["path"]["chapter"]
+            else:
+                folder_path = "output"
         os.makedirs(folder_path, exist_ok=True)
     return os.path.join(folder_path, f"{title}")

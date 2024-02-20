@@ -25,6 +25,7 @@ import re
 import datetime
 import os
 import time
+import json
 from tqdm import tqdm
 import hashlib
 import public as p
@@ -35,7 +36,8 @@ init(autoreset=True)
 
 
 # 定义正常模式用来下载番茄小说的函数
-def fanqie_n(url, encoding, user_agent, path_choice, data_folder, start_chapter_id):
+def fanqie_n(url, encoding, user_agent, path_choice, data_folder, start_chapter_id,
+             config_path):
     try:
         headers, title, content, chapters = p.get_fanqie(url, user_agent)
     except Timeout:
@@ -86,10 +88,35 @@ def fanqie_n(url, encoding, user_agent, path_choice, data_folder, start_chapter_
                 print("您没有选择路径，请重新选择！")
                 continue
             break
+        # 询问用户是否保存此路径
+        cho = input("是否使用此路径覆盖此模式默认保存路径（y/n(d)）？")
+        if not cho or cho == "n":
+            pass
+        else:
+            # 提取文件夹路径
+            folder_path = os.path.dirname(file_path)
+            # 如果配置文件不存在，则创建
+            if not os.path.exists(config_path):
+                with open(config_path, "w") as c:
+                    json.dump({"path": {"normal": folder_path}}, c)
+            else:
+                with open(config_path, "r") as c:
+                    config = json.load(c)
+                config["path"]["normal"] = folder_path
+                with open(config_path, "w") as c:
+                    json.dump(config, c)
 
     elif path_choice == 0:
-        # 定义文件名
-        file_path = title + ".txt"
+        # 定义文件名，检测是否有默认路径
+        if not os.path.exists(config_path):
+            file_path = title + ".txt"
+        else:
+            with open(config_path, "r") as c:
+                config = json.load(c)
+            if "normal" in config["path"]:
+                file_path = os.path.join(config["path"]["normal"], f"{title}.txt")
+            else:
+                file_path = title + ".txt"
 
     chapter_id = None
 

@@ -24,6 +24,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 import os
 import re
 import time
+import json
 import datetime
 from tqdm import tqdm
 import hashlib
@@ -34,7 +35,8 @@ from colorama import Fore, Style, init
 init(autoreset=True)
 
 
-def fanqie_b(encoding, user_agent, path_choice, data_folder):
+def fanqie_b(encoding, user_agent, path_choice, data_folder,
+             config_path):
 
     if not os.path.exists("urls.txt"):
         print("url.txt文件不存在")
@@ -104,12 +106,41 @@ def fanqie_b(encoding, user_agent, path_choice, data_folder):
                 else:
                     print("已选择保存文件夹")
                     break
+            # 询问用户是否保存此路径
+            cho = input("是否使用此路径覆盖此模式默认保存路径（y/n(d)）？")
+            if not cho or cho == "n":
+                pass
+            else:
+                # 如果配置文件不存在，则创建
+                if not os.path.exists(config_path):
+                    with open(config_path, "w") as c:
+                        json.dump({"path": {"batch": folder_path}}, c)
+                else:
+                    with open(config_path, "r") as c:
+                        config = json.load(c)
+                    config["path"]["batch"] = folder_path
+                    with open(config_path, "w") as c:
+                        json.dump(config, c)
+
+        elif path_choice == 0:
+
+            # 定义文件名，检测是否有默认路径
+            if not os.path.exists(config_path):
+                folder_path = "output"
+            else:
+                with open(config_path, "r") as c:
+                    config = json.load(c)
+                if "batch" in config["path"]:
+                    folder_path = config["path"]["batch"]
+                else:
+                    folder_path = "output"
+            os.makedirs(folder_path, exist_ok=True)
 
         # 对于文件中的每个url，执行函数
         for url in urls:
             url = url.strip()  # 移除行尾的换行符
             if url:  # 如果url不为空（即，跳过空行）
-                download_novels(url, encoding, user_agent, path_choice, folder_path, data_folder)
+                download_novels(url, encoding, user_agent, folder_path, data_folder)
                 time.sleep(1)
 
     except Exception as e:
@@ -118,7 +149,7 @@ def fanqie_b(encoding, user_agent, path_choice, data_folder):
 
 
 # 定义批量模式用来下载番茄小说的函数
-def download_novels(url, encoding, user_agent, path_choice, folder_path, data_folder):
+def download_novels(url, encoding, user_agent, folder_path, data_folder):
 
     try:
         headers, title, content, chapters = p.get_fanqie(url, user_agent)
@@ -155,23 +186,7 @@ def download_novels(url, encoding, user_agent, path_choice, folder_path, data_fo
 
     # 根据main.py中用户选择的路径方式，选择自定义路径或者默认
 
-    file_path = None
-
-    if path_choice == 1:
-
-        # 使用用户选择的文件夹路径和默认文件名来生成完整的文件路径
-
-        file_path = os.path.join(folder_path, f"{title}.txt")
-
-    elif path_choice == 0:
-
-        # 在程序文件夹下新建output文件夹，并把文件放入
-
-        output_folder = "output"
-
-        os.makedirs(output_folder, exist_ok=True)
-
-        file_path = os.path.join(output_folder, f"{title}.txt")
+    file_path = os.path.join(folder_path, f"{title}.txt")
 
     # 根据编码转换小说内容字符串为二进制数据
     data = content.encode(encoding, errors='ignore')

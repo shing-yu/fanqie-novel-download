@@ -38,7 +38,7 @@ init(autoreset=True)
 
 
 # 定义正常模式用来下载番茄小说的函数
-def fanqie_epub(url, user_agent, path_choice):
+def fanqie_epub(url, user_agent, path_choice, config_path):
     headers = {
         "User-Agent": user_agent
     }
@@ -290,10 +290,35 @@ def fanqie_epub(url, user_agent, path_choice):
                 print("您没有选择路径，请重新选择！")
                 continue
             break
+        # 询问用户是否保存此路径
+        cho = input("是否使用此路径覆盖此模式默认保存路径（y/n(d)）？")
+        if not cho or cho == "n":
+            pass
+        else:
+            # 提取文件夹路径
+            folder_path = os.path.dirname(file_path)
+            # 如果配置文件不存在，则创建
+            if not os.path.exists(config_path):
+                with open(config_path, "w") as c:
+                    json.dump({"path": {"epub": folder_path}}, c)
+            else:
+                with open(config_path, "r") as c:
+                    config = json.load(c)
+                config["path"]["epub"] = folder_path
+                with open(config_path, "w") as c:
+                    json.dump(config, c)
 
     elif path_choice == 0:
-        # 定义文件名
-        file_path = title + ".epub"
+        # 定义文件名，检测是否有默认路径
+        if not os.path.exists(config_path):
+            file_path = title + ".epub"
+        else:
+            with open(config_path, "r") as c:
+                config = json.load(c)
+            if "epub" in config["path"]:
+                file_path = os.path.join(config["path"]["epub"], f"{title}.epub")
+            else:
+                file_path = title + ".epub"
 
     epub.write_epub(file_path, book, {})
 
