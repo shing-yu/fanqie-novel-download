@@ -47,6 +47,7 @@ return_info = None
 user_folder = os.path.expanduser("~")
 data_path = os.path.join(user_folder, "fanqie_data")
 eula_path = os.path.join(data_path, "eula.txt")
+config_path = os.path.join(data_path, "config.json")
 eula_url = "https://gitee.com/xingyv1024/fanqie-novel-download/raw/main/EULA.md"
 license_url = "https://gitee.com/xingyv1024/fanqie-novel-download/raw/main/LICENSE.md"
 license_url_zh = "https://gitee.com/xingyv1024/fanqie-novel-download/raw/main/LICENSE-ZH.md"
@@ -61,15 +62,15 @@ proxies = {
 
 # 用户须知
 def print_usage():
-    print("欢迎使用此程序！")
+    print("欢迎使用", end=" ")
+    print(Fore.YELLOW + Style.BRIGHT + "番茄小说下载工具")
     print("""用户须知：
-此程序开源免费，如果您付费获取，那么您已经被骗了。
-本程序灵感及api来自于ibxff所作用户脚本，脚本链接请到更多中查看；
-为保护此程序不被用于不良商业行为，此程序使用GPLv3许可证，
+此程序开源免费，如果您付费获取，请您立即举报商家。
+本程序灵感及api来自于ibxff所作用户脚本，详情请到更多中查看；；
+此程序使用GPLv3开源许可证发布。
 
-您可以自由地复制、修改和分发本程序副本，但不能销售它。
-您可以使用此程序提供有偿代下载服务，但在提供服务的同时，必须向服务的接收者提供此程序的获取方式，
-以便他们可以自由使用、修改和分发该软件，同时也必须遵守GPLv3协议的所有其他规定。
+使用本程序代表您已阅读并同意本程序最终用户许可协议(EULA)（初次启动时已展示，可在更多中再次阅读）。
+（包括不得销售此程序副本，提供代下载服务需明确告知用户开源地址等）
 
 QQ： 外1群：149050832  外2群：667146297
 如果想要指定开始下载的章节，请在输入目录页链接时按Ctrl+C。
@@ -101,7 +102,7 @@ def start():
         print("7. 更新已下载的小说")
         print("8. 查看贡献（赞助）者名单")
         print("9. 退出程序")
-        print("10. 撤回同意")
+        print("10. 撤回同意/重置默认路径")
         choice = input("请输入您的选择（1~10）:（默认“1”）\n")
 
         # 通过用户选择，决定模式，给mode赋值
@@ -154,11 +155,13 @@ https://www.gnu.org/licenses/gpl-3.0.html
 请在使用本程序之前确保遵守相关法律法规和网站的使用政策，如有疑问，请咨询法律顾问。
 
 ibxff所作用户脚本:https://greasyfork.org/zh-CN/scripts/476688
-开源仓库地址:https://github.com/xing-yv/fanqie-novel-download
+开源仓库地址:https://github.com/shing-yu/fanqie-novel-download
 gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
 作者B站主页:https://space.bilibili.com/1920711824
-提出反馈:https://github.com/xing-yv/fanqie-novel-download/issues/new
+提出反馈:https://github.com/shing-yu/fanqie-novel-download/issues/new
 (请在右侧Label处选择issue类型以得到更快回复)
+
+最终用户许可协议(EULA)：https://gitee.com/xingyv1024/fanqie-novel-download/blob/main/EULA.md
 """)
             input("按Enter键返回...")
             clear_screen()
@@ -206,23 +209,25 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
                 continue
         elif choice == '10':
             clear_screen()
-            while True:
-                qd = input("您确定要撤回同意吗(yes/no)(默认:no): ")
-                if not qd:
-                    qd = "no"
-                if qd.lower() == "yes":
-                    break
-                elif qd.lower() == "no":
-                    flag2 = False
-                    break
+            cho = input("1-> 撤回同意  2-> 重置默认路径\n")
+            if cho == '1':
+                while True:
+                    qd = input("您确定要撤回同意吗(yes/no)(默认:no): ")
+                    if not qd:
+                        qd = "no"
+                    if qd.lower() == "yes":
+                        break
+                    elif qd.lower() == "no":
+                        flag2 = False
+                        break
+                    else:
+                        print("输入无效，请重新输入。")
+                if flag2 is False:
+                    clear_screen()
+                    continue
                 else:
-                    print("输入无效，请重新输入。")
-            if flag2 is False:
-                clear_screen()
-                continue
-            else:
-                with open(eula_path, "w", encoding="utf-8") as f:
-                    eula_txt = f"""eula_url: {eula_url}
+                    with open(eula_path, "w", encoding="utf-8") as f:
+                        eula_txt = f"""eula_url: {eula_url}
 license_url: {license_url}
 agreed: 
 no
@@ -230,8 +235,17 @@ eula_date:
 None
 
 """
-                    f.write(eula_txt)
-                print("您已撤回同意")
+                        f.write(eula_txt)
+                    print("您已撤回同意")
+                    input("按Enter键退出程序...")
+                    exit(0)
+            elif cho == '2':
+                os.remove(config_path)
+                print("已重置默认路径")
+                input("按Enter键退出程序...")
+                exit(0)
+            else:
+                print("输入无效")
                 input("按Enter键退出程序...")
                 exit(0)
         else:
@@ -384,11 +398,11 @@ def get_parameter(retry):
         elif type_path.lower() == "no":
             type_path_num = 0
             if mode == 2 or mode == 3:
-                print("您未选择自定义保存路径，请在获取完成后到程序文件夹下output文件夹寻找文件。")
-                print("(如果您在命令行中执行程序，请到执行目录下寻找output文件夹)")
+                print("您未选择自定义保存路径，请在获取完成后到默认路径下output文件夹寻找文件。")
+                print("(初始默认路径为程序所在文件夹，命令行为执行目录)")
             else:
-                print("您未选择自定义保存路径，请在获取完成后到程序相同文件夹下寻找文件。")
-                print("(如果您在命令行中执行程序，请到执行目录下寻找文件)")
+                print("您未选择自定义保存路径，请在获取完成后到默认路径下寻找文件。")
+                print("(初始默认路径为程序所在文件夹，命令行为执行目录)")
             break
 
         else:
@@ -454,19 +468,24 @@ def perform_user_mode_action():
     # 判断用户处于什么模式
     if mode == 0:
         # 调用番茄正常模式函数
-        return_info = fn.fanqie_n(page_url, txt_encoding, ua, type_path_num, data_path, start_chapter_id)
+        return_info = fn.fanqie_n(page_url, txt_encoding, ua, type_path_num, data_path, start_chapter_id,
+                                  config_path)
     elif mode == 1:
         # 调用番茄调试模式函数
-        return_info = fd.fanqie_d(page_url, txt_encoding, ua, type_path_num, data_path, start_chapter_id)
+        return_info = fd.fanqie_d(page_url, txt_encoding, ua, type_path_num, data_path, start_chapter_id,
+                                  config_path)
     elif mode == 2:
         # 调用番茄批量模式函数
-        return_info = fb.fanqie_b(txt_encoding, ua, type_path_num, data_path)
+        return_info = fb.fanqie_b(txt_encoding, ua, type_path_num, data_path,
+                                  config_path)
     elif mode == 3:
         # 调用番茄分章模式函数
-        return_info = fc.fanqie_c(page_url, txt_encoding, ua, type_path_num, start_chapter_id)
+        return_info = fc.fanqie_c(page_url, txt_encoding, ua, type_path_num, start_chapter_id,
+                                  config_path)
     elif mode == 4:
         # 调用番茄epub电子书模式函数
-        return_info = fe.fanqie_epub(page_url, ua, type_path_num)
+        return_info = fe.fanqie_epub(page_url, ua, type_path_num,
+                                     config_path)
 
 
 # 检查更新
