@@ -62,7 +62,8 @@ proxies = {
 
 # 用户须知
 def print_usage():
-    print("欢迎使用此程序！")
+    print("欢迎使用", end=" ")
+    print(Fore.YELLOW + Style.BRIGHT + "番茄小说下载工具")
     print("""用户须知：
 此程序开源免费，如果您付费获取，那么您已经被骗了。
 本程序灵感及api来自于ibxff所作用户脚本，脚本链接请到更多中查看；
