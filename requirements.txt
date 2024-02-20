@@ -1,6 +1,7 @@
-requests
-beautifulsoup4
-packaging
-ebooklib
-tqdm
-colorama
+requests~=2.31.0
+beautifulsoup4~=4.12.2
+packaging~=23.2
+ebooklib~=0.18
+tqdm~=4.66.1
+colorama~=0.4.6
+PyYAML~=6.0.1
