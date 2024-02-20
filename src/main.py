@@ -33,13 +33,18 @@ f.clear_screen()
 f.check_update(version)
 f.clear_screen()
 
-# 程序开始
-f.start()
+while True:
+    # 程序开始
+    f.start()
 
-if f.return_info is None:
-    # 清除输入缓存
-    f.clear_stdin()
-    input("按Enter键退出...")
-    exit(0)
-else:
-    f.get_parameter(retry=True)
+    if f.return_info is None:
+        # 清除输入缓存
+        f.clear_stdin()
+        try:
+            input("按Enter键退出（按Ctrl+C重新开始）...")
+        except KeyboardInterrupt:
+            f.clear_screen()
+            continue
+        exit(0)
+    else:
+        f.get_parameter(retry=True)
