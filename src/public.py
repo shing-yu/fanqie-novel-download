@@ -30,9 +30,9 @@ from colorama import Fore, Style, init
 
 init(autoreset=True)
 proxies = {
-        "http": None,
-        "https": None
-    }
+    "http": None,
+    "https": None
+}
 
 
 # 替换非法字符
@@ -115,7 +115,7 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
     return headers, title, content, chapters
 
 
-def get_api(chapter, headers):
+def get_api(chapter, headers, mode='default'):
     # 获取章节标题
     chapter_title = chapter.find("a").get_text()
     # 去除非法字符
@@ -164,6 +164,9 @@ def get_api(chapter, headers):
 
     # 提取文章标签中的文本
     chapter_text = re.search(r"<article>([\s\S]*?)</article>", chapter_content).group(1)
+
+    if mode == 'epub':
+        return chapter_title, chapter_text, chapter_id
 
     # 将 <p> 标签替换为换行符
     chapter_text = re.sub(r"<p>", "\n", chapter_text)

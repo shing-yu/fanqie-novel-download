@@ -20,6 +20,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 无论您对程序进行了任何操作，请始终保留此信息。
 """
 import os
+import yaml
 
 # 导入必要的模块
 import requests
@@ -45,10 +46,14 @@ def fanqie_epub(url, user_agent, path_choice):
 
     # 创建epub电子书
     book = epub.EpubBook()
+
     proxies = {
         "http": None,
         "https": None
     }
+
+    # 获取书籍id
+    book_id = re.search(r'\d+', url).group()
 
     # 获取网页源码
     try:
@@ -108,6 +113,15 @@ def fanqie_epub(url, user_agent, path_choice):
     book.set_language('zh-CN')
     book.add_author(author_name)
     book.add_metadata('DC', 'description', intro)
+
+    yaml_data = {
+        'fqid': book_id
+    }
+    yaml_content = yaml.dump(yaml_data)
+
+    # 设置 fqid 元数据
+    yaml_item = epub.EpubItem(uid='yaml', file_name='metadata.yaml', media_type='application/octet-stream', content=yaml_content)
+    book.add_item(yaml_item)
 
     # 获取卷标
     page_directory_content = soup.find('div', class_='page-directory-content')
@@ -181,53 +195,9 @@ def fanqie_epub(url, user_agent, path_choice):
             for chapter in tqdm(chapters):
                 chapter_id_name += 1
                 time.sleep(0.25)
-                # 获取章节标题
-                chapter_title = chapter.find("a").get_text()
 
-                # 获取章节网址
-                chapter_url = urljoin(url, chapter.find("a")["href"])
-
-                # 获取章节 id
-                chapter_id = re.search(r"/(\d+)", chapter_url).group(1)
-
-                # 构造 api 网址
-                api_url = (f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&"
-                           f"parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id="
-                           f"{chapter_id}&item_id={chapter_id}")
-
-                # 尝试获取章节内容
-                chapter_content = None
-                retry_count = 1
-                while retry_count < 4:  # 设置最大重试次数
-                    try:
-                        # 获取 api 响应
-                        api_response = requests.get(api_url, headers=headers, timeout=5, proxies=proxies)
-
-                        # 解析 api 响应为 json 数据
-                        api_data = api_response.json()
-                    except Exception as e:
-                        if retry_count == 1:
-                            tqdm.write(Fore.RED + Style.BRIGHT + f"发生异常: {e}")
-                            tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
-                        tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
-                        retry_count += 1  # 否则重试
-                        continue
-
-                    if "data" in api_data and "content" in api_data["data"]:
-                        chapter_content = api_data["data"]["content"]
-                        break  # 如果成功获取章节内容，跳出重试循环
-                    else:
-                        if retry_count == 1:
-                            tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
-                        tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
-                        retry_count += 1  # 否则重试
-
-                if retry_count == 4:
-                    tqdm.write(f"无法获取章节内容: {chapter_title}，跳过。")
-                    continue  # 重试次数过多后，跳过当前章节
-
-                # 提取文章标签中的文本
-                chapter_text = re.search(r"<article>([\s\S]*?)</article>", chapter_content).group(1)
+                # 获取章节内容
+                chapter_title, chapter_text, chapter_id = p.get_api(chapter, headers, mode='epub')
 
                 # 在小说内容字符串中添加章节标题和内容
                 text = epub.EpubHtml(title=chapter_title, file_name=f'chapter_{volume_id}_{chapter_id_name}.xhtml')
