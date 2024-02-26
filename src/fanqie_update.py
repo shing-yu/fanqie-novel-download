@@ -396,39 +396,39 @@ def fanqie_epub_update(user_agent, book_path):
                                 headers=headers,
                                 timeout=20,
                                 proxies=p.proxies)
+        html = response.text
+
+        # 解析网页源码
+        soup = BeautifulSoup(html, "html.parser")
+
+        # 获取小说标题
+        title = soup.find("h1").get_text()
+        # , class_ = "info-name"
+        title = p.rename(title)
+
+        # 获取小说简介
+        intro = soup.find("div", class_="page-abstract-content").get_text()
+
+        # 获取小说作者
+        author_name = soup.find('span', class_='author-name-text').get_text()
+
+        # 找到type="application/ld+json"的<script>标签
+        script_tag = soup.find('script', type='application/ld+json')
+
+        # 提取每个<script>标签中的JSON数据
+        json_data = json.loads(script_tag.string)
+        images_data = json_data.get('image', [])
+        # 打印提取出的images数据
+        img_url = images_data[0]
+
+        # 下载封面
+        response = requests.get(img_url, timeout=20)
     except Timeout:
         print(Fore.RED + Style.BRIGHT + "连接超时，请检查网络连接是否正常。")
         return
     except AttributeError:
-        print(Fore.RED + Style.BRIGHT + "获取详情失败：该小说不存在或禁止网页阅读！（或网络连接异常）")
+        print(Fore.RED + Style.BRIGHT + "该小说已不存在或禁止网页阅读！（或网络连接异常）")
         return
-    html = response.text
-
-    # 解析网页源码
-    soup = BeautifulSoup(html, "html.parser")
-
-    # 获取小说标题
-    title = soup.find("h1").get_text()
-    # , class_ = "info-name"
-    title = p.rename(title)
-
-    # 获取小说简介
-    intro = soup.find("div", class_="page-abstract-content").get_text()
-
-    # 获取小说作者
-    author_name = soup.find('span', class_='author-name-text').get_text()
-
-    # 找到type="application/ld+json"的<script>标签
-    script_tag = soup.find('script', type='application/ld+json')
-
-    # 提取每个<script>标签中的JSON数据
-    json_data = json.loads(script_tag.string)
-    images_data = json_data.get('image', [])
-    # 打印提取出的images数据
-    img_url = images_data[0]
-
-    # 下载封面
-    response = requests.get(img_url, timeout=20)
     # 获取图像的内容
     img_data = response.content
 
@@ -576,6 +576,8 @@ def fanqie_epub_update(user_agent, book_path):
 
                 # 在小说内容字符串中添加章节标题和内容
                 text = epub.EpubHtml(title=chapter_title, file_name=f'chapter_{volume_id}_{chapter_id_name}.xhtml')
+                text.add_item(nav_css1)
+                text.add_item(nav_css2)
                 text.content = (f'<h2 class="titlecss">{chapter_title}</h2>'
                                 f'{chapter_text}')
 
