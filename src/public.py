@@ -34,17 +34,6 @@ proxies = {
     "https": None
 }
 
-ua = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/118.0.0.0 "
-    "Safari/537.36"
-)
-
-headers = {
-    "User-Agent": ua
-}
-
 
 # 替换非法字符
 def rename(name):

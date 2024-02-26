@@ -26,7 +26,6 @@ import yaml
 import requests
 from bs4 import BeautifulSoup
 from ebooklib import epub
-from urllib.parse import urljoin
 import re
 import time
 import json
@@ -120,7 +119,8 @@ def fanqie_epub(url, user_agent, path_choice):
     yaml_content = yaml.dump(yaml_data)
 
     # 设置 fqid 元数据
-    yaml_item = epub.EpubItem(uid='yaml', file_name='metadata.yaml', media_type='application/octet-stream', content=yaml_content)
+    yaml_item = epub.EpubItem(uid='yaml', file_name='metadata.yaml', media_type='application/octet-stream',
+                              content=yaml_content)
     book.add_item(yaml_item)
 
     # 获取卷标

@@ -44,7 +44,7 @@ init(autoreset=True)
 def fanqie_update(user_agent, data_folder):
     # 请用户选择更新模式
     while True:
-        update_mode = input("请选择更新模式:1 -> 单个更新 2-> 批量更新\n")
+        update_mode = input("请选择更新模式:1 -> 单个更新 2-> 批量更新 3-> epub批量\n")
         if not update_mode:
             update_mode = '1'
         if update_mode == '1':
@@ -52,6 +52,9 @@ def fanqie_update(user_agent, data_folder):
             return
         elif update_mode == '2':
             break
+        elif update_mode == '3':
+            epub_batch_update(user_agent)
+            return
         else:
             print("无效的选择，请重新输入。")
 
@@ -229,9 +232,15 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
 def onefile(user_agent, data_folder):
     txt_file_path = None
     while True:
+        m_epub = False
         # 提示用户输入路径
-        user_path = input("请将要更新的小说拖动到窗口中，然后按 Enter 键:\n")
-        if '.txt' not in user_path:
+        user_path = input("请将要更新的小说拖动到窗口中，然后按 Enter 键:（支持新版本下载的epub）\n")
+        if ".txt" in user_path:
+            pass
+        elif ".epub" in user_path:
+            m_epub = True
+            print(Fore.YELLOW + Style.BRIGHT + "EPUB更新模式处于测试阶段，如发现问题请及时反馈。")
+        else:
             print("路径不正确，请重新输入")
             continue
 
@@ -243,6 +252,10 @@ def onefile(user_agent, data_folder):
         else:
             print("文件不存在，请重新输入")
             continue
+
+    if m_epub is True:
+        fanqie_epub_update(user_agent, user_path)
+        return
 
     txt_file = os.path.basename(txt_file_path)
     # # 寻找book_id
@@ -327,7 +340,41 @@ def onefile(user_agent, data_folder):
         print(f"{txt_file} 不是通过此工具下载，无法更新")
 
 
-def fanqie_epub_update(book_path):
+def epub_batch_update(user_agent):
+    print(Fore.YELLOW + Style.BRIGHT + "EPUB更新模式处于测试阶段，如发现问题请及时反馈。")
+    # 指定小说文件夹
+    novel_folder = "epub更新"
+
+    os.makedirs(novel_folder, exist_ok=True)
+
+    input("请在程序目录下”epub更新“文件夹内放入需更新的epub文件\n按 Enter 键继续...")
+
+    novel_files = [file for file in os.listdir(novel_folder) if file.endswith(".epub")]
+
+    if not novel_files:
+        print("没有可更新的文件")
+        return
+
+    for epub_file in novel_files:
+        print(f"正在更新: {epub_file}")
+        epub_file_path = os.path.join(novel_folder, epub_file)
+        # noinspection PyBroadException
+        try:
+            fanqie_epub_update(user_agent, epub_file_path)
+        except Exception:
+            # 导入打印异常信息的模块
+            import traceback
+            # 打印异常信息
+            print(Fore.RED + Style.BRIGHT + "发生错误，请保存以下信息并联系开发者：")
+            traceback.print_exc()
+
+
+def fanqie_epub_update(user_agent, book_path):
+
+    headers = {
+        "User-Agent": user_agent
+    }
+
     # 读取需要更新的epub文件
     book_o = epub.read_epub(book_path, {'ignore_ncx': True})
 
@@ -339,14 +386,14 @@ def fanqie_epub_update(book_path):
         yaml_item = book_o.get_item_with_id('yaml')
         yaml_content = yaml_item.get_content().decode('utf-8')
         book_id = yaml.safe_load(yaml_content)['fqid']
-    except AttributeError as e:
+    except AttributeError:
         print('当前仅支持更新2.10版本及以上下载的epub小说')
         return
 
     # 获取网页源码
     try:
         response = requests.get(f'https://fanqienovel.com/page/{book_id}',
-                                headers=p.headers,
+                                headers=headers,
                                 timeout=20,
                                 proxies=p.proxies)
     except Timeout:
@@ -499,7 +546,7 @@ def fanqie_epub_update(book_path):
                     while retry_count < 4:  # 设置最大重试次数
                         try:
                             # 获取 api 响应
-                            api_response = requests.get(api_url, headers=p.headers, timeout=5, proxies=p.proxies)
+                            api_response = requests.get(api_url, headers=headers, timeout=5, proxies=p.proxies)
 
                             # 解析 api 响应为 json 数据
                             api_data = api_response.json()
