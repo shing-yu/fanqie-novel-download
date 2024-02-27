@@ -3,7 +3,7 @@
   margin-top: 5pt;
 }
 @font-face {
-  font-family: "Xingyv Regular";
+  font-family: "HarmonyOS Sans SC";
   panose-1: 0 0 5 0 0 0 0 0 0 0;
-  src: url(fonts/Xingyv-Regular.ttf);
+  src: url(../fonts/HarmonyOS_Sans_SC_Regular.ttf);
 }
