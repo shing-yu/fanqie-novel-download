@@ -1,6 +1,7 @@
 requests
 beautifulsoup4
 packaging
-ebooklib
+ebooklib~=0.18
 tqdm
 colorama
+PyYAML
