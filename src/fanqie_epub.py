@@ -24,7 +24,6 @@ import yaml
 
 # 导入必要的模块
 import requests
-from bs4 import BeautifulSoup
 from ebooklib import epub
 import re
 import time
@@ -46,54 +45,21 @@ def fanqie_epub(url, user_agent, path_choice, config_path):
     # 创建epub电子书
     book = epub.EpubBook()
 
-    proxies = {
-        "http": None,
-        "https": None
-    }
-
     # 获取书籍id
     book_id = re.search(r'\d+', url).group()
 
-    # 获取网页源码
+    # 获取相关信息
     try:
-        response = requests.get(url, headers=headers, timeout=20, proxies=proxies)
+        soup, title, author_name, intro, img_url = p.get_fanqie(url, user_agent, mode='epub')
+        # 下载封面
+        response = requests.get(img_url, timeout=20)
     except Timeout:
         print(Fore.RED + Style.BRIGHT + "连接超时，请检查网络连接是否正常。")
         return
     except AttributeError:
         print(Fore.RED + Style.BRIGHT + "获取详情失败：该小说不存在或禁止网页阅读！（或网络连接异常）")
         return
-    html = response.text
 
-    # 解析网页源码
-    soup = BeautifulSoup(html, "html.parser")
-
-    # 获取小说标题
-    title = soup.find("h1").get_text()
-    # , class_ = "info-name"
-    # 替换非法字符
-    title = p.rename(title)
-
-    # 获取小说信息
-    # info = soup.find("div", class_="page-header-info").get_text()
-
-    # 获取小说简介
-    intro = soup.find("div", class_="page-abstract-content").get_text()
-
-    # 获取小说作者
-    author_name = soup.find('span', class_='author-name-text').get_text()
-
-    # 找到type="application/ld+json"的<script>标签
-    script_tag = soup.find('script', type='application/ld+json')
-
-    # 提取每个<script>标签中的JSON数据
-    json_data = json.loads(script_tag.string)
-    images_data = json_data.get('image', [])
-    # 打印提取出的images数据
-    img_url = images_data[0]
-
-    # 下载封面
-    response = requests.get(img_url, timeout=20)
     # 获取图像的内容
     img_data = response.content
 

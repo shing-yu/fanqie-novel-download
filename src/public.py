@@ -20,6 +20,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 无论您对程序进行了任何操作，请始终保留此信息。
 """
 
+import json
 import re
 import os
 import sys
@@ -72,7 +73,7 @@ def fix_publisher(text):
     return text
 
 
-def get_fanqie(url, user_agent):
+def get_fanqie(url, user_agent, mode='default'):
     headers = {
         "User-Agent": user_agent
     }
@@ -111,6 +112,21 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
     # 获取所有章节链接
     chapters = soup.find_all("div", class_="chapter-item")
+
+    if mode == 'epub':
+        # 获取小说作者
+        author_name = soup.find('span', class_='author-name-text').get_text()
+
+        # 找到type="application/ld+json"的<script>标签
+        script_tag = soup.find('script', type='application/ld+json')
+
+        # 提取每个<script>标签中的JSON数据
+        json_data = json.loads(script_tag.string)
+        images_data = json_data.get('image', [])
+        # 打印提取出的images数据
+        img_url = images_data[0]
+
+        return soup, title, author_name, intro, img_url
 
     return headers, title, content, chapters
 
