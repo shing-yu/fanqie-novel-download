@@ -158,7 +158,7 @@ def fanqie_epub(url, user_agent, path_choice, config_path):
 
             chapter_id_name = 0
             # 遍历每个章节链接
-            for chapter in tqdm(chapters):
+            for chapter in tqdm(chapters, desc="下载进度"):
                 chapter_id_name += 1
                 time.sleep(0.25)
 

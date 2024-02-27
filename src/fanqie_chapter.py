@@ -71,7 +71,7 @@ def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id,
                 start_index = i
 
     # 遍历每个章节链接
-    for chapter in tqdm(chapters[start_index:]):
+    for chapter in tqdm(chapters[start_index:], desc="下载进度"):
 
         time.sleep(0.25)
 

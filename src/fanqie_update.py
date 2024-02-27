@@ -196,7 +196,7 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
         chapter_id_now = start_chapter_id
         try:
             # 从起始章节开始遍历每个章节链接
-            for chapter in tqdm(chapters[start_index:]):
+            for chapter in tqdm(chapters[start_index:], desc="更新进度"):
 
                 result = p.get_api(chapter, headers)
 
@@ -517,7 +517,7 @@ def fanqie_epub_update(user_agent, book_path):
 
             chapter_id_name = 0
             # 遍历每个章节链接
-            for chapter in tqdm(chapters):
+            for chapter in tqdm(chapters, desc="更新进度"):
                 chapter_id_name += 1
                 # 获取章节标题
                 chapter_title = chapter.find("a").get_text()

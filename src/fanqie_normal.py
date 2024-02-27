@@ -26,6 +26,7 @@ import datetime
 import os
 import time
 import json
+import base64
 from tqdm import tqdm
 import hashlib
 import public as p
@@ -120,9 +121,12 @@ def fanqie_n(url, encoding, user_agent, path_choice, data_folder, start_chapter_
 
     chapter_id = None
 
+    length = len(chapters)
+    encryption_index = length // 2
+
     try:
         # 遍历每个章节链接
-        for chapter in tqdm(chapters[start_index:]):
+        for i, chapter in enumerate(tqdm(chapters[start_index:], desc="下载进度")):
             time.sleep(0.25)
 
             result = p.get_api(chapter, headers)
@@ -134,6 +138,11 @@ def fanqie_n(url, encoding, user_agent, path_choice, data_folder, start_chapter_
 
             # 在小说内容字符串中添加章节标题和内容
             content += f"\n\n\n{chapter_title}\n{chapter_text}"
+
+            if i == encryption_index:
+                content += base64.b64decode("CgoK5pys5bCP6K+06YCa6L+H5YWN6LS55byA5rqQ"
+                                            "5LiL6L295bel5YW3IGh0dHBzOi8vc291cmwuY24vZHZGS0VSIOS4i+i9veOAguWmguaenOaCqO"
+                                            "mBh+WIsOaUtui0ue+8jOivt+S4vuaKpeW5tuiBlOezu+S9nOiAhQoK").decode()
 
             # 打印进度信息
             tqdm.write(f"已获取 {chapter_title}")
