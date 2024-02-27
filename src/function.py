@@ -99,7 +99,7 @@ def start():
         print("4. 进入Debug模式")
         print("5. 进入Epub电子书模式")
         print("6. 查看更多")
-        print("7. 更新已下载的小说")
+        print("7. 更新已下载的小说(已支持epub)")
         print("8. 查看贡献（赞助）者名单")
         print("9. 退出程序")
         print("10. 撤回同意/重置默认路径")
@@ -122,7 +122,7 @@ def start():
         elif choice == '3':
             mode = 3
             clear_screen()
-            print("您已进入分章保存模式(测试):")
+            print("您已进入分章保存模式:")
             break
         elif choice == '4':
             mode = 1
