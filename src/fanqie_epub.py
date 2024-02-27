@@ -134,7 +134,7 @@ def fanqie_epub(url, user_agent, path_choice, config_path):
                        f'<p>{intro}</p>')
     book.add_item(intro_e)
 
-    font_file = p.asset_path("Xingyv-Regular.ttf")
+    font_file = p.asset_path("HarmonyOS_Sans_SC_Regular.ttf")
     css1_file = p.asset_path("page_styles.css")
     css2_file = p.asset_path("stylesheet.css")
     # 打开资源文件
@@ -148,8 +148,8 @@ def fanqie_epub(url, user_agent, path_choice, config_path):
     # 创建一个EpubItem实例来存储你的字体文件
     font = epub.EpubItem(
         uid="font",
-        file_name="fonts/Xingyv-Regular.ttf",  # 这将是字体文件在epub书籍中的路径和文件名
-        media_type="application/x-font-ttf",
+        file_name="fonts/HarmonyOS_Sans_SC_Regular.ttf",  # 这将是字体文件在epub书籍中的路径和文件名
+        media_type="application/vnd.ms-opentype",
         content=font_content,
     )
     # 创建一个EpubItem实例来存储你的CSS样式
