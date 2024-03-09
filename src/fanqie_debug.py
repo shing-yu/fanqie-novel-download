@@ -248,10 +248,10 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
             chapter_text = re.search(r"<article>([\s\S]*?)</article>", chapter_content).group(1)
 
             # 将 <p> 标签替换为换行符
-            chapter_text = re.sub(r"<p>", "\n", chapter_text)
+            chapter_text = re.sub(r"<p\b[^>]*>", "\n", chapter_text)
 
             # 去除其他 html 标签
-            chapter_text = re.sub(r"</?\w+>", "", chapter_text)
+            chapter_text = re.sub(r"<[\x00-\x7F]*?>", "", chapter_text)
 
             # 针对性去除所有 出版物 所携带的标签
             chapter_text = p.fix_publisher(chapter_text)

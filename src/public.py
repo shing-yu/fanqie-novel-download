@@ -185,10 +185,10 @@ def get_api(chapter, headers, mode='default'):
         return chapter_title, chapter_text, chapter_id
 
     # 将 <p> 标签替换为换行符
-    chapter_text = re.sub(r"<p>", "\n", chapter_text)
+    chapter_text = re.sub(r"<p\b[^>]*>", "\n", chapter_text)
 
     # 去除其他 html 标签
-    chapter_text = re.sub(r"</?\w+>", "", chapter_text)
+    chapter_text = re.sub(r"<[\x00-\x7F]*?>", "", chapter_text)
 
     chapter_text = fix_publisher(chapter_text)
 
