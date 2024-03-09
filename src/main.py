@@ -25,6 +25,9 @@ from sys import exit
 
 version = "v2.10.0"
 
+# 检查另一个实例是否正在运行
+f.check_instance()
+
 # 检查EULA
 f.check_eula()
 f.clear_screen()

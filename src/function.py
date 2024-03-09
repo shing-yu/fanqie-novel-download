@@ -28,6 +28,7 @@ import fanqie_update as fu
 import fanqie_epub as fe
 import os
 import re
+import time
 import requests
 import platform
 from sys import exit
@@ -746,3 +747,23 @@ def clear_stdin():
         import sys
         import termios
         termios.tcflush(sys.stdin, termios.TCIOFLUSH)
+
+
+sock = None
+
+
+def check_instance():
+    global sock
+    # 通过端口检查是否有其他实例正在运行
+    import socket
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        sock.bind(('localhost', 51522))
+    except socket.error:
+        print("另一个程序进程已经在运行中，请勿重复运行")
+        print("将在5秒后退出程序")
+        for i in range(5, 0, -1):
+            print(f"{i}")
+            time.sleep(1)
+        exit(1)
