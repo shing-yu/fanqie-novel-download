@@ -163,7 +163,14 @@ def fanqie_epub(url, user_agent, path_choice, config_path):
                 time.sleep(0.25)
 
                 # 获取章节内容
-                chapter_title, chapter_text, chapter_id = p.get_api(chapter, headers, mode='epub')
+                result = p.get_api(chapter, headers, mode='epub')
+
+                if result == "skip":
+                    continue
+                elif result == "terminate":
+                    break
+                else:
+                    chapter_title, chapter_text, chapter_id = result
 
                 # 在小说内容字符串中添加章节标题和内容
                 text = epub.EpubHtml(title=chapter_title, file_name=f'chapter_{volume_id}_{chapter_id_name}.xhtml')

@@ -212,37 +212,63 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
             # 尝试获取章节内容
             chapter_content = None
-            retry_count = 1
-            while retry_count < 4:  # 设置最大重试次数
-                try:
-                    # 获取 api 响应
-                    api_response = requests.get(api_url, headers=headers, timeout=5, proxies=proxies)
+            while True:
+                retry_count = 1
+                skip = False
+                terminate = False
+                while retry_count < 4:  # 设置最大重试次数
+                    try:
+                        # 获取 api 响应
+                        api_response = requests.get(api_url, headers=headers, timeout=5, proxies=proxies)
 
-                    tqdm.write(Fore.YELLOW + Style.BRIGHT + f"[DEBUG]HTTP状态码:{api_response}")
+                        # 解析 api 响应为 json 数据
+                        api_data = api_response.json()
+                    except Exception as e:
+                        if retry_count == 1:
+                            tqdm.write(Fore.RED + Style.BRIGHT + f"发生异常: {e}")
+                            tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
+                        tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
+                        retry_count += 1  # 否则重试
+                        continue
 
-                    # 解析 api 响应为 json 数据
-                    api_data = api_response.json()
+                    if "data" in api_data and "content" in api_data["data"]:
+                        chapter_content = api_data["data"]["content"]
+                        break  # 如果成功获取章节内容，跳出重试循环
+                    else:
+                        if retry_count == 1:
+                            tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
+                        tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
+                        retry_count += 1  # 否则重试
 
-                except Exception as e:
-                    if retry_count == 1:
-                        tqdm.write(Fore.RED + Style.BRIGHT + f"发生异常: {e}")
-                        tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
-                    tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
-                    retry_count += 1  # 否则重试
-                    continue
-
-                if "data" in api_data and "content" in api_data["data"]:
-                    chapter_content = api_data["data"]["content"]
-                    break  # 如果成功获取章节内容，跳出重试循环
+                if retry_count == 4:
+                    from func_timeout import func_timeout, FunctionTimedOut
+                    tqdm.write(Fore.RED + Style.BRIGHT + f"无法获取章节内容: {chapter_title}")
+                    # 请用户在20秒内选择处理方式
+                    try:
+                        while True:
+                            choice = func_timeout(20, lambda: input("请选择处理方式：1.跳过此章节/2.重试获取章节内容/3.终止下载并保存（1/2/3）"
+                                                                    "（20秒内不选择默认重试）\n"))
+                            if choice in ["1", "2", "3"]:
+                                break
+                            else:
+                                tqdm.write("输入有误，请重新输入")
+                    except FunctionTimedOut:
+                        tqdm.write("超时，默认重试获取章节内容")
+                        choice = "2"
+                    if choice == "1":
+                        skip = True
+                    elif choice == "2":
+                        continue
+                    elif choice == "3":
+                        terminate = True
+                    break
                 else:
-                    if retry_count == 1:
-                        tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
-                    tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
-                    retry_count += 1  # 否则重试
+                    break
 
-            if retry_count == 4:
-                tqdm.write(f"无法获取章节内容: {chapter_title}，跳过。")
-                continue  # 重试次数过多后，跳过当前章节
+            if skip:
+                continue
+            if terminate:
+                break
 
             # 提取文章标签中的文本
             chapter_text = re.search(r"<article>([\s\S]*?)</article>", chapter_content).group(1)

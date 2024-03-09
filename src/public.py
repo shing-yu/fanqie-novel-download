@@ -149,34 +149,99 @@ def get_api(chapter, headers, mode='default'):
                f"{chapter_id}&item_id={chapter_id}")
     # 尝试获取章节内容
     chapter_content = None
-    retry_count = 1
-    while retry_count < 4:  # 设置最大重试次数
-        try:
-            # 获取 api 响应
-            api_response = requests.get(api_url, headers=headers, timeout=5, proxies=proxies)
+    while True:
+        retry_count = 1
+        while retry_count < 4:  # 设置最大重试次数
+            try:
+                # 获取 api 响应
+                api_response = requests.get(api_url, headers=headers, timeout=5, proxies=proxies)
 
-            # 解析 api 响应为 json 数据
-            api_data = api_response.json()
-        except Exception as e:
-            if retry_count == 1:
-                tqdm.write(Fore.RED + Style.BRIGHT + f"发生异常: {e}")
-                tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
-            tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
-            retry_count += 1  # 否则重试
-            continue
+                # 解析 api 响应为 json 数据
+                api_data = api_response.json()
+            except Exception as e:
+                if retry_count == 1:
+                    tqdm.write(Fore.RED + Style.BRIGHT + f"发生异常: {e}")
+                    tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
+                tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
+                retry_count += 1  # 否则重试
+                continue
 
-        if "data" in api_data and "content" in api_data["data"]:
-            chapter_content = api_data["data"]["content"]
-            break  # 如果成功获取章节内容，跳出重试循环
+            if "data" in api_data and "content" in api_data["data"]:
+                chapter_content = api_data["data"]["content"]
+                break  # 如果成功获取章节内容，跳出重试循环
+            else:
+                if retry_count == 1:
+                    tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
+                tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
+                retry_count += 1  # 否则重试
+
+        if retry_count == 4:
+            import tkinter as tk
+            from tkinter import font, messagebox
+            tqdm.write(Fore.RED + Style.BRIGHT + f"无法获取章节内容: {chapter_title}")
+            tqdm.write(Fore.YELLOW + Style.BRIGHT + "请在弹出窗口中选择处理方式")
+            choice = None
+
+            def on_button_click(value):
+                nonlocal choice
+                choice = value
+                window.destroy()
+
+            # 弹窗请用户选择处理方式
+            window = tk.Tk()
+            window.title("番茄下载器 - 选择处理方式")
+            # 获取屏幕宽度和高度
+            screen_width = window.winfo_screenwidth()
+            screen_height = window.winfo_screenheight()
+            # 计算窗口宽和高
+            x = (screen_width - 400) / 2
+            y = (screen_height - 260) / 2
+            window.geometry(f"400x260+{int(x)}+{int(y)}")
+
+            # 不允许调整大小
+            window.resizable(False, False)
+
+            # 获取默认字体并设置字体大小
+            default_font_family = font.nametofont("TkDefaultFont").actual()["family"]
+            font1 = font.Font(family=default_font_family, size=12)
+            font2 = font.Font(family=default_font_family, size=8)
+
+            label = tk.Label(window, text=f"无法获取章节内容: \n{chapter_title}", pady=10, font=font1)
+            label.pack()
+
+            label2 = tk.Label(window, text="已达最大重试次数\n您希望程序如何处理此问题：", font=font2)
+            label2.pack()
+
+            button1_frame = tk.Frame(window)
+            button1_frame.pack()
+            button1 = tk.Button(button1_frame, text="跳过此章节 (1)", command=lambda: on_button_click("1"), font=font1)
+            button1.pack(pady=5)
+
+            button2_frame = tk.Frame(window)
+            button2_frame.pack()
+            button2 = tk.Button(button2_frame, text="再次重试 (2)", command=lambda: on_button_click("2"), font=font1)
+            button2.pack(pady=5)
+
+            button3_frame = tk.Frame(window)
+            button3_frame.pack()
+            button3 = tk.Button(button3_frame, text="终止下载并保存 (3)", command=lambda: on_button_click("3"),
+                                font=font1)
+            button3.pack(pady=5)
+
+            def on_closing():
+                messagebox.showwarning("警告", "您必须选择处理方式，程序才能继续运行")
+
+            window.protocol("WM_DELETE_WINDOW", on_closing)
+
+            window.mainloop()
+            if choice == "1":
+                return "skip"
+            elif choice == "2":
+                continue
+            elif choice == "3":
+                return "terminate"
         else:
-            if retry_count == 1:
-                tqdm.write(f"{chapter_title} 获取失败，正在尝试重试...")
-            tqdm.write(f"第 ({retry_count}/3) 次重试获取章节内容")
-            retry_count += 1  # 否则重试
-
-    if retry_count == 4:
-        tqdm.write(f"无法获取章节内容: {chapter_title}，跳过。")
-        return  # 重试次数过多后，跳过当前章节
+            break
 
     # 提取文章标签中的文本
     chapter_text = re.search(r"<article>([\s\S]*?)</article>", chapter_content).group(1)

@@ -131,8 +131,10 @@ def fanqie_n(url, encoding, user_agent, path_choice, data_folder, start_chapter_
 
             result = p.get_api(chapter, headers)
 
-            if result is None:
+            if result == "skip":
                 continue
+            elif result == "terminate":
+                break
             else:
                 chapter_title, chapter_text, chapter_id = result
 

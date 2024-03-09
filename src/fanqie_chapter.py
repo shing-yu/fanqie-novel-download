@@ -77,8 +77,10 @@ def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id,
 
         result = p.get_api(chapter, headers)
 
-        if result is None:
+        if result == "skip":
             continue
+        elif result == "terminate":
+            break
         else:
             chapter_title, chapter_text, _ = result
 

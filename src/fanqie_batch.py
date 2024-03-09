@@ -177,8 +177,10 @@ def download_novels(url, encoding, user_agent, folder_path, data_folder):
 
         result = p.get_api(chapter, headers)
 
-        if result is None:
+        if result == "skip":
             continue
+        elif result == "terminate":
+            break
         else:
             chapter_title, chapter_text, chapter_id = result
 

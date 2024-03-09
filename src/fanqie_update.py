@@ -200,8 +200,10 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
 
                 result = p.get_api(chapter, headers)
 
-                if result is None:
+                if result == "skip":
                     continue
+                elif result == "terminate":
+                    break
                 else:
                     chapter_title, chapter_text, chapter_id_now = result
 
