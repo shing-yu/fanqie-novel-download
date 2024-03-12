@@ -516,52 +516,53 @@ def check_update(now_version):
         if "tag_name" in release_info:
             latest_version = release_info["tag_name"]
             release_describe = release_info["body"]
-            # 检测是否是重要更新
-            if "!important!" in release_describe:
-                # 如果是，则弹窗提示
-                import tkinter as tk
-                from tkinter import messagebox
-                root = tk.Tk()
-
-                # 点击确认跳转到下载页面
-                def open_url():
-                    import webbrowser
-                    webbrowser.open("https://gitee.com/xingyv1024/fanqie-novel-download/releases/latest")
-                    exit(0)
-
-                root.withdraw()
-                result = messagebox.askokcancel("重要更新",
-                                                f"检测到重要更新！\n更新内容:\n{release_describe}\n点击确定前往下载",
-                                                icon="warning")
-                if result:
-                    open_url()
-                root.destroy()
-                return
-            elif "!very important!" in release_describe:
-                # 如果是，则弹窗提示
-                import tkinter as tk
-                from tkinter import messagebox
-                root = tk.Tk()
-
-                # 点击确认跳转到下载页面
-                def open_url():
-                    import webbrowser
-                    webbrowser.open("https://gitee.com/xingyv1024/fanqie-novel-download/releases/latest")
-                    exit(0)
-
-                root.withdraw()
-                # 此更新不可取消
-                messagebox.showinfo("非常重要更新", f"检测到非常重要更新！\n更新内容:\n{release_describe}\n点击确定前往下载")
-                open_url()
-                root.destroy()
-                exit(0)
-            elif "|notification|" in release_describe:
-                print(f"检测到通知：\n{release_describe}")
-                input("按Enter键继续...\n")
-                return
             print(f"最新的发行版是：{latest_version}")
             result = compare_versions(now_version, latest_version)
             if result == -1:
+                # 检测是否是重要更新
+                if "!important!" in release_describe:
+                    # 如果是，则弹窗提示
+                    import tkinter as tk
+                    from tkinter import messagebox
+                    root = tk.Tk()
+
+                    # 点击确认跳转到下载页面
+                    def open_url():
+                        import webbrowser
+                        webbrowser.open("https://gitee.com/xingyv1024/fanqie-novel-download/releases/latest")
+                        exit(0)
+
+                    root.withdraw()
+                    result = messagebox.askokcancel("重要更新",
+                                                    f"检测到重要更新！\n更新内容:\n{release_describe}\n点击确定前往下载",
+                                                    icon="warning")
+                    if result:
+                        open_url()
+                    root.destroy()
+                    return
+                elif "!very important!" in release_describe:
+                    # 如果是，则弹窗提示
+                    import tkinter as tk
+                    from tkinter import messagebox
+                    root = tk.Tk()
+
+                    # 点击确认跳转到下载页面
+                    def open_url():
+                        import webbrowser
+                        webbrowser.open("https://gitee.com/xingyv1024/fanqie-novel-download/releases/latest")
+                        exit(0)
+
+                    root.withdraw()
+                    # 此更新不可取消
+                    messagebox.showinfo("非常重要更新",
+                                        f"检测到非常重要更新！\n更新内容:\n{release_describe}\n点击确定前往下载")
+                    open_url()
+                    root.destroy()
+                    exit(0)
+                elif "|notification|" in release_describe:
+                    print(f"检测到通知：\n{release_describe}")
+                    input("按Enter键继续...\n")
+                    return
                 print("检测到新版本\n更新可用！请到 https://gitee.com/xingyv1024/fanqie-novel-download/releases/latest 下载最新版")
                 print(f"更新内容:\n{release_describe}")
                 input("按Enter键继续...\n")
