@@ -10,15 +10,15 @@
 
 感谢您长期以来的支持与理解。
 
-祝好，
-星隅(shing-yu) &
-番茄工具社区
-2024年3月19日
+祝好，  
+星隅(shing-yu) &  
+番茄工具社区  
+2024年3月19日  
 
-受影响不再可用的其他项目：
-[shing-yu/fanqie-downloader-api-v4](https://github.com/shing-yu/fanqie-downloader-api-v4)
-[weiwei-cool/FanQieNovelDownloadOnWeb](https://github.com/weiwei-cool/FanQieNovelDownloadOnWeb)
-网页版和机器人
+受影响不再可用的其他项目：  
+[shing-yu/fanqie-downloader-api-v4](https://github.com/shing-yu/fanqie-downloader-api-v4)  
+[weiwei-cool/FanQieNovelDownloadOnWeb](https://github.com/weiwei-cool/FanQieNovelDownloadOnWeb)  
+网页版和机器人  
 
 # fanqie-novel-download
 番茄小说下载的Python实现。这是一个用于从番茄小说网站下载小说的Python程序。  
