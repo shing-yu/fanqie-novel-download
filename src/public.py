@@ -34,6 +34,11 @@ proxies = {
     "http": None,
     "https": None
 }
+headers = {
+    "User-Agent": "Mozilla/5.0 (Linux; Android 4.2.1; M040 Build/JOP40D) "
+                  "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.59 "
+                  "Mobile Safari/537.36"
+}
 
 
 # 替换非法字符
@@ -73,14 +78,11 @@ def fix_publisher(text):
     return text
 
 
-def get_fanqie(url, user_agent, mode='default'):
-    headers = {
-        "User-Agent": user_agent
-    }
+def get_fanqie(url, mode='default'):
 
     # 获取网页源码
 
-    response = requests.get(url, headers=headers, timeout=20, proxies=proxies)
+    response = requests.get(url, timeout=20, proxies=proxies)
     html = response.text
 
     # 解析网页源码
@@ -128,10 +130,11 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
         return soup, title, author_name, intro, img_url
 
-    return headers, title, content, chapters
+    return title, content, chapters
 
 
-def get_api(chapter, headers, mode='default'):
+def get_api(chapter, mode='default'):
+
     # 获取章节标题
     chapter_title = chapter.find("a").get_text()
     # 去除非法字符
@@ -145,8 +148,8 @@ def get_api(chapter, headers, mode='default'):
 
     # 构造 api 网址
     api_url = (f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&"
-               f"parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id="
-               f"{chapter_id}&item_id={chapter_id}")
+               f"version_code=973&app_name=news_article&version_name=9.7.3&app_version=9.7.3&device_id=1&"
+               f"channel=google&device_type=1&os_api=33&os_version=13&item_id={chapter_id}&aid=1319")
     # 尝试获取章节内容
     chapter_content = None
     while True:

@@ -34,11 +34,11 @@ init(autoreset=True)
 
 
 # 定义分章节保存模式用来下载番茄小说的函数
-def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id,
+def fanqie_c(url, encoding, path_choice, start_chapter_id,
              config_path):
 
     try:
-        headers, title, introduction, chapters = p.get_fanqie(url, user_agent)
+        title, introduction, chapters = p.get_fanqie(url)
     except Timeout:
         print(Fore.RED + Style.BRIGHT + "连接超时，请检查网络连接是否正常。")
         return
@@ -75,7 +75,7 @@ def fanqie_c(url, encoding, user_agent, path_choice, start_chapter_id,
 
         time.sleep(0.25)
 
-        result = p.get_api(chapter, headers)
+        result = p.get_api(chapter)
 
         if result == "skip":
             continue

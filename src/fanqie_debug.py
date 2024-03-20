@@ -40,12 +40,21 @@ init(autoreset=True)
 
 
 # 定义调试模式用来下载番茄小说的函数
-def fanqie_d(url, encoding, user_agent, path_choice, data_folder, start_chapter_id,
+def fanqie_d(url, encoding, path_choice, data_folder, start_chapter_id,
              config_path):
 
-    headers = {
-        "User-Agent": user_agent
-    }
+    # 询问是否自定义ua
+    choice = input("是否使用自定义UA(y/n)？")
+    if choice == "y":
+        # 获取自定义UA
+        ua = input("请输入自定义UA：")
+        headers = {
+            "User-Agent": ua
+        }
+    else:
+        # 使用默认UA
+        headers = p.headers
+
     proxies = {
         "http": None,
         "https": None
@@ -53,7 +62,7 @@ def fanqie_d(url, encoding, user_agent, path_choice, data_folder, start_chapter_
 
     # 获取网页源码
     try:
-        response = requests.get(url, headers=headers, timeout=20, proxies=proxies)
+        response = requests.get(url, timeout=20, proxies=proxies)
     except Timeout:
         print(Fore.RED + Style.BRIGHT + "连接超时，请检查网络连接是否正常。")
         return
@@ -206,8 +215,8 @@ Gitee:https://gitee.com/xingyv1024/fanqie-novel-download/
 
             # 构造 api 网址
             api_url = (f"https://novel.snssdk.com/api/novel/book/reader/full/v1/?device_platform=android&"
-                       f"parent_enterfrom=novel_channel_search.tab.&aid=2329&platform_id=1&group_id="
-                       f"{chapter_id}&item_id={chapter_id}")
+                       f"version_code=973&app_name=news_article&version_name=9.7.3&app_version=9.7.3&device_id=1&"
+                       f"channel=google&device_type=1&os_api=33&os_version=13&item_id={chapter_id}&aid=1319")
             tqdm.write(Fore.YELLOW + Style.BRIGHT + f"[DEBUG]api网址:{api_url}")
 
             # 尝试获取章节内容

@@ -37,10 +37,7 @@ init(autoreset=True)
 
 
 # 定义正常模式用来下载番茄小说的函数
-def fanqie_epub(url, user_agent, path_choice, config_path):
-    headers = {
-        "User-Agent": user_agent
-    }
+def fanqie_epub(url, path_choice, config_path):
 
     # 创建epub电子书
     book = epub.EpubBook()
@@ -50,7 +47,7 @@ def fanqie_epub(url, user_agent, path_choice, config_path):
 
     # 获取相关信息
     try:
-        soup, title, author_name, intro, img_url = p.get_fanqie(url, user_agent, mode='epub')
+        soup, title, author_name, intro, img_url = p.get_fanqie(url, mode='epub')
         # 下载封面
         response = requests.get(img_url, timeout=20)
     except Timeout:
@@ -163,7 +160,7 @@ def fanqie_epub(url, user_agent, path_choice, config_path):
                 time.sleep(0.25)
 
                 # 获取章节内容
-                result = p.get_api(chapter, headers, mode='epub')
+                result = p.get_api(chapter, mode='epub')
 
                 if result == "skip":
                     continue

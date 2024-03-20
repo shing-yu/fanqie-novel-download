@@ -23,7 +23,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 import function as f
 from sys import exit
 
-version = "v2.10.1"
+version = "v3.0.0"
 
 # 检查另一个实例是否正在运行
 f.check_instance()

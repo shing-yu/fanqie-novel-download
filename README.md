@@ -1,25 +1,3 @@
-## 番茄工具暂停更新公告
-
-各位用户及开发者：
-
-由于不可抗力因素，番茄项目所依赖的API已经不再可用（包括上游项目）。经过社区讨论，我们决定暂停对项目的更新，存储库将会存档。
-
-这并不意味着整个项目链的终结，我们将把开发重点转移到七猫项目；
-
-如果将来有新的方式能够实现项目所需的功能，我们将会考虑恢复更新。
-
-感谢您长期以来的支持与理解。
-
-祝好，  
-星隅(shing-yu) &  
-番茄工具社区  
-2024年3月19日  
-
-受影响不再可用的其他项目：  
-[shing-yu/fanqie-downloader-api-v4](https://github.com/shing-yu/fanqie-downloader-api-v4)  
-[weiwei-cool/FanQieNovelDownloadOnWeb](https://github.com/weiwei-cool/FanQieNovelDownloadOnWeb)  
-网页版和机器人  
-
 # fanqie-novel-download
 番茄小说下载的Python实现。这是一个用于从番茄小说网站下载小说的Python程序。  
 **如果需要下载七猫小说。可以使用此项目的变体项目 [7mao-novel-downloader](https://github.com/xing-yv/7mao-novel-downloader)。**  

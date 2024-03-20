@@ -41,19 +41,19 @@ init(autoreset=True)
 
 
 # 定义番茄更新函数
-def fanqie_update(user_agent, data_folder):
+def fanqie_update(data_folder):
     # 请用户选择更新模式
     while True:
         update_mode = input("请选择更新模式:1 -> 单个更新 2-> 批量更新 3-> epub批量\n")
         if not update_mode:
             update_mode = '1'
         if update_mode == '1':
-            onefile(user_agent, data_folder)
+            onefile(data_folder)
             return
         elif update_mode == '2':
             break
         elif update_mode == '3':
-            epub_batch_update(user_agent)
+            epub_batch_update()
             return
         else:
             print("无效的选择，请重新输入。")
@@ -135,7 +135,7 @@ def fanqie_update(user_agent, data_folder):
                 else:
                     print(Fore.GREEN + Style.BRIGHT + "hash校验通过！")
             print(f"上次更新时间{last_update_time}")
-            result = download_novel(url, encoding, user_agent, last_chapter_id, txt_file_path)
+            result = download_novel(url, encoding, last_chapter_id, txt_file_path)
             if result == "DN":
                 print(f"{novel_name} 已是最新，不需要更新。\n")
             elif result == "Timeout":
@@ -167,9 +167,9 @@ def fanqie_update(user_agent, data_folder):
 
 
 # 定义更新番茄小说的函数
-def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
+def download_novel(url, encoding, start_chapter_id, txt_file_path):
     try:
-        headers, _, content, chapters = p.get_fanqie(url, user_agent)
+        _, content, chapters = p.get_fanqie(url)
     except Timeout:
         print(Fore.RED + Style.BRIGHT + "连接超时，请检查网络连接是否正常。")
         return "Timeout"
@@ -198,7 +198,7 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
             # 从起始章节开始遍历每个章节链接
             for chapter in tqdm(chapters[start_index:], desc="更新进度"):
 
-                result = p.get_api(chapter, headers)
+                result = p.get_api(chapter)
 
                 if result == "skip":
                     continue
@@ -231,7 +231,7 @@ def download_novel(url, encoding, user_agent, start_chapter_id, txt_file_path):
     return last_chapter_id
 
 
-def onefile(user_agent, data_folder):
+def onefile(data_folder):
     txt_file_path = None
     while True:
         m_epub = False
@@ -256,7 +256,7 @@ def onefile(user_agent, data_folder):
             continue
 
     if m_epub is True:
-        fanqie_epub_update(user_agent, user_path)
+        fanqie_epub_update(user_path)
         return
 
     txt_file = os.path.basename(txt_file_path)
@@ -316,7 +316,7 @@ def onefile(user_agent, data_folder):
             else:
                 print(Fore.GREEN + Style.BRIGHT + "hash校验通过！")
         print(f"上次更新时间{last_update_time}")
-        result = download_novel(url, encoding, user_agent, last_chapter_id, txt_file_path)
+        result = download_novel(url, encoding, last_chapter_id, txt_file_path)
         if result == "DN":
             print(f"{novel_name} 已是最新，不需要更新。\n")
         elif result == "Timeout":
@@ -342,7 +342,7 @@ def onefile(user_agent, data_folder):
         print(f"{txt_file} 不是通过此工具下载，无法更新")
 
 
-def epub_batch_update(user_agent):
+def epub_batch_update():
     print(Fore.YELLOW + Style.BRIGHT + "EPUB更新模式处于测试阶段，如发现问题请及时反馈。")
     # 指定小说文件夹
     novel_folder = "epub更新"
@@ -362,7 +362,7 @@ def epub_batch_update(user_agent):
         epub_file_path = os.path.join(novel_folder, epub_file)
         # noinspection PyBroadException
         try:
-            fanqie_epub_update(user_agent, epub_file_path)
+            fanqie_epub_update(epub_file_path)
         except Exception:
             # 导入打印异常信息的模块
             import traceback
@@ -371,11 +371,7 @@ def epub_batch_update(user_agent):
             traceback.print_exc()
 
 
-def fanqie_epub_update(user_agent, book_path):
-
-    headers = {
-        "User-Agent": user_agent
-    }
+def fanqie_epub_update(book_path):
 
     # 读取需要更新的epub文件
     book_o = epub.read_epub(book_path, {'ignore_ncx': True})
@@ -395,7 +391,6 @@ def fanqie_epub_update(user_agent, book_path):
     # 获取网页源码
     try:
         response = requests.get(f'https://fanqienovel.com/page/{book_id}',
-                                headers=headers,
                                 timeout=20,
                                 proxies=p.proxies)
         html = response.text
@@ -548,7 +543,7 @@ def fanqie_epub_update(user_agent, book_path):
                     while retry_count < 4:  # 设置最大重试次数
                         try:
                             # 获取 api 响应
-                            api_response = requests.get(api_url, headers=headers, timeout=5, proxies=p.proxies)
+                            api_response = requests.get(api_url, timeout=5, proxies=p.proxies)
 
                             # 解析 api 响应为 json 数据
                             api_data = api_response.json()

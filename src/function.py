@@ -41,7 +41,6 @@ init(autoreset=True)
 mode = None
 page_url = None
 txt_encoding = None
-ua = None
 type_path_num = None
 return_info = None
 user_folder = os.path.expanduser("~")
@@ -169,7 +168,7 @@ gitee地址:https://gitee.com/xingyv1024/fanqie-novel-download
             clear_screen()
             print("您已进入更新模式")
             # 调用番茄更新函数
-            return_info = fu.fanqie_update(ua, data_path)
+            return_info = fu.fanqie_update(data_path)
             return
         elif choice == '8':
             clear_screen()
@@ -256,7 +255,6 @@ None
 def get_parameter(retry):
     global page_url
     global txt_encoding
-    global ua
     global type_path_num
     global book_id
     global start_chapter_id
@@ -353,30 +351,6 @@ def get_parameter(retry):
     if mode != 4:
         print(f"你选择的保存编码是：{txt_encoding}")
 
-    # 初始化“ua”
-    ua = (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/118.0.0.0 "
-        "Safari/537.36"
-    )
-
-    # 定义 User-Agent
-    if mode == 1:  # 判断用户是否处于调试模式
-        while True:
-            ua_choice = input("是否自行输入User-Agent？(yes/no)(默认:no): ")
-            if not ua_choice:
-                ua_choice = "no"
-            # 是则询问是否自定义ua
-            if ua_choice.lower() == "yes":
-                ua = input("请输入自定义的User-Agent: \n")
-                break
-            elif ua_choice.lower() == "no":
-                break
-            else:
-                print("输入无效，请重新输入。")
-                continue
-
     type_path_num = None
 
     # 询问用户是否自定义保存路径
@@ -468,23 +442,23 @@ def perform_user_mode_action():
     # 判断用户处于什么模式
     if mode == 0:
         # 调用番茄正常模式函数
-        return_info = fn.fanqie_n(page_url, txt_encoding, ua, type_path_num, data_path, start_chapter_id,
+        return_info = fn.fanqie_n(page_url, txt_encoding, type_path_num, data_path, start_chapter_id,
                                   config_path)
     elif mode == 1:
         # 调用番茄调试模式函数
-        return_info = fd.fanqie_d(page_url, txt_encoding, ua, type_path_num, data_path, start_chapter_id,
+        return_info = fd.fanqie_d(page_url, txt_encoding, type_path_num, data_path, start_chapter_id,
                                   config_path)
     elif mode == 2:
         # 调用番茄批量模式函数
-        return_info = fb.fanqie_b(txt_encoding, ua, type_path_num, data_path,
+        return_info = fb.fanqie_b(txt_encoding, type_path_num, data_path,
                                   config_path)
     elif mode == 3:
         # 调用番茄分章模式函数
-        return_info = fc.fanqie_c(page_url, txt_encoding, ua, type_path_num, start_chapter_id,
+        return_info = fc.fanqie_c(page_url, txt_encoding, type_path_num, start_chapter_id,
                                   config_path)
     elif mode == 4:
         # 调用番茄epub电子书模式函数
-        return_info = fe.fanqie_epub(page_url, ua, type_path_num,
+        return_info = fe.fanqie_epub(page_url, type_path_num,
                                      config_path)
 
 

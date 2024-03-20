@@ -37,10 +37,10 @@ init(autoreset=True)
 
 
 # 定义正常模式用来下载番茄小说的函数
-def fanqie_n(url, encoding, user_agent, path_choice, data_folder, start_chapter_id,
+def fanqie_n(url, encoding, path_choice, data_folder, start_chapter_id,
              config_path):
     try:
-        headers, title, content, chapters = p.get_fanqie(url, user_agent)
+        title, content, chapters = p.get_fanqie(url)
     except Timeout:
         print(Fore.RED + Style.BRIGHT + "连接超时，请检查网络连接是否正常。")
         return
@@ -129,7 +129,7 @@ def fanqie_n(url, encoding, user_agent, path_choice, data_folder, start_chapter_
         for i, chapter in enumerate(tqdm(chapters[start_index:], desc="下载进度")):
             time.sleep(0.25)
 
-            result = p.get_api(chapter, headers)
+            result = p.get_api(chapter)
 
             if result == "skip":
                 continue
